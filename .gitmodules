@@ -2,3 +2,6 @@
 	path = external/sdl
 	url = https://github.com/libsdl-org/SDL.git
 	branch = release-2.30.x
+[submodule "external/sol2"]
+	path = external/sol2
+	url = https://github.com/ThePhD/sol2.git
