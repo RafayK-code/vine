@@ -3,6 +3,9 @@ project("VineMain")
 
 set(VINE_SRC_PATH ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/sdl)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/sol2)
+
 file(GLOB_RECURSE SRC_FILES
     "${VINE_SRC_PATH}/*.cpp"
 )
