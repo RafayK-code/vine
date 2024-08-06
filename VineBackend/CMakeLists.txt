@@ -1,17 +1,30 @@
 cmake_minimum_required(VERSION 3.20)
-project("VineMain")
+project("VineBackend")
 
-set(VINE_SRC_PATH ${CMAKE_CURRENT_SOURCE_DIR}/src)
+set(CMAKE_CXX_STANDARD 17)
 
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/sdl)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/sol2)
+set(VINE_BACKEND_SRC_PATH ${CMAKE_CURRENT_SOURCE_DIR}/src)
+set(VINE_BACKEND_INC_PATH ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-file(GLOB_RECURSE SRC_FILES
-    "${VINE_SRC_PATH}/*.cpp"
+set(SDL_PATH ${CMAKE_CURRENT_SOURCE_DIR}/external/sdl)
+set(SOL2_PATH ${CMAKE_CURRENT_SOURCE_DIR}/external/sol2)
+set(LUA_PATH ${CMAKE_CURRENT_SOURCE_DIR}/external/lua)
+
+add_subdirectory(${LUA_PATH})
+add_subdirectory(${SDL_PATH})
+add_subdirectory(${SOL2_PATH})
+
+file(GLOB_RECURSE VINE_BACKEND_SRC_FILES
+    "${VINE_BACKEND_SRC_PATH}/*.cpp"
 )
 
-file(GLOB_RECURSE INC_FILES
-    "${VINE_SRC_PATH}/*.h"
+file(GLOB_RECURSE VINE_BACKEND_INC_FILES
+    "${VINE_BACKEND_INC_PATH}/*.h"
 )
 
-add_library(${PROJECT_NAME} STATIC ${SRC_FILES} ${INC_FILES})
+add_library(${PROJECT_NAME} STATIC ${VINE_BACKEND_SRC_FILES} ${VINE_BACKEND_INC_FILES})
+
+target_include_directories(${PROJECT_NAME} PUBLIC ${VINE_BACKEND_INC_PATH})
+target_include_directories(${PROJECT_NAME} PUBLIC ${LUA_PATH}/lua-5.4.6/include)
+target_include_directories(${PROJECT_NAME} PUBLIC ${SDL_PATH}/include)
+target_include_directories(${PROJECT_NAME} PUBLIC ${SOL2_PATH}/include)
