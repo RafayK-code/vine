@@ -8,3 +8,6 @@
 [submodule "VineBackend/external/lua"]
 	path = VineBackend/external/lua
 	url = https://github.com/walterschell/Lua.git
+[submodule "VineBackend/external/spdlog"]
+	path = VineBackend/external/spdlog
+	url = https://github.com/gabime/spdlog.git
