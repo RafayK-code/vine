@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vine/util/Singleton.h>
+#include <vine/core/Base.h>
 
 #include <spdlog/spdlog.h>
 #include <memory>
@@ -13,7 +14,7 @@ namespace vine
     public:
         ~Logger();
 
-        std::shared_ptr<spdlog::logger>& getLogger() { return logger_; }
+        RefPtr<spdlog::logger>& getLogger() { return logger_; }
 
         static void init();
         static void shutdown();
@@ -21,7 +22,7 @@ namespace vine
     private:
         Logger();
 
-        std::shared_ptr<spdlog::logger> logger_;
+        RefPtr<spdlog::logger> logger_;
     };
 }
 
