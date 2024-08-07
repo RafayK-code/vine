@@ -1,10 +1,8 @@
 #pragma once
-#ifndef _APP_EVENT_H
-#define _APP_EVENT_H
 
-#include "Event.h"
+#include <vine/events/Event.h>
 
-namespace sntl
+namespace vine
 {
     class AppTickEvent : public IEvent
     {
@@ -34,5 +32,3 @@ namespace sntl
         std::string getName() const override { return "AppRenderEvent"; }
     };
 }
-
-#endif

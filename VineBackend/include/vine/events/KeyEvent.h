@@ -1,11 +1,9 @@
 #pragma once
-#ifndef _KEY_EVENT_H
-#define _KEY_EVENT_H
 
-#include "Event.h"
-#include "core/codes/KeyCodes.h"
+#include <vine/events/Event.h>
+#include <vine/core/codes/KeyCodes.h>
 
-namespace sntl
+namespace vine
 {
     class KeyEvent : public IEvent
     {
@@ -65,5 +63,3 @@ namespace sntl
         std::string getName() const override { return "KeyTypedEvent"; }
     };
 }
-
-#endif

@@ -23,7 +23,7 @@ namespace vine
         Window(const WindowProps& props);
         ~Window();
 
-        void onTick();
+        void tick();
 
         const std::string& getTitle() const { return props_.title; }
 

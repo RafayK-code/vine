@@ -36,7 +36,7 @@ namespace vine
         ~EventDispatcher();
 
         template<typename E>
-        CallbackID addEventCallbackFn(const EventCallbackFn<E>& callback)
+        CallbackID addEventCallback(const EventCallbackFn<E>& callback)
         {
             IEventCallbackFn cbWrapper = [callback](IEvent* e)
             {
@@ -54,7 +54,11 @@ namespace vine
         template<typename E>
         void dispatchEvent(E& e)
         {
-
+            std::vector<IEventCallbackFn> eCallbacks = callbackFns_[E::getStaticEventType()];
+            for (const auto& callback : eCallbacks)
+            {
+                callback(&e);
+            }
         }
 
     private:

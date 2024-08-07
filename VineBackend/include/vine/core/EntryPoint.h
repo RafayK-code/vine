@@ -9,7 +9,10 @@ namespace vine
     int vineMain(int argc, char** argv)
     {
         Application* app = createApplication(argc, argv);
-        app->run();
+        while (app->isRunning())
+        {
+            app->run();
+        }
         delete app;
 
         return 0;
@@ -18,5 +21,5 @@ namespace vine
 
 int main(int argc, char** argv)
 {
-    vine::vineMain(argc, argv);
+    return vine::vineMain(argc, argv);
 }

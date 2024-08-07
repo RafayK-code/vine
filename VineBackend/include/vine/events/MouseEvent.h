@@ -1,11 +1,9 @@
 #pragma once
-#ifndef _MOUSE_EVENT_H
-#define _MOUSE_EVENT_H
 
-#include "Event.h"
-#include "core/codes/MouseCodes.h"
+#include <vine/events/Event.h>
+#include <vine/core/codes/MouseCodes.h>
 
-namespace sntl
+namespace vine
 {
     class MouseButtonEvent : public IEvent
     {
@@ -87,5 +85,3 @@ namespace sntl
         float yOffset_;
     };
 }
-
-#endif

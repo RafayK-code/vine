@@ -1,10 +1,8 @@
 #pragma once
-#ifndef _WINDOW_EVENT_H
-#define _WINDOW_EVENT_H
 
-#include "Event.h"
+#include <vine/window/Window.h>
 
-namespace sntl
+namespace vine
 {
     class WindowCloseEvent : public IEvent
     {
@@ -76,5 +74,3 @@ namespace sntl
         int ypos_;
     };
 }
-
-#endif
