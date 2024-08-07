@@ -1,6 +1,7 @@
 #include <vine/core/Application.h>
 
 #include <vine/events/WindowEvent.h>
+#include <vine/core/Logger.h>
 
 #include <iostream>
 
@@ -8,13 +9,13 @@ namespace vine
 {
     Application::Application()
     {
-        SDL_Init(SDL_INIT_VIDEO);
+        Logger::init();
+
+        DBG_ASSERT(SDL_Init(SDL_INIT_VIDEO) == 0, "SDL could not be initialized");
 
         window_ = new Window({ "Hello World", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 1280, 720 });
 
-        window_->addEventCallback<WindowResizeEvent>([](WindowResizeEvent& e) {
-            std::cout << "Hello: " << e.getWidth() << ", " << e.getHeight();
-        });
+        DBG_INFO("Window created successfully");
 
         window_->addEventCallback<WindowCloseEvent>([this](WindowCloseEvent& e) {
             running_ = false;
@@ -27,6 +28,9 @@ namespace vine
     {
         delete window_;
         SDL_Quit();
+
+        DBG_INFO("Application successfully shutdown");
+        Logger::shutdown();
     }
 
     void Application::run()

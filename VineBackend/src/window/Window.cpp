@@ -1,6 +1,7 @@
 #include <vine/window/Window.h>
 
 #include <vine/events/WindowEvent.h>
+#include <vine/core/Logger.h>
 
 namespace vine
 {
@@ -18,6 +19,7 @@ namespace vine
     void Window::init()
     {
         window_ = SDL_CreateWindow(props_.title.c_str(), props_.xpos, props_.ypos, props_.width, props_.height, SDL_WINDOW_RESIZABLE);
+        DBG_ASSERT(window_, "Window could not be created");
     }
 
     void Window::tick()

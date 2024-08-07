@@ -1,8 +1,8 @@
 #pragma once
 
-#include <SDL.h>
-
 #include <vine/events/Event.h>
+
+#include <SDL.h>
 
 namespace vine
 {
