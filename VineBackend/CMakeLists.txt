@@ -14,6 +14,7 @@ set(LUA_PATH ${CMAKE_CURRENT_SOURCE_DIR}/external/lua)
 set(SPDLOG_PATH ${CMAKE_CURRENT_SOURCE_DIR}/external/spdlog)
 set(GLM_PATH ${CMAKE_CURRENT_SOURCE_DIR}/external/glm)
 set(GLAD_PATH ${CMAKE_CURRENT_SOURCE_DIR}/external/glad)
+set(STB_PATH ${CMAKE_CURRENT_SOURCE_DIR}/external/stb)
 
 add_subdirectory(${LUA_PATH})
 add_subdirectory(${SDL_PATH})
@@ -21,6 +22,7 @@ add_subdirectory(${SOL2_PATH})
 add_subdirectory(${SPDLOG_PATH})
 add_subdirectory(${GLM_PATH})
 add_subdirectory(${GLAD_PATH})
+add_subdirectory(${STB_PATH})
 
 file(GLOB_RECURSE VINE_BACKEND_SRC_FILES
     "${VINE_BACKEND_SRC_PATH}/*.cpp"
@@ -41,3 +43,4 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${SDL_PATH}/include)
 target_include_directories(${PROJECT_NAME} PUBLIC ${SOL2_PATH}/include)
 target_include_directories(${PROJECT_NAME} PUBLIC ${GLM_PATH})
 target_include_directories(${PROJECT_NAME} PUBLIC ${GLAD_PATH}/include)
+target_include_directories(${PROJECT_NAME} PUBLIC ${STB_PATH}/include)
