@@ -25,7 +25,6 @@ namespace vine
     RefPtr<Shader> ShaderCache::get(const std::string& name) const
     {
         DBG_ASSERT(exists(name), "Shader does not exist");
-
         return shaders_.find(name)->second;
     }
 
