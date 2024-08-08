@@ -31,6 +31,7 @@ namespace vine
         ~Texture();
 
         void bind(uint32_t slot = 0) const;
+        void unbind(uint32_t slot = 0) const;
 
         const TextureSpecification& getSpecification() const { return spec_; }
 
