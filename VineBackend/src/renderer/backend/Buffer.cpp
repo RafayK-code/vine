@@ -102,6 +102,16 @@ namespace vine
         glBufferSubData(GL_ARRAY_BUFFER, 0, size, data);
     }
 
+    VertexBufferRef createVertexBuffer(float* vertices, uint32_t size)
+    {
+        return std::make_shared<VertexBuffer>(vertices, size);
+    }
+
+    VertexBufferRef createVertexBuffer(uint32_t size)
+    {
+        return std::make_shared<VertexBuffer>(size);
+    }
+
     IndexBuffer::IndexBuffer(uint32_t* indices, uint32_t count)
         : count_(count)
     {
@@ -123,5 +133,10 @@ namespace vine
     void IndexBuffer::unbind() const
     {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    }
+
+    IndexBufferRef createIndexBuffer(uint32_t* indices, uint32_t count)
+    {
+        return std::make_shared<IndexBuffer>(indices, count);
     }
 }

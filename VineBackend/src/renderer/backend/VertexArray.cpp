@@ -51,7 +51,7 @@ namespace vine
         glBindVertexArray(0);
     }
 
-    void VertexArray::addVertexBuffer(const RefPtr<VertexBuffer>& vertexBuffer)
+    void VertexArray::addVertexBuffer(const VertexBufferRef& vertexBuffer)
     {
         DBG_ASSERT(vertexBuffer->getLayout().getElements().size() > 0, "Vertex buffer has no layout");
 
@@ -128,11 +128,16 @@ namespace vine
         vertexBuffers_.push_back(vertexBuffer);
     }
 
-    void VertexArray::setIndexBuffer(const RefPtr<IndexBuffer>& indexBuffer)
+    void VertexArray::setIndexBuffer(const IndexBufferRef& indexBuffer)
     {
         glBindVertexArray(rendererID_);
         indexBuffer->bind();
 
         indexBuffer_ = indexBuffer;
+    }
+
+    VertexArrayRef createVertexArray()
+    {
+        return std::make_shared<VertexArray>();
     }
 }

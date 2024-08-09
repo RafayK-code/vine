@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include <memory>
 
 namespace vine
 {
@@ -85,6 +86,10 @@ namespace vine
         BufferLayout layout_;
     };
 
+    using VertexBufferRef = std::shared_ptr<VertexBuffer>;
+    VertexBufferRef createVertexBuffer(float* vertices, uint32_t size);
+    VertexBufferRef createVertexBuffer(uint32_t size);
+
     class IndexBuffer
     {
     public:
@@ -100,4 +105,7 @@ namespace vine
         uint32_t rendererID_;
         uint32_t count_;
     };
+
+    using IndexBufferRef = std::shared_ptr<IndexBuffer>;
+    IndexBufferRef createIndexBuffer(uint32_t* indices, uint32_t count);
 }

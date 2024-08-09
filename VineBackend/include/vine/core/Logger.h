@@ -14,7 +14,7 @@ namespace vine
     public:
         ~Logger();
 
-        RefPtr<spdlog::logger>& getLogger() { return logger_; }
+        std::shared_ptr<spdlog::logger>& getLogger() { return logger_; }
 
         static void init();
         static void shutdown();
@@ -22,7 +22,7 @@ namespace vine
     private:
         Logger();
 
-        RefPtr<spdlog::logger> logger_;
+        std::shared_ptr<spdlog::logger> logger_;
     };
 }
 

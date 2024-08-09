@@ -3,6 +3,7 @@
 #include <string>
 #include <glm/glm.hpp>
 #include <unordered_map>
+#include <memory>
 
 namespace vine
 {
@@ -38,4 +39,7 @@ namespace vine
 
         std::unordered_map<std::string, int> uniformCache_;
     };
+
+    using ShaderRef = std::shared_ptr<Shader>;
+    ShaderRef createShader(const std::string& name, const std::string& vertexPath, const std::string& fragmentPath);
 }

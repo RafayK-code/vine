@@ -12,6 +12,8 @@
 
 namespace vine
 {
+    TextureRef tex;
+
     Application::Application()
     {
         Logger::init();
@@ -32,6 +34,8 @@ namespace vine
         Renderer::init();
 
         running_ = true;
+
+        tex = createTexture("assets/images/goblin_king.png");
     }
 
     Application::~Application()
@@ -56,9 +60,9 @@ namespace vine
         }
 
         glClear(GL_COLOR_BUFFER_BIT);
-        OrthographicCamera cam(-1, 1, -1, 1);
+        OrthographicCamera cam(0, 1280, 0, 720);
         Renderer::beginScene(cam);
-        Renderer::drawQuad({ 0.0f, 0.0f }, { 1.0f, 1.0f }, { 1.0f, 1.0f, 1.0f, 1.0f });
+        Renderer::drawQuad({ 50.0f, 50.0f }, { 50.0f, 50.0f }, tex);
         Renderer::endScene();
 
         window_->tick();

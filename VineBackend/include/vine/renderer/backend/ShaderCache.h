@@ -10,16 +10,16 @@ namespace vine
     class ShaderCache
     {
     public:
-        void add(const std::string& name, const RefPtr<Shader>& shader);
-        void add(const RefPtr<Shader>& shader);
+        void add(const std::string& name, const ShaderRef& shader);
+        void add(const ShaderRef& shader);
 
-        RefPtr<Shader> load(const std::string& name, const std::string& vertexPath, const std::string& fragmentPath);
+        ShaderRef load(const std::string& name, const std::string& vertexPath, const std::string& fragmentPath);
 
-        RefPtr<Shader> get(const std::string& name) const;
+        ShaderRef get(const std::string& name) const;
 
         bool exists(const std::string& name) const;
 
     private:
-        std::unordered_map<std::string, RefPtr<Shader>> shaders_;
+        std::unordered_map<std::string, ShaderRef> shaders_;
     };
 }

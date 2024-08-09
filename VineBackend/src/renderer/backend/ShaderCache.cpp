@@ -4,25 +4,25 @@
 
 namespace vine
 {
-    void ShaderCache::add(const std::string& name, const RefPtr<Shader>& shader)
+    void ShaderCache::add(const std::string& name, const ShaderRef& shader)
     {
         DBG_ASSERT(!exists(name), "Shader already exists");
         shaders_[name] = shader;
     }
 
-    void ShaderCache::add(const RefPtr<Shader>& shader)
+    void ShaderCache::add(const ShaderRef& shader)
     {
         add(shader->getName(), shader);
     }
 
-    RefPtr<Shader> ShaderCache::load(const std::string& name, const std::string& vertexPath, const std::string& fragmentPath)
+    ShaderRef ShaderCache::load(const std::string& name, const std::string& vertexPath, const std::string& fragmentPath)
     {
-        RefPtr<Shader> shader = makeRef<Shader>(name, vertexPath, fragmentPath);
+        ShaderRef shader = createShader(name, vertexPath, fragmentPath);
         add(name, shader);
         return shader;
     }
 
-    RefPtr<Shader> ShaderCache::get(const std::string& name) const
+    ShaderRef ShaderCache::get(const std::string& name) const
     {
         DBG_ASSERT(exists(name), "Shader does not exist");
         return shaders_.find(name)->second;

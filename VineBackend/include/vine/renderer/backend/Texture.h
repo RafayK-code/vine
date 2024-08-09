@@ -2,6 +2,7 @@
 
 #include <string>
 #include <glad/glad.h>
+#include <memory>
 
 namespace vine
 {
@@ -51,4 +52,8 @@ namespace vine
         GLenum internalFormat_;
         GLenum dataFormat_;
     };
+
+    using TextureRef = std::shared_ptr<Texture>;
+    TextureRef createTexture(const TextureSpecification& spec);
+    TextureRef createTexture(const std::string& path);
 }

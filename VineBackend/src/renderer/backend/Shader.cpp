@@ -121,4 +121,9 @@ namespace vine
 
         return uniformCache_[name];
     }
+
+    ShaderRef createShader(const std::string& name, const std::string& vertexPath, const std::string& fragmentPath)
+    {
+        return std::make_shared<Shader>(name, vertexPath, fragmentPath);
+    }
 }
