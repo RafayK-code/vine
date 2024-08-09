@@ -2,12 +2,13 @@
 
 #include <vine/events/WindowEvent.h>
 #include <vine/core/Logger.h>
+#include <vine/renderer/Renderer.h>
 
 #include <iostream>
 
 #include <glad/glad.h>
 
-SDL_GLContext mainContext;
+#include <filesystem>
 
 namespace vine
 {
@@ -19,21 +20,23 @@ namespace vine
         window_ = new Window({ "Hello World", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 1280, 720 });
         DBG_INFO("Window created successfully");
 
-        mainContext = SDL_GL_CreateContext(window_->getNativePtr());
+        context_.createContext(window_->getNativePtr());
 
-        gladLoadGLLoader(SDL_GL_GetProcAddress);
         glViewport(0, 0, window_->getWidth(), window_->getHeight());
-        glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
         window_->addEventCallback<WindowCloseEvent>([this](WindowCloseEvent& e) {
             running_ = false;
         });
+
+        Renderer::init();
 
         running_ = true;
     }
 
     Application::~Application()
     {
+        context_.destroyContext();
         delete window_;
         SDL_Quit();
 
@@ -51,6 +54,12 @@ namespace vine
                 window_->dispatchSDLEvents(&e);
             }
         }
+
+        glClear(GL_COLOR_BUFFER_BIT);
+        OrthographicCamera cam(-1, 1, -1, 1);
+        Renderer::beginScene(cam);
+        Renderer::drawQuad({ 0.0f, 0.0f }, { 1.0f, 1.0f }, { 1.0f, 1.0f, 1.0f, 1.0f });
+        Renderer::endScene();
 
         window_->tick();
     }

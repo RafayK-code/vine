@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vine/window/Window.h>
+#include <vine/renderer/GraphicsContext.h>
 
 namespace vine
 {
@@ -22,6 +23,7 @@ namespace vine
         bool running_;
 
         Window* window_;
+        GraphicsContext context_;
     };
 
     Application* createApplication(int argc, char** argv);

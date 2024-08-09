@@ -4,6 +4,7 @@ project("VineMain")
 set(CMAKE_CXX_STANDARD 17)
 
 set(VINE_MAIN_SRC_PATH ${CMAKE_CURRENT_SOURCE_DIR}/src)
+set(VINE_MAIN_ASSETS_PATH ${CMAKE_CURRENT_SOURCE_DIR}/assets)
 
 file(GLOB_RECURSE VINE_MAIN_SRC_FILES
     "${VINE_MAIN_SRC_PATH}/*.cpp"
@@ -28,3 +29,10 @@ target_link_libraries(${PROJECT_NAME} PRIVATE sol2::sol2)
 target_link_libraries(${PROJECT_NAME} PRIVATE spdlog)
 target_link_libraries(${PROJECT_NAME} PRIVATE glad)
 target_link_libraries(${PROJECT_NAME} PRIVATE stb)
+
+add_custom_command(
+    TARGET ${PROJECT_NAME} PRE_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    "${VINE_MAIN_ASSETS_PATH}" "${CMAKE_BINARY_DIR}/${PROJECT_NAME}/assets"
+    COMMENT "Copying assets to output directory"
+)

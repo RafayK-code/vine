@@ -8,7 +8,7 @@
 
 namespace vine
 {
-    static std::string& getFileContents(const std::string& path)
+    static std::string getFileContents(const std::string& path)
     {
         std::ifstream file(path, std::ios::binary);
 
