@@ -5,8 +5,10 @@
 
 namespace vine
 {
-    Renderer::Renderer()
+    Renderer::Renderer(SDL_Window* window)
     {
+        context_.createContext(window);
+
         data_ = std::make_unique<RendererData>();
         data_->quadVertexArray = createVertexArray();;
 
@@ -72,11 +74,13 @@ namespace vine
 
     Renderer::~Renderer()
     {
+        context_.destroyContext();
     }
 
-    void Renderer::init()
+    void Renderer::init(SDL_Window* window)
     {
-        createSingleton();
+        getHiddenPtr() = new Renderer(window);
+        getHiddenPtr()->initStatics();
     }
 
     void Renderer::shutdown()
@@ -102,10 +106,7 @@ namespace vine
         data_->textureShader->bind();
         data_->textureShader->uploadUniformMat4("u_ViewProjection", camera.getProjectionMatrix());
 
-        data_->quadIndexCount = 0;
-        data_->quadVertexBufferPtr = data_->quadVertexBufferBase;
-
-        data_->textureSlotIndex = 1;
+        startBatch();
     }
 
     void Renderer::endScene()
@@ -123,6 +124,20 @@ namespace vine
             data_->textureSlots[i]->bind(i);
         }
         glDrawElements(GL_TRIANGLES, data_->quadIndexCount, GL_UNSIGNED_INT, nullptr);
+    }
+
+    void Renderer::startBatch()
+    {
+        data_->quadIndexCount = 0;
+        data_->quadVertexBufferPtr = data_->quadVertexBufferBase;
+
+        data_->textureSlotIndex = 1;
+    }
+
+    void Renderer::nextBatch()
+    {
+        flush();
+        startBatch();
     }
 
     void Renderer::drawQuad(const glm::vec2& position, const glm::vec2& scale, const glm::vec4& color)
@@ -242,6 +257,9 @@ namespace vine
         const float textureIndex = 0.0f;
         constexpr glm::vec2 texCoords[] = { {0.0f, 0.0f}, {1.0f, 0.0f}, {1.0f, 1.0f}, {0.0f, 1.0f} };
 
+        if (data_->quadIndexCount >= data_->maxIndices)
+            nextBatch();
+
         for (size_t i = 0; i < quadVertexCount; i++)
         {
             data_->quadVertexBufferPtr->position = transform * data_->quadVertexPositions[i];
@@ -259,6 +277,9 @@ namespace vine
         constexpr size_t quadVertexCount = 4;
         constexpr glm::vec2 texCoords[] = { {0.0f, 0.0f}, {1.0f, 0.0f}, {1.0f, 1.0f}, {0.0f, 1.0f} };
 
+        if (data_->quadIndexCount >= data_->maxIndices)
+            nextBatch();
+
         float textureIndex = 0.0f;
 
         for (uint32_t i = 0; i < data_->textureSlotIndex; i++)
@@ -272,6 +293,9 @@ namespace vine
 
         if (textureIndex == 0.0f)
         {
+            if (data_->textureSlotIndex >= data_->maxTextureSlots)
+                nextBatch();
+
             textureIndex = (float)data_->textureSlotIndex;
             data_->textureSlots[data_->textureSlotIndex] = texture;
             data_->textureSlotIndex++;

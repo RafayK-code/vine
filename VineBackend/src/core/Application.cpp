@@ -5,6 +5,7 @@
 #include <vine/renderer/Renderer.h>
 
 #include <vine/renderer/renderable/Sprite.h>
+#include <vine/renderer/renderable/Quad.h>
 
 #include <iostream>
 
@@ -14,8 +15,8 @@
 
 namespace vine
 {
-    TextureRef tex;
     IRenderable* sprite;
+    IRenderable* quad;
 
     Application::Application()
     {
@@ -25,16 +26,13 @@ namespace vine
         window_ = new Window({ "Hello World", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 1280, 720 });
         DBG_INFO("Window created successfully");
 
-        context_.createContext(window_->getNativePtr());
-
+        Renderer::init(window_->getNativePtr());
         glViewport(0, 0, window_->getWidth(), window_->getHeight());
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        Renderer::ref().setClearColor({ 1.0f, 1.0f, 1.0f, 1.0f });
 
         window_->addEventCallback<WindowCloseEvent>([this](WindowCloseEvent& e) {
             running_ = false;
         });
-
-        Renderer::init();
 
         running_ = true;
 
@@ -44,11 +42,18 @@ namespace vine
         state.layer = 1.0f;
         state.rotation = 45.0f;
         sprite = new Sprite("assets/images/goblin_king.png", state);
+
+        quad = new Quad(RenderableState());
+        quad->setPosition({ 600.0f, 500.0f });
+        quad->setScale({ 100.0f, 100.0f });
+        quad->setColor({ 1.0f, 0.0f, 0.0f, 1.0f });
     }
 
     Application::~Application()
     {
-        context_.destroyContext();
+        delete quad;
+        delete sprite;
+        Renderer::shutdown();
         delete window_;
         SDL_Quit();
 
@@ -67,15 +72,12 @@ namespace vine
             }
         }
 
-        Renderer::ref().setClearColor({ 1.0f, 1.0f, 1.0f, 1.0f });
         Renderer::ref().clear();
         OrthographicCamera cam(0, 1280, 0, 720, -0.1f, -100.0f);
         Renderer::ref().beginScene(cam);
         // z is how many units away from the screen --> maybe renderer can handle the flip?
-        Renderer::ref().drawQuad({ 100.0f, 100.0f, 50.5f }, { 500.0f, 200.0f }, { 0.4f, 1.0f, 1.0f, 1.0f });
-        //Renderer::drawQuad({ 50.0f, 50.0f, 10.0f }, { 200.0f, 200.0f }, tex);
-        //Renderer::drawQuad({ 100.0f, 100.0f, 50.5f }, { 200.0f, 200.0f }, tex);
         sprite->render();
+        quad->render();
         Renderer::ref().endScene();
 
         window_->tick();

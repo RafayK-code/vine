@@ -23,7 +23,6 @@ namespace vine
         bool running_;
 
         Window* window_;
-        GraphicsContext context_;
     };
 
     Application* createApplication(int argc, char** argv);

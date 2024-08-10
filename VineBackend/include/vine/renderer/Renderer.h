@@ -5,6 +5,7 @@
 #include <vine/util/Singleton.h>
 #include <vine/renderer/backend/VertexArray.h>
 #include <vine/renderer/backend/ShaderCache.h>
+#include <vine/renderer/GraphicsContext.h>
 
 #include <array>
 
@@ -16,7 +17,7 @@ namespace vine
     public:
         ~Renderer();
 
-        static void init();
+        static void init(SDL_Window* window);
         static void shutdown();
 
         void setClearColor(const glm::vec4& color);
@@ -36,7 +37,10 @@ namespace vine
         void drawQuad(const glm::mat4& transform, const TextureRef& texture, const glm::vec4& tintColor = { 1.0f, 1.0f, 1.0f, 1.0f });
 
     private:
-        Renderer();
+        Renderer(SDL_Window* window);
+
+        void startBatch();
+        void nextBatch();
 
     private:
         struct QuadVertex
@@ -75,5 +79,6 @@ namespace vine
         };
 
         std::unique_ptr<RendererData> data_;
+        GraphicsContext context_;
     };
 }
