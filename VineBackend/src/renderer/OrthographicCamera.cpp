@@ -4,8 +4,8 @@
 
 namespace vine
 {
-    OrthographicCamera::OrthographicCamera(float left, float right, float bottom, float top)
-        : position_(glm::vec3(0.0f, 0.0f, 0.0f)), rotation_(0.0f), projectionMatrix_(glm::ortho(left, right, bottom, top))
+    OrthographicCamera::OrthographicCamera(float left, float right, float bottom, float top, float near, float far)
+        : position_(glm::vec3(0.0f, 0.0f, 0.0f)), rotation_(0.0f), projectionMatrix_(glm::ortho(left, right, bottom, top, near, far))
     {
         updateViewMatrix();
     }
@@ -14,9 +14,9 @@ namespace vine
     {
     }
 
-    void OrthographicCamera::setProjection(float left, float right, float bottom, float top)
+    void OrthographicCamera::setProjection(float left, float right, float bottom, float top, float near, float far)
     {
-        projectionMatrix_ = glm::ortho(left, right, bottom, top);
+        projectionMatrix_ = glm::ortho(left, right, bottom, top, near, far);
         updateViewMatrix();
     }
 

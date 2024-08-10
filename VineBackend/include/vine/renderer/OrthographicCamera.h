@@ -7,10 +7,10 @@ namespace vine
     class OrthographicCamera
     {
     public:
-        OrthographicCamera(float left, float right, float bottom, float top);
+        OrthographicCamera(float left, float right, float bottom, float top, float near, float far);
         ~OrthographicCamera();
 
-        void setProjection(float left, float right, float bottom, float top);
+        void setProjection(float left, float right, float bottom, float top, float near, float far);
 
         const glm::vec3& getPosition() const { return position_; }
         void setPosition(const glm::vec3& position) { position_ = position; updateViewMatrix(); }

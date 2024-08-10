@@ -73,7 +73,7 @@ namespace vine
         }
         else if (channels == 3)
         {
-            internalFormat_ = GL_RGB8;
+            internalFormat_ = GL_RGB;
             dataFormat_ = GL_RGB;
         }
         else if (channels == 1)

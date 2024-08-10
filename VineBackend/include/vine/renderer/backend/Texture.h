@@ -43,6 +43,8 @@ namespace vine
 
         bool isLoaded() const { return loaded_; }
 
+        bool operator==(const Texture& other) const { return rendererID_ == other.rendererID_; }
+
     private:
         uint32_t rendererID_;
 

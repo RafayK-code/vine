@@ -1,15 +1,21 @@
 #pragma once
 
 #include <vine/renderer/backend/Shader.h>
-#include <vine/core/Base.h>
+#include <vine/util/Singleton.h>
 
 #include <unordered_map>
 
 namespace vine
 {
-    class ShaderCache
+    class ShaderCache : public Singleton<ShaderCache>
     {
+        friend class Singleton<ShaderCache>;
     public:
+        ~ShaderCache();
+
+        static void init();
+        static void shutdown();
+
         void add(const std::string& name, const ShaderRef& shader);
         void add(const ShaderRef& shader);
 
@@ -18,6 +24,9 @@ namespace vine
         ShaderRef get(const std::string& name) const;
 
         bool exists(const std::string& name) const;
+
+    private:
+        ShaderCache();
 
     private:
         std::unordered_map<std::string, ShaderRef> shaders_;

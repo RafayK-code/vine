@@ -30,9 +30,11 @@ target_link_libraries(${PROJECT_NAME} PRIVATE spdlog)
 target_link_libraries(${PROJECT_NAME} PRIVATE glad)
 target_link_libraries(${PROJECT_NAME} PRIVATE stb)
 
-add_custom_command(
-    TARGET ${PROJECT_NAME} PRE_BUILD
+add_custom_target(
+    copy_assets ALL
     COMMAND ${CMAKE_COMMAND} -E copy_directory
     "${VINE_MAIN_ASSETS_PATH}" "${CMAKE_BINARY_DIR}/${PROJECT_NAME}/assets"
     COMMENT "Copying assets to output directory"
 )
+
+add_dependencies(${PROJECT_NAME} copy_assets)

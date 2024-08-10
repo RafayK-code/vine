@@ -4,6 +4,8 @@
 #include <vine/core/Logger.h>
 #include <vine/renderer/Renderer.h>
 
+#include <vine/renderer/renderable/Sprite.h>
+
 #include <iostream>
 
 #include <glad/glad.h>
@@ -13,6 +15,7 @@
 namespace vine
 {
     TextureRef tex;
+    IRenderable* sprite;
 
     Application::Application()
     {
@@ -35,7 +38,12 @@ namespace vine
 
         running_ = true;
 
-        tex = createTexture("assets/images/goblin_king.png");
+        RenderableState state;
+        state.pos = { 100.0f, 100.0f };
+        state.scale = { 200.0f, 200.0f };
+        state.layer = 1.0f;
+        state.rotation = 45.0f;
+        sprite = new Sprite("assets/images/goblin_king.png", state);
     }
 
     Application::~Application()
@@ -59,11 +67,16 @@ namespace vine
             }
         }
 
-        glClear(GL_COLOR_BUFFER_BIT);
-        OrthographicCamera cam(0, 1280, 0, 720);
-        Renderer::beginScene(cam);
-        Renderer::drawQuad({ 50.0f, 50.0f }, { 50.0f, 50.0f }, tex);
-        Renderer::endScene();
+        Renderer::ref().setClearColor({ 1.0f, 1.0f, 1.0f, 1.0f });
+        Renderer::ref().clear();
+        OrthographicCamera cam(0, 1280, 0, 720, -0.1f, -100.0f);
+        Renderer::ref().beginScene(cam);
+        // z is how many units away from the screen --> maybe renderer can handle the flip?
+        Renderer::ref().drawQuad({ 100.0f, 100.0f, 50.5f }, { 500.0f, 200.0f }, { 0.4f, 1.0f, 1.0f, 1.0f });
+        //Renderer::drawQuad({ 50.0f, 50.0f, 10.0f }, { 200.0f, 200.0f }, tex);
+        //Renderer::drawQuad({ 100.0f, 100.0f, 50.5f }, { 200.0f, 200.0f }, tex);
+        sprite->render();
+        Renderer::ref().endScene();
 
         window_->tick();
     }

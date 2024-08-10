@@ -4,6 +4,24 @@
 
 namespace vine
 {
+    ShaderCache::ShaderCache()
+    {
+    }
+
+    ShaderCache::~ShaderCache()
+    {
+    }
+
+    void ShaderCache::init()
+    {
+        createSingleton();
+    }
+
+    void ShaderCache::shutdown()
+    {
+        destroySingleton();
+    }
+
     void ShaderCache::add(const std::string& name, const ShaderRef& shader)
     {
         DBG_ASSERT(!exists(name), "Shader already exists");
