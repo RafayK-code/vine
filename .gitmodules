@@ -14,3 +14,6 @@
 [submodule "VineBackend/external/glm"]
 	path = VineBackend/external/glm
 	url = https://github.com/g-truc/glm.git
+[submodule "VineBackend/external/pugixml"]
+	path = VineBackend/external/pugixml
+	url = https://github.com/zeux/pugixml.git
