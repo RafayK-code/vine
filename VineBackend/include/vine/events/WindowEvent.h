@@ -4,7 +4,7 @@
 
 namespace vine
 {
-    class WindowCloseEvent : public IEvent
+    class WindowCloseEvent : public Event
     {
     public:
         WindowCloseEvent() = default;
@@ -14,7 +14,7 @@ namespace vine
         std::string getName() const override { return "WindowCloseEvent"; }
     };
 
-    class WindowResizeEvent : public IEvent 
+    class WindowResizeEvent : public Event 
     {
     public:
         WindowResizeEvent(int width, int height)
@@ -34,7 +34,7 @@ namespace vine
         int height_;
     };
 
-    class WindowFocusEvent : public IEvent
+    class WindowFocusEvent : public Event
     {
     public:
         WindowFocusEvent() = default;
@@ -44,7 +44,7 @@ namespace vine
         std::string getName() const override { return "WindowFocusEvent"; }
     };
 
-    class WindowLostFocusEvent : public IEvent
+    class WindowLostFocusEvent : public Event
     {
     public:
         WindowLostFocusEvent() = default;
@@ -54,7 +54,7 @@ namespace vine
         std::string getName() const override { return "WindowLostFocusEvent"; }
     };
 
-    class WindowMovedEvent : public IEvent
+    class WindowMovedEvent : public Event
     {
     public:
         WindowMovedEvent(int xpos, int ypos)

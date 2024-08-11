@@ -5,7 +5,7 @@
 
 namespace vine
 {
-    class MouseButtonEvent : public IEvent
+    class MouseButtonEvent : public Event
     {
     public:
         MouseCode getMouseButton() const { return button_; }
@@ -45,7 +45,7 @@ namespace vine
         std::string getName() const override { return "MouseButtonUpEvent"; }
     };
 
-    class MouseMovedEvent : public IEvent
+    class MouseMovedEvent : public Event
     {
     public:
         MouseMovedEvent(float x, float y)
@@ -65,7 +65,7 @@ namespace vine
         float mouseY_;
     };
 
-    class MouseScrolledEvent : public IEvent
+    class MouseScrolledEvent : public Event
     {
     public:
         MouseScrolledEvent(float xOffset, float yOffset)

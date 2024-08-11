@@ -4,7 +4,7 @@
 
 namespace vine
 {
-    class AppTickEvent : public IEvent
+    class AppTickEvent : public Event
     {
     public:
         AppTickEvent(float dt)
@@ -22,7 +22,7 @@ namespace vine
         float dt_;
     };
 
-    class AppRenderEvent : public IEvent
+    class AppRenderEvent : public Event
     {
     public:
         AppRenderEvent() = default;

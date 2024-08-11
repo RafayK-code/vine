@@ -4,24 +4,12 @@
 
 namespace vine
 {
-    Sprite::Sprite(const std::string& texturePath, const RenderableState& state)
+    Sprite::Sprite(const SpriteState& state)
+        : Renderable(state), spritePos_(state.spritePos), spriteScale_(state.spriteScale)
     {
-        setState(state);
-        texture_ = createTexture(texturePath);
-    }
-
-    Sprite::Sprite(const TextureRef& texture, const RenderableState& state)
-        : texture_(texture)
-    {
-        setState(state);
     }
 
     Sprite::~Sprite()
     {
-    }
-
-    void Sprite::render()
-    {
-        Renderer::ref().drawQuad(getTransform(), texture_, getColor());
     }
 }

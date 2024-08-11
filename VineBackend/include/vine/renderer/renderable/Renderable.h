@@ -17,12 +17,13 @@ namespace vine
         bool visible = true;
     };
 
-    class IRenderable
+    class Renderable
     {
     public:
-        virtual ~IRenderable() = default;
+        Renderable(const RenderableState& state);
+        virtual ~Renderable();
 
-        virtual void render() = 0;
+        virtual void render() const = 0;
 
         const glm::vec2& getPosition() const { return state_.pos; }
         void setPosition(const glm::vec2& pos) { state_.pos = pos; updateTransform(); }
@@ -46,10 +47,7 @@ namespace vine
         void setShader(const std::string& name);
         void setShader(const ShaderRef& shader) { shader_ = shader; }
 
-        const glm::mat4& getTransform() { return transform_; }
-
-    protected:
-        void setState(const RenderableState& state) { state_ = state; updateTransform(); }
+        const glm::mat4& getTransform() const { return transform_; }
 
     private:
         void updateTransform();

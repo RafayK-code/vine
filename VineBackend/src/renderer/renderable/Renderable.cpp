@@ -6,12 +6,22 @@
 
 namespace vine
 {
-    void IRenderable::setShader(const std::string& name)
+    Renderable::Renderable(const RenderableState& state)
+        : state_(state)
+    {
+        updateTransform();
+    }
+
+    Renderable::~Renderable()
+    {
+    }
+
+    void Renderable::setShader(const std::string& name)
     {
         shader_ = ShaderCache::ref().get(name);
     }
 
-    void IRenderable::updateTransform()
+    void Renderable::updateTransform()
     {
         transform_ = glm::translate(glm::mat4(1.0f), { state_.pos.x, state_.pos.y, state_.layer }) *
             glm::rotate(glm::mat4(1.0f), glm::radians(state_.rotation), glm::vec3(0.0f, 0.0f, 1.0f)) *

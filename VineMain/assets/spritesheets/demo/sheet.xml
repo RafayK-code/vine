@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with TexturePacker https://www.codeandweb.com/texturepacker -->
+<!-- $TexturePacker:SmartUpdate:94a3d9fb691d6ba7676f516d5563a772:cebb55994e9dc145e3fcaafb5ed1d250:1424f48906e31749f237a83d3b5d03fb$ -->
+<!--Format:
+n  => name of the sprite
+x  => sprite x pos in texture
+y  => sprite y pos in texture
+w  => sprite width (may be trimmed)
+h  => sprite height (may be trimmed)
+pX => x pos of the pivot point (relative to sprite width)
+pY => y pos of the pivot point (relative to sprite height)
+oX => sprite's x-corner offset (only available if trimmed)
+oY => sprite's y-corner offset (only available if trimmed)
+oW => sprite's original width (only available if trimmed)
+oH => sprite's original height (only available if trimmed)
+r => 'y' only set if sprite is rotated
+with polygon mode enabled:
+vertices   => points in sprite coordinate system (x0,y0,x1,y1,x2,y2, ...)
+verticesUV => points in sheet coordinate system (x0,y0,x1,y1,x2,y2, ...)
+triangles  => sprite triangulation, 3 vertex indices per triangle
+-->
+<TextureAtlas imagePath="sheet.png" width="288" height="32">
+    <sprite n="wall_texture_1.png" x="0" y="0" w="32" h="32" pX="0.5" pY="0.5"/>
+    <sprite n="wall_texture_2.png" x="32" y="0" w="32" h="32" pX="0.5" pY="0.5"/>
+    <sprite n="wall_texture_3.png" x="64" y="0" w="32" h="32" pX="0.5" pY="0.5"/>
+    <sprite n="wall_texture_4.png" x="96" y="0" w="32" h="32" pX="0.5" pY="0.5"/>
+    <sprite n="wall_texture_5.png" x="128" y="0" w="32" h="32" pX="0.5" pY="0.5"/>
+    <sprite n="wall_texture_blood.png" x="160" y="0" w="32" h="32" pX="0.5" pY="0.5"/>
+    <sprite n="wall_texture_bones.png" x="192" y="0" w="32" h="32" pX="0.5" pY="0.5"/>
+    <sprite n="wall_texture_gold.png" x="224" y="0" w="32" h="32" pX="0.5" pY="0.5"/>
+    <sprite n="wall_texture_torch.png" x="256" y="0" w="32" h="32" pX="0.5" pY="0.5"/>
+</TextureAtlas>

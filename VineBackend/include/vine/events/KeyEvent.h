@@ -5,7 +5,7 @@
 
 namespace vine
 {
-    class KeyEvent : public IEvent
+    class KeyEvent : public Event
     {
     public:
         KeyCode getKeyCode() const { return keyCode_; }

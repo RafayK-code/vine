@@ -15,10 +15,10 @@ namespace vine
         MouseButtonDown, MouseButtonUp, MouseMoved, MouseScrolled,
     };
 
-    class IEvent
+    class Event
     {
     public:
-        virtual ~IEvent() = default;
+        virtual ~Event() = default;
 
         virtual EventType getEventType() const = 0;
         virtual std::string getName() const = 0;
@@ -38,7 +38,7 @@ namespace vine
         template<typename E>
         CallbackID addEventCallback(const EventCallbackFn<E>& callback)
         {
-            IEventCallbackFn cbWrapper = [callback](IEvent* e)
+            BaseEventCallbackFn cbWrapper = [callback](Event* e)
             {
                 if (E* event = dynamic_cast<E*>(e))
                     callback(*event);
@@ -54,7 +54,7 @@ namespace vine
         template<typename E>
         void dispatchEvent(E& e)
         {
-            std::vector<IEventCallbackFn> eCallbacks = callbackFns_[E::getStaticEventType()];
+            std::vector<BaseEventCallbackFn> eCallbacks = callbackFns_[E::getStaticEventType()];
             for (const auto& callback : eCallbacks)
             {
                 callback(&e);
@@ -71,9 +71,9 @@ namespace vine
             return ((CallbackID)high << 32) | low;
         }
 
-        using IEventCallbackFn = std::function<void(IEvent*)>;
+        using BaseEventCallbackFn = std::function<void(Event*)>;
 
     private:
-        std::vector<std::vector<IEventCallbackFn>> callbackFns_;
+        std::vector<std::vector<BaseEventCallbackFn>> callbackFns_;
     };
 }

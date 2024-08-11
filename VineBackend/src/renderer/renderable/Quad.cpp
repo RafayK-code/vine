@@ -5,15 +5,15 @@
 namespace vine
 {
     Quad::Quad(const RenderableState& state)
+        : Renderable(state)
     {
-        setState(state);
     }
 
     Quad::~Quad()
     {
     }
 
-    void Quad::render()
+    void Quad::render() const
     {
         Renderer::ref().drawQuad(getTransform(), getColor());
     }

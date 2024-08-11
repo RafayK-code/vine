@@ -30,11 +30,11 @@ namespace vine
         void drawQuad(const glm::vec2& position, const glm::vec2& scale, const glm::vec4& color);
         void drawQuad(const glm::vec3& position, const glm::vec2& scale, const glm::vec4& color);
         
-        void drawQuad(const glm::vec2& position, const glm::vec2& scale, const TextureRef& texture);
-        void drawQuad(const glm::vec3& position, const glm::vec2& scale, const TextureRef& texture);
+        void drawQuad(const glm::vec2& position, const glm::vec2& scale, const TextureRef& texture, glm::vec2 texPos = { -1.0f, -1.0f }, glm::vec2 texScale = { -1.0f, -1.0f });
+        void drawQuad(const glm::vec3& position, const glm::vec2& scale, const TextureRef& texture, glm::vec2 texPos = { -1.0f, -1.0f }, glm::vec2 texScale = { -1.0f, -1.0f });
         
         void drawQuad(const glm::mat4& transform, const glm::vec4& color);
-        void drawQuad(const glm::mat4& transform, const TextureRef& texture, const glm::vec4& tintColor = { 1.0f, 1.0f, 1.0f, 1.0f });
+        void drawQuad(const glm::mat4& transform, const TextureRef& texture, glm::vec2 texPos = { -1.0f, -1.0f }, glm::vec2 texScale = { -1.0f, -1.0f }, const glm::vec4& tintColor = { 1.0f, 1.0f, 1.0f, 1.0f });
 
     private:
         Renderer(SDL_Window* window);

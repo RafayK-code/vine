@@ -100,11 +100,8 @@ namespace vine
 
     void Renderer::beginScene(const OrthographicCamera& camera)
     {
-        //data_->flatColorShader->bind();
-        //data_->flatColorShader->uploadUniformMat4("u_ViewProjection", camera.getViewProjectionMatrix());
-
         data_->textureShader->bind();
-        data_->textureShader->uploadUniformMat4("u_ViewProjection", camera.getProjectionMatrix());
+        data_->textureShader->uploadUniformMat4("u_ViewProjection", camera.getViewProjectionMatrix());
 
         startBatch();
     }
@@ -185,12 +182,12 @@ namespace vine
         */
     }
 
-    void Renderer::drawQuad(const glm::vec2& position, const glm::vec2& scale, const TextureRef& texture)
+    void Renderer::drawQuad(const glm::vec2& position, const glm::vec2& scale, const TextureRef& texture, glm::vec2 srcPos, glm::vec2 srcScale)
     {
-        drawQuad({ position.x, position.y, 0.0f }, scale, texture);
+        drawQuad({ position.x, position.y, 0.0f }, scale, texture, srcPos, srcScale);
     }
 
-    void Renderer::drawQuad(const glm::vec3& position, const glm::vec2& scale, const TextureRef& texture)
+    void Renderer::drawQuad(const glm::vec3& position, const glm::vec2& scale, const TextureRef& texture, glm::vec2 srcPos, glm::vec2 srcScale)
     {
         constexpr glm::vec4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
 
@@ -272,10 +269,24 @@ namespace vine
         data_->quadIndexCount += 6;
     }
 
-    void Renderer::drawQuad(const glm::mat4& transform, const TextureRef& texture, const glm::vec4& tintColor)
+    void Renderer::drawQuad(const glm::mat4& transform, const TextureRef& texture, glm::vec2 srcPos, glm::vec2 srcScale, const glm::vec4& tintColor)
     {
         constexpr size_t quadVertexCount = 4;
-        constexpr glm::vec2 texCoords[] = { {0.0f, 0.0f}, {1.0f, 0.0f}, {1.0f, 1.0f}, {0.0f, 1.0f} };
+        glm::vec2 texCoords[] = { {0.0f, 0.0f}, {1.0f, 0.0f}, {1.0f, 1.0f}, {0.0f, 1.0f} };
+
+        if (srcPos.x >= 0.0f && srcPos.y >= 0.0f && srcScale.x >= 0.0f && srcScale.y >= 0.0f)
+        {
+            float srcXNorm = srcPos.x / (float)texture->getWidth();
+            float srcYNorm = srcPos.y / (float)texture->getHeight();
+
+            float srcWNorm = srcScale.x / (float)texture->getWidth();
+            float srcHNorm = srcScale.y / (float)texture->getHeight();
+
+            texCoords[0] = { srcXNorm, srcYNorm };
+            texCoords[1] = { srcXNorm + srcWNorm, srcYNorm};
+            texCoords[2] = { srcXNorm + srcWNorm, srcYNorm + srcHNorm };
+            texCoords[3] = { srcXNorm, srcYNorm + srcHNorm };
+        }
 
         if (data_->quadIndexCount >= data_->maxIndices)
             nextBatch();

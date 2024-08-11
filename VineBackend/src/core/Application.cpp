@@ -4,7 +4,7 @@
 #include <vine/core/Logger.h>
 #include <vine/renderer/Renderer.h>
 
-#include <vine/renderer/renderable/Sprite.h>
+#include <vine/renderer/renderable/SpriteImmediate.h>
 #include <vine/renderer/renderable/Quad.h>
 
 #include <iostream>
@@ -15,8 +15,8 @@
 
 namespace vine
 {
-    IRenderable* sprite;
-    IRenderable* quad;
+    Renderable* sprite;
+    Renderable* quad;
 
     Application::Application()
     {
@@ -36,12 +36,14 @@ namespace vine
 
         running_ = true;
 
-        RenderableState state;
-        state.pos = { 100.0f, 100.0f };
-        state.scale = { 200.0f, 200.0f };
+        SpriteState state;
+        state.pos = { 500.0f, 100.0f };
+        state.scale = { 50.0f, 50.0f };
         state.layer = 1.0f;
-        state.rotation = 45.0f;
-        sprite = new Sprite("assets/images/goblin_king.png", state);
+        state.rotation = 0.0f;
+        state.spritePos = { 256.0f, 0.0f };
+        state.spriteScale = { 32.0f, 32.0f };
+        sprite = new SpriteImmediate("assets/spritesheets/demo/sheet.png", state);
 
         quad = new Quad(RenderableState());
         quad->setPosition({ 600.0f, 500.0f });

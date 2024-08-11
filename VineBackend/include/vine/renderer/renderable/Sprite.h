@@ -1,24 +1,29 @@
 #pragma once
 
 #include <vine/renderer/renderable/Renderable.h>
-#include <vine/renderer/backend/Texture.h>
 
 namespace vine
 {
-    class Sprite : public IRenderable
+    struct SpriteState : public RenderableState
+    {
+        glm::vec2 spritePos = { -1.0f, -1.0f };
+        glm::vec2 spriteScale = { -1.0f, -1.0f };
+    };
+
+    class Sprite : public Renderable
     {
     public:
-        Sprite(const std::string& texturePath, const RenderableState& state);
-        Sprite(const TextureRef& texture, const RenderableState& state);
-
+        Sprite(const SpriteState& state);
         virtual ~Sprite();
 
-        virtual void render() override;
+        const glm::vec2& getSpritePos() const { return spritePos_; }
+        void setSpritePos(const glm::vec2& spritePos) { spritePos_ = spritePos; }
 
-        const TextureRef& getTexture() const { return texture_; }
-        void setTexture(const TextureRef& texture) { texture_ = texture; }
+        const glm::vec2& getSpriteScale() const { return spriteScale_; }
+        void setSpriteScale(const glm::vec2& spriteScale) { spriteScale_ = spriteScale; }
 
     private:
-        TextureRef texture_;
+        glm::vec2 spritePos_;
+        glm::vec2 spriteScale_;
     };
 }
