@@ -17,3 +17,6 @@
 [submodule "VineBackend/external/pugixml"]
 	path = VineBackend/external/pugixml
 	url = https://github.com/zeux/pugixml.git
+[submodule "VineBackend/external/crossguid"]
+	path = VineBackend/external/crossguid
+	url = https://github.com/graeme-hill/crossguid.git
