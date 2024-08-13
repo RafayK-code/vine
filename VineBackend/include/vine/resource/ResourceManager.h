@@ -15,24 +15,31 @@ namespace vine
     public:
         ~ResourceManager();
 
-        void init();
-        void shutdown();
+        static void init();
+        static void shutdown();
 
-        ResourceHandle addSprite(const std::string& image, const SpriteState& state);
-        ResourceHandle addSprite(const TextureRef& texture, const SpriteState& state);
+        template<typename T, typename CreationT>
+        const ResourceHandle& createResource(const CreationT& data)
+        {
+            Resource* res = new T(data);
+            
+            if (resources_.find(res->getHandle()) != resources_.end())
+            {
+                delete res;
+                return xg::Guid();
+            }
 
-        ResourceHandle addSpriteSheet(const std::string& sheet, const RenderableState& defaultState = RenderableState());
+            resources_.insert({ res->getHandle(), res });
+            return res->getHandle();
+        }
 
-        const Sprite& getSprite(const ResourceHandle& handle) const;
-        const SpriteSheet& getSpriteSheet(const ResourceHandle& handle) const;
-
-        void deleteSprite(const ResourceHandle& handle);
-        void deleteSpriteSheet(const ResourceHandle& handle);
+        Resource* getResource(const ResourceHandle& handle);
+        void removeResource(const ResourceHandle& handle);
 
     private:
         ResourceManager();
 
     private:
-        std::unordered_map<ResourceHandle, ResourceBase> resources_;
+        std::unordered_map<ResourceHandle, Resource*> resources_;
     };
 }

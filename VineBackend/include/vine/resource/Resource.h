@@ -1,69 +1,57 @@
 #pragma once
 
-#include <vine/resource/ResourceManager.h>
-
 #include <crossguid/guid.hpp>
 #include <utility>
+#include <string>
 
 namespace vine
 {
     using ResourceHandle = xg::Guid;
 
-    class ResourceBase
+    enum class ResourceDataType
+    {
+        ResourceDataTypeNone = 0,
+        ResourceDataTypeImage,
+        ResourceDataTypeFont,
+    };
+
+    class ResourceCreationData
+    {
+    public:
+        ResourceCreationData(const std::string& filename);
+        ResourceCreationData(const ResourceCreationData& other);
+
+        virtual ~ResourceCreationData();
+
+        virtual ResourceCreationData* clone() const;
+
+        std::string file;
+        ResourceDataType type;
+    };
+
+    class ResourceManager;
+
+    class Resource
     {
         friend class ResourceManager;
     public:
-        ResourceBase();
-        virtual ~ResourceBase();
+        virtual ~Resource();
+
+        virtual void load() = 0;
+        virtual void unload() = 0;
 
         const ResourceHandle& getHandle() const { return handle_; }
         bool isLoaded() const { return loaded_; }
 
+        const ResourceCreationData* getCreationData() const { return creationData_; }
+
+    protected:
+        Resource(const ResourceCreationData& data);
+
     protected:
         ResourceHandle handle_;
         bool loaded_;
-    };
 
-    template<typename ResourceType>
-    class Resource : public ResourceBase
-    {
-    public:
-        Resource() 
-            : resource_(nullptr)
-        {
-        }
-
-        virtual ~Resource() 
-        { 
-            if (loaded_)
-                delete resource_; 
-        }
-
-        template<typename... Args>
-        bool load(Args&&... args)
-        {
-            if (loaded_)
-                return false;
-
-            resource_ = new ResourceType(std::forward<Args>(args)...);
-            handle_ = xg::newGuid();
-            loaded_ = true;
-            return true;
-        }
-
-        bool unload()
-        {
-            if (!loaded_)
-                return false;
-
-            delete resource_;
-            loaded_ = false;
-            return true;
-        }
-
-        const ResourceType& getResource() const { return *resource_; }
-
-    protected:
-        ResourceType* resource_;
+        ResourceCreationData* creationData_;
     };
 }
