@@ -38,6 +38,11 @@ file(GLOB VINE_WINDOW
     "${VINE_BACKEND_SRC_PATH}/window/*.cpp"
 )
 
+file(GLOB VINE_RESOURCE
+    "${VINE_BACKEND_INC_PATH}/vine/resource/*.h"
+    "${VINE_BACKEND_SRC_PATH}/resource/*.cpp"
+)
+
 source_group("core" FILES ${VINE_CORE})
 source_group("core\\codes" FILES ${VINE_CORE_CODES})
 source_group("events" FILES ${VINE_EVENTS})
@@ -46,3 +51,4 @@ source_group("renderer\\backend" FILES ${VINE_RENDERER_BACKEND})
 source_group("renderer\\renderable" FILES ${VINE_RENDERER_RENDERABLE})
 source_group("util" FILES ${VINE_UTIL})
 source_group("window" FILES ${VINE_WINDOW})
+source_group("resource" FILES ${VINE_RESOURCE})

@@ -16,6 +16,7 @@ set(GLM_PATH ${CMAKE_CURRENT_SOURCE_DIR}/external/glm)
 set(GLAD_PATH ${CMAKE_CURRENT_SOURCE_DIR}/external/glad)
 set(STB_PATH ${CMAKE_CURRENT_SOURCE_DIR}/external/stb)
 set(PUGIXML_PATH ${CMAKE_CURRENT_SOURCE_DIR}/external/pugixml)
+set(CROSSGUID_PATH ${CMAKE_CURRENT_SOURCE_DIR}/external/crossguid)
 
 add_subdirectory(${LUA_PATH})
 add_subdirectory(${SDL_PATH})
@@ -25,6 +26,7 @@ add_subdirectory(${GLM_PATH})
 add_subdirectory(${GLAD_PATH})
 add_subdirectory(${STB_PATH})
 add_subdirectory(${PUGIXML_PATH})
+add_subdirectory(${CROSSGUID_PATH})
 
 file(GLOB_RECURSE VINE_BACKEND_SRC_FILES
     "${VINE_BACKEND_SRC_PATH}/*.cpp"
@@ -47,3 +49,4 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${GLM_PATH})
 target_include_directories(${PROJECT_NAME} PUBLIC ${GLAD_PATH}/include)
 target_include_directories(${PROJECT_NAME} PUBLIC ${STB_PATH}/include)
 target_include_directories(${PROJECT_NAME} PUBLIC ${PUGIXML_PATH}/src)
+target_include_directories(${PROJECT_NAME} PUBLIC ${CROSSGUID_PATH}/include)

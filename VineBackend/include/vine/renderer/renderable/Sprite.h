@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vine/renderer/renderable/Renderable.h>
+#include <vine/renderer/backend/Texture.h>
 
 namespace vine
 {
@@ -13,8 +14,12 @@ namespace vine
     class Sprite : public Renderable
     {
     public:
-        Sprite(const SpriteState& state);
+        Sprite(const std::string& image, const SpriteState& state);
+        Sprite(const TextureRef& texture, const SpriteState& state);
+
         virtual ~Sprite();
+
+        virtual void render() const override;
 
         const glm::vec2& getSpritePos() const { return spritePos_; }
         void setSpritePos(const glm::vec2& spritePos) { spritePos_ = spritePos; }
@@ -22,8 +27,12 @@ namespace vine
         const glm::vec2& getSpriteScale() const { return spriteScale_; }
         void setSpriteScale(const glm::vec2& spriteScale) { spriteScale_ = spriteScale; }
 
+        const TextureRef& getTexture() const { return texture_; }
+
     private:
         glm::vec2 spritePos_;
         glm::vec2 spriteScale_;
+
+        TextureRef texture_;
     };
 }

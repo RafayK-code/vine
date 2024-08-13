@@ -1,8 +1,9 @@
 #pragma once
 
-#include <vine/renderer/renderable/SpriteImmediate.h>
+#include <vine/renderer/renderable/Sprite.h>
 #include <vine/renderer/backend/Texture.h>
 
+#include <string>
 #include <vector>
 
 namespace vine
@@ -10,12 +11,19 @@ namespace vine
     class SpriteSheet
     {
     public:
-        SpriteSheet(const std::string& sheet, const SpriteState& state);
+        SpriteSheet(const std::string& sheet, const RenderableState& defaultState = RenderableState());
         ~SpriteSheet();
 
-        const SpriteImmediate& getSprite(const std::string& name) const;
+        Sprite* getSprite(const std::string& name);
 
     private:
-        std::vector<SpriteImmediate> sprites_;
+        struct NamedSprite
+        {
+            Sprite* sprite;
+            std::string name;
+        };
+
+        std::vector<NamedSprite> sprites_;
+        TextureRef texture_;
     };
 }

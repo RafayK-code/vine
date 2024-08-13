@@ -4,7 +4,8 @@
 #include <vine/core/Logger.h>
 #include <vine/renderer/Renderer.h>
 
-#include <vine/renderer/renderable/SpriteImmediate.h>
+#include <vine/renderer/renderable/Sprite.h>
+#include <vine/renderer/renderable/SpriteSheet.h>
 #include <vine/renderer/renderable/Quad.h>
 
 #include <iostream>
@@ -17,6 +18,8 @@ namespace vine
 {
     Renderable* sprite;
     Renderable* quad;
+
+    SpriteSheet* sheet;
 
     Application::Application()
     {
@@ -43,7 +46,12 @@ namespace vine
         state.rotation = 0.0f;
         state.spritePos = { 256.0f, 0.0f };
         state.spriteScale = { 32.0f, 32.0f };
-        sprite = new SpriteImmediate("assets/spritesheets/demo/sheet.png", state);
+        //sprite = new Sprite("assets/spritesheets/demo/sheet.png", state);
+
+        sheet = new SpriteSheet("assets/spritesheets/demo/sheet.xml");
+        Sprite* s = sheet->getSprite("wall_texture_gold.png");
+        s->setPosition({ 200.0f, 200.0f });
+        s->setScale({ 100.0f, 100.0f });
 
         quad = new Quad(RenderableState());
         quad->setPosition({ 600.0f, 500.0f });
@@ -54,7 +62,8 @@ namespace vine
     Application::~Application()
     {
         delete quad;
-        delete sprite;
+        //delete sprite;
+        delete sheet;
         Renderer::shutdown();
         delete window_;
         SDL_Quit();
@@ -78,7 +87,9 @@ namespace vine
         OrthographicCamera cam(0, 1280, 0, 720, -0.1f, -100.0f);
         Renderer::ref().beginScene(cam);
         // z is how many units away from the screen --> maybe renderer can handle the flip?
-        sprite->render();
+        //sprite->render();
+
+        sheet->getSprite("wall_texture_gold.png")->render();
         quad->render();
         Renderer::ref().endScene();
 

@@ -19,7 +19,7 @@ vertices   => points in sprite coordinate system (x0,y0,x1,y1,x2,y2, ...)
 verticesUV => points in sheet coordinate system (x0,y0,x1,y1,x2,y2, ...)
 triangles  => sprite triangulation, 3 vertex indices per triangle
 -->
-<TextureAtlas imagePath="sheet.png" width="288" height="32">
+<TextureAtlas imagePath="assets/spritesheets/demo/sheet.png" width="288" height="32">
     <sprite n="wall_texture_1.png" x="0" y="0" w="32" h="32" pX="0.5" pY="0.5"/>
     <sprite n="wall_texture_2.png" x="32" y="0" w="32" h="32" pX="0.5" pY="0.5"/>
     <sprite n="wall_texture_3.png" x="64" y="0" w="32" h="32" pX="0.5" pY="0.5"/>
