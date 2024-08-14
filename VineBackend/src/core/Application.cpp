@@ -8,6 +8,8 @@
 #include <vine/renderer/renderable/SpriteSheet.h>
 #include <vine/renderer/renderable/Quad.h>
 
+#include <vine/resource/ResourceManager.h>
+
 #include <iostream>
 
 #include <glad/glad.h>
@@ -20,11 +22,14 @@ namespace vine
     Renderable* quad;
 
     SpriteSheet* sheet;
+    ResourceHandle handle;
 
     Application::Application()
     {
         Logger::init();
         DBG_ASSERT(SDL_Init(SDL_INIT_VIDEO) == 0, "SDL could not be initialized");
+
+        ResourceManager::init();
 
         window_ = new Window({ "Hello World", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 1280, 720 });
         DBG_INFO("Window created successfully");
@@ -68,6 +73,7 @@ namespace vine
         delete window_;
         SDL_Quit();
 
+        ResourceManager::shutdown();
         DBG_INFO("Application successfully shutdown");
         Logger::shutdown();
     }
