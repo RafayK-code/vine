@@ -35,4 +35,9 @@ namespace vine
 
         TextureRef texture_;
     };
+
+    using SpriteRef = std::shared_ptr<Sprite>;
+
+    SpriteRef createSprite(const std::string& image, const SpriteState& state);
+    SpriteRef createSprite(const TextureRef& texture, const SpriteState& state);
 }

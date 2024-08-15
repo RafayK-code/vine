@@ -18,8 +18,8 @@ namespace vine
         static void init();
         static void shutdown();
 
-        template<typename T, typename CreationT>
-        const ResourceHandle& createResource(const CreationT& data)
+        template<typename T>
+        const ResourceHandle& createResource(const ResourceCreationData& data)
         {
             Resource* res = new T(data);
             
@@ -33,7 +33,30 @@ namespace vine
             return res->getHandle();
         }
 
+        template<typename T>
+        const ResourceHandle& createAndLoadResource(const ResourceCreationData& data)
+        {
+            Resource* res = new T(data);
+
+            if (resources_.find(res->getHandle()) != resources_.end())
+            {
+                delete res;
+                return xg::Guid();
+            }
+
+            resources_.insert({ res->getHandle(), res });
+            res->load();
+            return res->getHandle();
+        }
+
         Resource* getResource(const ResourceHandle& handle);
+
+        template<typename T>
+        T* getResource(const ResourceHandle& handle)
+        {
+            return dynamic_cast<T*>(getResource(handle));
+        }
+
         void removeResource(const ResourceHandle& handle);
 
     private:

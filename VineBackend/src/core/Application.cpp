@@ -9,6 +9,7 @@
 #include <vine/renderer/renderable/Quad.h>
 
 #include <vine/resource/ResourceManager.h>
+#include <vine/resource/ResourceImage.h>
 
 #include <iostream>
 
@@ -49,9 +50,9 @@ namespace vine
         state.scale = { 50.0f, 50.0f };
         state.layer = 1.0f;
         state.rotation = 0.0f;
-        state.spritePos = { 256.0f, 0.0f };
-        state.spriteScale = { 32.0f, 32.0f };
-        //sprite = new Sprite("assets/spritesheets/demo/sheet.png", state);
+        handle = ResourceManager::ref().createAndLoadResource<ResourceImage>({ "assets/spritesheets/demo/sheet.png" });
+        TextureRef tex = ResourceManager::ref().getResource<ResourceImage>(handle)->getTexture();
+        sprite = new Sprite(tex, state);
 
         sheet = new SpriteSheet("assets/spritesheets/demo/sheet.xml");
         Sprite* s = sheet->getSprite("wall_texture_gold.png");
@@ -67,7 +68,7 @@ namespace vine
     Application::~Application()
     {
         delete quad;
-        //delete sprite;
+        delete sprite;
         delete sheet;
         Renderer::shutdown();
         delete window_;
@@ -93,7 +94,7 @@ namespace vine
         OrthographicCamera cam(0, 1280, 0, 720, -0.1f, -100.0f);
         Renderer::ref().beginScene(cam);
         // z is how many units away from the screen --> maybe renderer can handle the flip?
-        //sprite->render();
+        sprite->render();
 
         sheet->getSprite("wall_texture_gold.png")->render();
         quad->render();
