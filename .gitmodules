@@ -20,3 +20,6 @@
 [submodule "VineBackend/external/crossguid"]
 	path = VineBackend/external/crossguid
 	url = https://github.com/graeme-hill/crossguid.git
+[submodule "VineBackend/external/msdf-atlas-gen"]
+	path = VineBackend/external/msdf-atlas-gen
+	url = https://github.com/Chlumsky/msdf-atlas-gen.git
