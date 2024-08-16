@@ -26,4 +26,7 @@ namespace vine
         std::vector<NamedSprite> sprites_;
         TextureRef texture_;
     };
+
+    using SpriteSheetRef = std::shared_ptr<SpriteSheet>;
+    SpriteSheetRef createSpriteSheet(const std::string& sheet, const RenderableState& defaultState = RenderableState());
 }

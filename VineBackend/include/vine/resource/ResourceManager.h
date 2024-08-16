@@ -33,8 +33,8 @@ namespace vine
             return res->getHandle();
         }
 
-        template<typename T>
-        const ResourceHandle& createAndLoadResource(const ResourceCreationData& data)
+        template<typename T, typename CreationT = ResourceCreationData>
+        const ResourceHandle& createAndLoadResource(const CreationT& data)
         {
             Resource* res = new T(data);
 

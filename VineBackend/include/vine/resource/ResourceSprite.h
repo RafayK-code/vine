@@ -11,12 +11,14 @@ namespace vine
         ResourceSpriteCreationData(const std::string& file, const SpriteState& state);
         ResourceSpriteCreationData(const ResourceSpriteCreationData& other);
 
+        virtual ~ResourceSpriteCreationData();
+
         virtual ResourceCreationData* clone() const override;
 
         SpriteState state;
     };
 
-    class ResourceSprite : Resource
+    class ResourceSprite : public Resource
     {
         friend class ResourceManager;
     public:

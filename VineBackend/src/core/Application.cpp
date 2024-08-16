@@ -10,6 +10,7 @@
 
 #include <vine/resource/ResourceManager.h>
 #include <vine/resource/ResourceImage.h>
+#include <vine/resource/ResourceSprite.h>
 
 #include <iostream>
 
@@ -19,7 +20,7 @@
 
 namespace vine
 {
-    Renderable* sprite;
+    SpriteRef sprite;
     Renderable* quad;
 
     SpriteSheet* sheet;
@@ -50,9 +51,8 @@ namespace vine
         state.scale = { 50.0f, 50.0f };
         state.layer = 1.0f;
         state.rotation = 0.0f;
-        handle = ResourceManager::ref().createAndLoadResource<ResourceImage>({ "assets/spritesheets/demo/sheet.png" });
-        TextureRef tex = ResourceManager::ref().getResource<ResourceImage>(handle)->getTexture();
-        sprite = new Sprite(tex, state);
+        handle = ResourceManager::ref().createAndLoadResource<ResourceSprite, ResourceSpriteCreationData>(ResourceSpriteCreationData("assets/spritesheets/demo/sheet.png", state));
+        sprite = ResourceManager::ref().getResource<ResourceSprite>(handle)->getSprite();
 
         sheet = new SpriteSheet("assets/spritesheets/demo/sheet.xml");
         Sprite* s = sheet->getSprite("wall_texture_gold.png");
@@ -68,7 +68,7 @@ namespace vine
     Application::~Application()
     {
         delete quad;
-        delete sprite;
+        sprite = nullptr;
         delete sheet;
         Renderer::shutdown();
         delete window_;
@@ -81,6 +81,8 @@ namespace vine
 
     void Application::run()
     {
+        onTick();
+
         SDL_Event e;
         while (SDL_PollEvent(&e))
         {

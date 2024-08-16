@@ -13,7 +13,7 @@ namespace vine
 
         virtual void onInit() {}
         virtual void onTick() {}
-        virtual void onClose() {}
+        virtual void onShutdown() {}
 
         void run();
 

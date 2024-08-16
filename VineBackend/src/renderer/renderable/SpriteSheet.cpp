@@ -58,4 +58,9 @@ namespace vine
 
         return it->sprite;
     }
+
+    SpriteSheetRef createSpriteSheet(const std::string& sheet, const RenderableState& defaultState)
+    {
+        return std::make_shared<SpriteSheet>(sheet, defaultState);
+    }
 }

@@ -9,10 +9,12 @@ namespace vine
     int vineMain(int argc, char** argv)
     {
         Application* app = createApplication(argc, argv);
+        app->onInit();
         while (app->isRunning())
         {
             app->run();
         }
+        app->onShutdown();
         delete app;
 
         return 0;
