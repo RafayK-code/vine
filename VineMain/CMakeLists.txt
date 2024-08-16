@@ -31,6 +31,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE glad)
 target_link_libraries(${PROJECT_NAME} PRIVATE stb)
 target_link_libraries(${PROJECT_NAME} PRIVATE pugixml)
 target_link_libraries(${PROJECT_NAME} PRIVATE crossguid)
+target_link_libraries(${PROJECT_NAME} PRIVATE msdf-atlas-gen)
 
 add_custom_target(
     copy_assets ALL
