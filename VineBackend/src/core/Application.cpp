@@ -7,6 +7,7 @@
 #include <vine/renderer/renderable/Sprite.h>
 #include <vine/renderer/renderable/SpriteSheet.h>
 #include <vine/renderer/renderable/Quad.h>
+#include <vine/renderer/renderable/Text.h>
 
 #include <vine/resource/ResourceManager.h>
 #include <vine/resource/ResourceImage.h>
@@ -30,6 +31,7 @@ namespace vine
     ResourceHandle handle;
 
     FontRef font;
+    Text* text;
 
     Application::Application()
     {
@@ -43,7 +45,7 @@ namespace vine
 
         Renderer::init(window_->getNativePtr());
         glViewport(0, 0, window_->getWidth(), window_->getHeight());
-        Renderer::ref().setClearColor({ 1.0f, 1.0f, 1.0f, 1.0f });
+        Renderer::ref().setClearColor({ 0.0f, 0.0f, 0.0f, 0.0f });
 
         window_->addEventCallback<WindowCloseEvent>([this](WindowCloseEvent& e) {
             running_ = false;
@@ -70,12 +72,18 @@ namespace vine
         quad->setColor({ 1.0f, 0.0f, 0.0f, 1.0f });
 
         font = Font::getDefault();
+        text = new Text(font, TextState());
+        text->setPosition({ 0.0f, 600.0f });
+        text->setLayer(1.0f);
+        text->setScale({ 50.0f,50.0f });
+        text->setText("hello\nworld!");
     }
 
     Application::~Application()
     {
         delete quad;
         font = nullptr;
+        delete text;
         sprite = nullptr;
         delete sheet;
         Renderer::shutdown();
@@ -106,11 +114,13 @@ namespace vine
         // z is how many units away from the screen --> maybe renderer can handle the flip?
         sprite->render();
 
-        glm::mat4 transform = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 600.0f, 1.0f)) * glm::scale(glm::mat4(1.0f), glm::vec3(200.0f, 200.0f, 1.0f));
+        glm::mat4 transform = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 600.0f, 1.0f)) * glm::scale(glm::mat4(1.0f), glm::vec3(25.0f, 25.0f, 1.0f));
 
-        Renderer::TextParams params;
-        params.color = { 0.0f, 0.0f, 0.0f, 1.0f };
-        Renderer::ref().drawText("Hello world!", font, transform, params);
+        //Renderer::TextParams params;
+        //params.color = { 1.0f, 1.0f, 1.0f, 1.0f };
+        //params.kerning = 0.0f;
+        //Renderer::ref().drawText("Hello\nworld!", font, transform, params);
+        text->render();
 
         sheet->getSprite("wall_texture_gold.png")->render();
         quad->render();
