@@ -12,9 +12,12 @@
 #include <vine/resource/ResourceImage.h>
 #include <vine/resource/ResourceSprite.h>
 
+#include <vine/renderer/backend/Font.h>
+
 #include <iostream>
 
 #include <glad/glad.h>
+#include <glm/gtc/matrix_transform.hpp>
 
 #include <filesystem>
 
@@ -25,6 +28,8 @@ namespace vine
 
     SpriteSheet* sheet;
     ResourceHandle handle;
+
+    FontRef font;
 
     Application::Application()
     {
@@ -63,11 +68,14 @@ namespace vine
         quad->setPosition({ 600.0f, 500.0f });
         quad->setScale({ 100.0f, 100.0f });
         quad->setColor({ 1.0f, 0.0f, 0.0f, 1.0f });
+
+        font = Font::getDefault();
     }
 
     Application::~Application()
     {
         delete quad;
+        font = nullptr;
         sprite = nullptr;
         delete sheet;
         Renderer::shutdown();
@@ -98,9 +106,17 @@ namespace vine
         // z is how many units away from the screen --> maybe renderer can handle the flip?
         sprite->render();
 
+        glm::mat4 transform = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 600.0f, 1.0f)) * glm::scale(glm::mat4(1.0f), glm::vec3(200.0f, 200.0f, 1.0f));
+
+        Renderer::TextParams params;
+        params.color = { 0.0f, 0.0f, 0.0f, 1.0f };
+        Renderer::ref().drawText("Hello world!", font, transform, params);
+
         sheet->getSprite("wall_texture_gold.png")->render();
         quad->render();
         Renderer::ref().endScene();
+
+
 
         window_->tick();
     }

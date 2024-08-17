@@ -39,6 +39,7 @@ file(GLOB_RECURSE VINE_BACKEND_INC_FILES
 )
 
 add_compile_definitions(SPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_TRACE)
+add_compile_definitions(MSDFGEN_PUBLIC=)
 
 add_library(${PROJECT_NAME} STATIC ${VINE_BACKEND_SRC_FILES} ${VINE_BACKEND_INC_FILES})
 
@@ -53,3 +54,4 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${STB_PATH}/include)
 target_include_directories(${PROJECT_NAME} PUBLIC ${PUGIXML_PATH}/src)
 target_include_directories(${PROJECT_NAME} PUBLIC ${CROSSGUID_PATH}/include)
 target_include_directories(${PROJECT_NAME} PUBLIC ${MSDF_PATH})
+target_include_directories(${PROJECT_NAME} PUBLIC ${MSDF_PATH}/msdfgen)

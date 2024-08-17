@@ -1,5 +1,7 @@
 #include <vine/renderer/Renderer.h>
 
+#include <vine/renderer/backend/MSDFData.h>
+
 #include <glm/gtc/matrix_transform.hpp>
 #include <glad/glad.h>
 
@@ -10,7 +12,9 @@ namespace vine
         context_.createContext(window);
 
         data_ = std::make_unique<RendererData>();
-        data_->quadVertexArray = createVertexArray();;
+
+        //quad stuff
+        data_->quadVertexArray = createVertexArray();
 
         data_->quadVB = createVertexBuffer(data_->maxQuads * sizeof(QuadVertex));
         data_->quadVB->setLayout({
@@ -18,7 +22,7 @@ namespace vine
             { "a_Color", ShaderDataType::Float4 },
             { "a_TexCoord", ShaderDataType::Float2 },
             { "a_TexIndex", ShaderDataType::Float }
-            });
+        });
         data_->quadVertexArray->addVertexBuffer(data_->quadVB);
 
         data_->quadVertexBufferBase = new QuadVertex[data_->maxVertices];
@@ -43,6 +47,20 @@ namespace vine
 
         delete[] quadIndices;
 
+        //text stuff
+        data_->textVertexArray = createVertexArray();
+
+        data_->textVB = createVertexBuffer(data_->maxVertices * sizeof(TextVertex));
+        data_->textVB->setLayout({
+            { "a_Position", ShaderDataType::Float3 },
+            { "a_Color", ShaderDataType::Float4 },
+            { "a_TexCoord", ShaderDataType::Float2 }
+        });
+        data_->textVertexArray->addVertexBuffer(data_->textVB);
+        data_->textVertexArray->setIndexBuffer(quadIB);
+        data_->textVertexBufferBase = new TextVertex[data_->maxVertices];
+
+
         //texture stuff
         data_->whiteTexture = createTexture(TextureSpecification());
         uint32_t whiteTextureData = 0xffffffff;
@@ -61,9 +79,11 @@ namespace vine
 
         // shader stuff
         ShaderCache::init();
-        data_->textureShader = ShaderCache::ref().load("TextureShader", "assets/shaders/texture.vs", "assets/shaders/texture.fs");
-        data_->textureShader->bind();
-        data_->textureShader->uploadUniformIntArray("u_Textures", samplers, data_->maxTextureSlots);
+        data_->quadShader = ShaderCache::ref().load("QuadShader", "assets/shaders/texture.vs", "assets/shaders/texture.fs");
+        data_->quadShader->bind();
+        data_->quadShader->uploadUniformIntArray("u_Textures", samplers, data_->maxTextureSlots);
+
+        data_->textShader = ShaderCache::ref().load("TextShader", "assets/shaders/text.vs", "assets/shaders/text.fs");
 
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LESS);
@@ -100,33 +120,59 @@ namespace vine
 
     void Renderer::beginScene(const OrthographicCamera& camera)
     {
-        data_->textureShader->bind();
-        data_->textureShader->uploadUniformMat4("u_ViewProjection", camera.getViewProjectionMatrix());
+        data_->quadShader->bind();
+        data_->quadShader->uploadUniformMat4("u_ViewProjection", camera.getViewProjectionMatrix());
+
+        data_->textShader->bind();
+        data_->textShader->uploadUniformMat4("u_ViewProjection", camera.getViewProjectionMatrix());
 
         startBatch();
     }
 
     void Renderer::endScene()
     {
-        uint32_t size = (uint8_t*)data_->quadVertexBufferPtr - (uint8_t*)data_->quadVertexBufferBase;
-        data_->quadVB->setData(data_->quadVertexBufferBase, size);
-
         flush();
     }
 
     void Renderer::flush()
     {
-        for (uint32_t i = 0; i < data_->textureSlotIndex; i++)
+        if (data_->quadIndexCount)
         {
-            data_->textureSlots[i]->bind(i);
+            uint32_t size = (uint8_t*)data_->quadVertexBufferPtr - (uint8_t*)data_->quadVertexBufferBase;
+            data_->quadVB->setData(data_->quadVertexBufferBase, size);
+
+            for (uint32_t i = 0; i < data_->textureSlotIndex; i++)
+            {
+                data_->textureSlots[i]->bind(i);
+            }
+
+            data_->quadShader->bind();
+            data_->quadVertexArray->bind();
+            glDrawElements(GL_TRIANGLES, data_->quadIndexCount, GL_UNSIGNED_INT, nullptr);
         }
-        glDrawElements(GL_TRIANGLES, data_->quadIndexCount, GL_UNSIGNED_INT, nullptr);
+
+        if (data_->textIndexCount)
+        {
+            uint32_t size = (uint8_t*)data_->textVertexBufferPtr - (uint8_t*)data_->textVertexBufferBase;
+            data_->textVB->setData(data_->textVertexBufferBase, size);
+
+            TextVertex* buf = data_->textVertexBufferBase;
+            data_->fontAtlasTexture->bind(0);
+            data_->textShader->bind();
+            data_->textShader->uploadUniformInt("u_FontAtlas", 0);
+
+            data_->textVertexArray->bind();
+            glDrawElements(GL_TRIANGLES, data_->textIndexCount, GL_UNSIGNED_INT, nullptr);
+        }
     }
 
     void Renderer::startBatch()
     {
         data_->quadIndexCount = 0;
         data_->quadVertexBufferPtr = data_->quadVertexBufferBase;
+
+        data_->textIndexCount = 0;
+        data_->textVertexBufferPtr = data_->textVertexBufferBase;
 
         data_->textureSlotIndex = 1;
     }
@@ -322,5 +368,104 @@ namespace vine
         }
 
         data_->quadIndexCount += 6;
+    }
+
+    void Renderer::drawText(const std::string& text, FontRef font, const glm::mat4& transform, const TextParams& params)
+    {
+        const msdf_atlas::FontGeometry& fontGeomtry = font->getData()->fontGeometry;
+        const msdfgen::FontMetrics& metrics = fontGeomtry.getMetrics();
+        TextureRef fontAtlas = font->getAtlasTexture();
+
+        data_->fontAtlasTexture = fontAtlas;
+
+        double x = 0.0;
+        double fsScale = 1.0 / (metrics.ascenderY - metrics.descenderY);
+        double y = 0.0;
+
+        const float spaceGlyphAdvance = fontGeomtry.getGlyph(' ')->getAdvance();
+
+        for (size_t i = 0; i < text.size(); i++)
+        {
+            char character = text[i];
+            if (character == '\r')
+                continue;
+
+            if (character == '\n')
+            {
+                x = 0;
+                y -= fsScale * metrics.lineHeight + params.lineSpacing;
+                continue;
+            }
+
+            if (character == ' ')
+            {
+                float advance = spaceGlyphAdvance;
+                if (i < text.size() - 1)
+                {
+                    char nextCharacter = text[i + 1];
+                    double dAdvance;
+                    fontGeomtry.getAdvance(dAdvance, character, nextCharacter);
+                    advance = (float)dAdvance;
+                }
+
+                x += fsScale * advance + params.kerning;
+                continue;
+            }
+
+            if (character == '\t')
+            {
+                x += 4.0f * (fsScale * spaceGlyphAdvance + params.kerning);
+                continue;
+            }
+
+            const msdf_atlas::GlyphGeometry* glyph = fontGeomtry.getGlyph(character);
+            if (!glyph)
+                glyph = fontGeomtry.getGlyph('?');
+
+            double al, ab, ar, at;
+            glyph->getQuadAtlasBounds(al, ab, ar, at);
+            glm::vec2 texCoordMin = { (float)al, (float)ab };
+            glm::vec2 texCoordMax = { (float)ar, (float)at };
+
+            double pl, pb, pr, pt;
+            glyph->getQuadPlaneBounds(pl, pb, pr, pt);
+            glm::vec2 quadMin = { (float)pl, (float)pb };
+            glm::vec2 quadMax = { (float)pr, (float)pt };
+
+            quadMin *= fsScale;
+            quadMax *= fsScale;
+
+            quadMin += glm::vec2(x, y);
+            quadMax += glm::vec2(x, y);
+
+            float texelWidth = 1.0f / fontAtlas->getWidth();
+            float texelHeight = 1.0f / fontAtlas->getHeight();
+            texCoordMin *= glm::vec2(texelWidth, texelHeight);
+            texCoordMax *= glm::vec2(texelWidth, texelHeight);
+
+            constexpr size_t textVertexCount = 4;
+            const glm::vec2 texCoords[] = { texCoordMin, {texCoordMin.x, texCoordMax.y}, texCoordMax, {texCoordMax.x, texCoordMin.y} };
+            const glm::vec4 positions[] = { {quadMin, 0.0f, 1.0f}, {quadMin.x, quadMax.y, 0.0f, 1.0f}, {quadMax, 0.0f, 1.0f}, {quadMax.x, quadMin.y, 0.0f, 1.0f} };
+
+
+            for (size_t i = 0; i < textVertexCount; i++)
+            {
+                data_->textVertexBufferPtr->position = transform * positions[i];
+                data_->textVertexBufferPtr->color = params.color;
+                data_->textVertexBufferPtr->texCoord = texCoords[i];
+                data_->textVertexBufferPtr++;
+            }
+
+            data_->textIndexCount += 6;
+
+            if (i < text.size() - 1)
+            {
+                double advance = glyph->getAdvance();
+                char nextCharacter = text[i + 1];
+                fontGeomtry.getAdvance(advance, character, nextCharacter);
+
+                x += fsScale * advance + params.kerning;
+            }
+        }
     }
 }
