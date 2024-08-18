@@ -125,4 +125,9 @@ namespace vine
 
         return defaultFont;
     }
+
+    FontRef createFont(const std::string& font)
+    {
+        return std::make_shared<Font>(font);
+    }
 }

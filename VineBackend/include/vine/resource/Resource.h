@@ -6,7 +6,7 @@
 
 namespace vine
 {
-    using ResourceHandle = xg::Guid;
+    using Handle = xg::Guid;
 
     enum class ResourceDataType
     {
@@ -40,7 +40,7 @@ namespace vine
         virtual void load() = 0;
         virtual void unload() = 0;
 
-        const ResourceHandle& getHandle() const { return handle_; }
+        const Handle& getHandle() const { return handle_; }
         bool isLoaded() const { return loaded_; }
 
         const ResourceCreationData* getCreationData() const { return creationData_; }
@@ -49,7 +49,7 @@ namespace vine
         Resource(const ResourceCreationData& data);
 
     protected:
-        ResourceHandle handle_;
+        Handle handle_;
         bool loaded_;
 
         ResourceCreationData* creationData_;

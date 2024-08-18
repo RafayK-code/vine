@@ -28,7 +28,7 @@ namespace vine
     Renderable* quad;
 
     SpriteSheet* sheet;
-    ResourceHandle handle;
+    Handle handle;
 
     FontRef font;
     Text* text;
@@ -77,6 +77,7 @@ namespace vine
         text->setLayer(1.0f);
         text->setScale({ 50.0f,50.0f });
         text->setText("hello\nworld!");
+        text->setLineSpacing(-0.1f);
     }
 
     Application::~Application()

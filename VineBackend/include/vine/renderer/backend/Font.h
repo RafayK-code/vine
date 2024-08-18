@@ -26,4 +26,6 @@ namespace vine
         MSDFData* data_;
         TextureRef atlasTexture_;
     };
+
+    FontRef createFont(const std::string& font);
 }

@@ -1,5 +1,7 @@
 #include <vine/resource/ResourceManager.h>
 
+#include <vine/core/Logger.h>
+
 namespace vine
 {
     ResourceManager::ResourceManager()
@@ -22,7 +24,20 @@ namespace vine
         destroySingleton();
     }
 
-    Resource* ResourceManager::getResource(const ResourceHandle& handle)
+    Handle ResourceManager::addResource(Resource* resource)
+    {
+        auto it = resources_.find(resource->getHandle());
+        if (it != resources_.end())
+        {
+            DBG_WARN("Resource already exists in manager");
+            return resource->getHandle();
+        }
+
+        resources_.insert({ resource->getHandle(), resource });
+        return resource->getHandle();
+    }
+
+    Resource* ResourceManager::getResource(const Handle& handle)
     {
         auto it = resources_.find(handle);
         if (it == resources_.end())
@@ -31,7 +46,7 @@ namespace vine
         return it->second;
     }
 
-    void ResourceManager::removeResource(const ResourceHandle& handle)
+    void ResourceManager::removeResource(const Handle& handle)
     {
         auto it = resources_.find(handle);
         if (it == resources_.end())

@@ -31,7 +31,7 @@ namespace vine
         void setKerning(float kerning) { kerning_ = kerning; }
 
         float getLineSpacing() const { return lineSpacing_; }
-        float setLineSpacing(float lineSpacing) { lineSpacing_ = lineSpacing; }
+        void setLineSpacing(float lineSpacing) { lineSpacing_ = lineSpacing; }
 
         const FontRef& getFont() const { return font_; }
 

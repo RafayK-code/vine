@@ -18,51 +18,39 @@ namespace vine
         static void init();
         static void shutdown();
 
-        template<typename T>
-        const ResourceHandle& createResource(const ResourceCreationData& data)
+        Handle addResource(Resource* resource);
+
+        template<typename T, typename CreationT = ResourceCreationData>
+        Handle createResource(const CreationT& data)
         {
             Resource* res = new T(data);
-            
-            if (resources_.find(res->getHandle()) != resources_.end())
-            {
-                delete res;
-                return xg::Guid();
-            }
-
             resources_.insert({ res->getHandle(), res });
             return res->getHandle();
         }
 
         template<typename T, typename CreationT = ResourceCreationData>
-        const ResourceHandle& createAndLoadResource(const CreationT& data)
+        Handle createAndLoadResource(const CreationT& data)
         {
             Resource* res = new T(data);
-
-            if (resources_.find(res->getHandle()) != resources_.end())
-            {
-                delete res;
-                return xg::Guid();
-            }
-
             resources_.insert({ res->getHandle(), res });
             res->load();
             return res->getHandle();
         }
 
-        Resource* getResource(const ResourceHandle& handle);
+        Resource* getResource(const Handle& handle);
 
         template<typename T>
-        T* getResource(const ResourceHandle& handle)
+        T* getResource(const Handle& handle)
         {
             return dynamic_cast<T*>(getResource(handle));
         }
 
-        void removeResource(const ResourceHandle& handle);
+        void removeResource(const Handle& handle);
 
     private:
         ResourceManager();
 
     private:
-        std::unordered_map<ResourceHandle, Resource*> resources_;
+        std::unordered_map<Handle, Resource*> resources_;
     };
 }
