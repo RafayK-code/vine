@@ -4,9 +4,12 @@
 #include <vine/renderer/backend/Font.h>
 
 #include <string>
+#include <crossguid/guid.hpp>
 
 namespace vine
 {
+    using Handle = xg::Guid;
+
     struct TextState : public RenderableState
     {
         std::string text = "";
@@ -17,9 +20,7 @@ namespace vine
     class Text : public Renderable
     {
     public:
-        Text(const std::string& fontPath, const TextState& state);
-        Text(const FontRef& font, const TextState& state);
-
+        Text(const Handle& fontHandle, const TextState& state);
         virtual ~Text();
 
         virtual void render() const;
@@ -34,6 +35,7 @@ namespace vine
         void setLineSpacing(float lineSpacing) { lineSpacing_ = lineSpacing; }
 
         const FontRef& getFont() const { return font_; }
+        const Handle& getFontHandle() const { return fontHandle_; }
 
     private:
         std::string text_;
@@ -41,5 +43,6 @@ namespace vine
         float lineSpacing_;
 
         FontRef font_;
+        Handle fontHandle_;
     };
 }

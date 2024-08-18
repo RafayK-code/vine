@@ -1,18 +1,22 @@
 #include <vine/renderer/renderable/Text.h>
 
 #include <vine/renderer/Renderer.h>
+#include <vine/resource/ResourceManager.h>
+#include <vine/resource/ResourceFont.h>
+#include <vine/core/Logger.h>
 
 namespace vine
 {
-    Text::Text(const std::string& fontPath, const TextState& state)
-        : Renderable(state), text_(state.text), kerning_(state.kerning), lineSpacing_(state.lineSpacing)
+    Text::Text(const Handle& fontHandle, const TextState& state)
+        : Renderable(state), fontHandle_(fontHandle), text_(state.text), kerning_(state.kerning), lineSpacing_(state.lineSpacing)
     {
-        font_ = std::make_shared<Font>(fontPath);
-    }
+        ResourceFont* resFont = ResourceManager::ref().getResource<ResourceFont>(fontHandle_);
+        DBG_ASSERT(resFont, "Font resource with given handle could not be found");
 
-    Text::Text(const FontRef& font, const TextState& state)
-        : Renderable(state), font_(font), text_(state.text), kerning_(state.kerning), lineSpacing_(state.lineSpacing)
-    {
+        if (!resFont->isLoaded())
+            resFont->load();
+
+        font_ = resFont->getFont();
     }
 
     Text::~Text()

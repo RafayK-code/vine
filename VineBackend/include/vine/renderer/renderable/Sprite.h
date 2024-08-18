@@ -3,8 +3,12 @@
 #include <vine/renderer/renderable/Renderable.h>
 #include <vine/renderer/backend/Texture.h>
 
+#include <crossguid/guid.hpp>
+
 namespace vine
 {
+    using Handle = xg::Guid;
+
     struct SpriteState : public RenderableState
     {
         glm::vec2 spritePos = { -1.0f, -1.0f };
@@ -14,9 +18,7 @@ namespace vine
     class Sprite : public Renderable
     {
     public:
-        Sprite(const std::string& image, const SpriteState& state);
-        Sprite(const TextureRef& texture, const SpriteState& state);
-
+        Sprite(const Handle& textureHandle, const SpriteState& state);
         virtual ~Sprite();
 
         virtual void render() const override;
@@ -28,16 +30,15 @@ namespace vine
         void setSpriteScale(const glm::vec2& spriteScale) { spriteScale_ = spriteScale; }
 
         const TextureRef& getTexture() const { return texture_; }
+        const Handle& getTextureHandle() const { return textureHandle_; }
 
     private:
         glm::vec2 spritePos_;
         glm::vec2 spriteScale_;
 
         TextureRef texture_;
+        Handle textureHandle_;
     };
 
-    using SpriteRef = std::shared_ptr<Sprite>;
-
-    SpriteRef createSprite(const std::string& image, const SpriteState& state);
-    SpriteRef createSprite(const TextureRef& texture, const SpriteState& state);
+    void createSpritesFromSheet(const std::string& sheet, const RenderableState& defaultState = RenderableState());
 }

@@ -3,7 +3,6 @@
 #include <vine/resource/Resource.h>
 #include <vine/util/Singleton.h>
 #include <vine/renderer/renderable/Sprite.h>
-#include <vine/renderer/renderable/SpriteSheet.h>
 
 #include <unordered_map>
 

@@ -21,22 +21,22 @@ namespace vine
 
         void render() const;
 
-        Handle addRenderable(Renderable* renderable);
+        Renderable* addRenderable(const std::string& name, Renderable* renderable);
         
         template<typename T, typename... Args>
-        Handle createRenderable(Args&&... args)
+        Renderable* createRenderable(const std::string& name, Args&&... args)
         {
             Renderable* renderable = new T(std::forward<Args>(args)...);
-            return addRenderable(renderable);
+            return addRenderable(name, renderable);
         }
 
-        Renderable* getRenderable(const Handle& handle);
-        void removeRenderable(const Handle& handle);
+        Renderable* getRenderable(const std::string& name);
+        void removeRenderable(const std::string& name);
 
     private:
         RenderableManager();
 
     private:
-        std::unordered_map<Handle, Renderable*> renderables_;
+        std::unordered_map<std::string, Renderable*> renderables_;
     };
 }

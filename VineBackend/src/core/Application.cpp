@@ -5,13 +5,13 @@
 #include <vine/renderer/Renderer.h>
 
 #include <vine/renderer/renderable/Sprite.h>
-#include <vine/renderer/renderable/SpriteSheet.h>
 #include <vine/renderer/renderable/Quad.h>
 #include <vine/renderer/renderable/Text.h>
+#include <vine/renderer/renderable/RenderableManager.h>
 
 #include <vine/resource/ResourceManager.h>
 #include <vine/resource/ResourceImage.h>
-#include <vine/resource/ResourceSprite.h>
+#include <vine/resource/ResourceFont.h>
 
 #include <vine/renderer/backend/Font.h>
 
@@ -24,13 +24,8 @@
 
 namespace vine
 {
-    SpriteRef sprite;
     Renderable* quad;
 
-    SpriteSheet* sheet;
-    Handle handle;
-
-    FontRef font;
     Text* text;
 
     Application::Application()
@@ -47,6 +42,8 @@ namespace vine
         glViewport(0, 0, window_->getWidth(), window_->getHeight());
         Renderer::ref().setClearColor({ 0.0f, 0.0f, 0.0f, 0.0f });
 
+        RenderableManager::init();
+
         window_->addEventCallback<WindowCloseEvent>([this](WindowCloseEvent& e) {
             running_ = false;
         });
@@ -58,11 +55,13 @@ namespace vine
         state.scale = { 50.0f, 50.0f };
         state.layer = 1.0f;
         state.rotation = 0.0f;
-        handle = ResourceManager::ref().createAndLoadResource<ResourceSprite, ResourceSpriteCreationData>(ResourceSpriteCreationData("assets/spritesheets/demo/sheet.png", state));
-        sprite = ResourceManager::ref().getResource<ResourceSprite>(handle)->getSprite();
 
-        sheet = new SpriteSheet("assets/spritesheets/demo/sheet.xml");
-        Sprite* s = sheet->getSprite("wall_texture_gold.png");
+        //sheet = new SpriteSheet("assets/spritesheets/demo/sheet.xml");
+        //Sprite* s = sheet->getSprite("wall_texture_gold.png");
+
+        createSpritesFromSheet("assets/spritesheets/demo/sheet.xml");
+        Renderable* s = RenderableManager::ref().getRenderable("wall_texture_gold.png");
+
         s->setPosition({ 200.0f, 200.0f });
         s->setScale({ 100.0f, 100.0f });
 
@@ -71,27 +70,25 @@ namespace vine
         quad->setScale({ 100.0f, 100.0f });
         quad->setColor({ 1.0f, 0.0f, 0.0f, 1.0f });
 
-        font = Font::getDefault();
-        text = new Text(font, TextState());
+        Handle handle = ResourceManager::ref().createAndLoadResource<ResourceFont>({ "assets/fonts/opensans/OpenSans-Regular.ttf" });
+        text = new Text(handle, TextState());
         text->setPosition({ 0.0f, 600.0f });
         text->setLayer(1.0f);
         text->setScale({ 50.0f,50.0f });
         text->setText("hello\nworld!");
         text->setLineSpacing(-0.1f);
+
+        RenderableManager::ref().addRenderable("Text", text);
     }
 
     Application::~Application()
     {
         delete quad;
-        font = nullptr;
-        delete text;
-        sprite = nullptr;
-        delete sheet;
+        RenderableManager::shutdown();
         Renderer::shutdown();
         delete window_;
-        SDL_Quit();
-
         ResourceManager::shutdown();
+        SDL_Quit();
         DBG_INFO("Application successfully shutdown");
         Logger::shutdown();
     }
@@ -113,17 +110,7 @@ namespace vine
         OrthographicCamera cam(0, 1280, 0, 720, -0.1f, -100.0f);
         Renderer::ref().beginScene(cam);
         // z is how many units away from the screen --> maybe renderer can handle the flip?
-        sprite->render();
-
-        glm::mat4 transform = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 600.0f, 1.0f)) * glm::scale(glm::mat4(1.0f), glm::vec3(25.0f, 25.0f, 1.0f));
-
-        //Renderer::TextParams params;
-        //params.color = { 1.0f, 1.0f, 1.0f, 1.0f };
-        //params.kerning = 0.0f;
-        //Renderer::ref().drawText("Hello\nworld!", font, transform, params);
-        text->render();
-
-        sheet->getSprite("wall_texture_gold.png")->render();
+        RenderableManager::ref().render();
         quad->render();
         Renderer::ref().endScene();
 
