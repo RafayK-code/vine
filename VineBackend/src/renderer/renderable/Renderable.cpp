@@ -18,6 +18,7 @@ namespace vine
 
     void Renderable::setShader(const std::string& name)
     {
+        shaderName_ = name;
         shader_ = ShaderCache::ref().get(name);
     }
 

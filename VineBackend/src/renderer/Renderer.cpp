@@ -468,4 +468,24 @@ namespace vine
             }
         }
     }
+
+    void Renderer::setActiveQuadShader(const std::string& shader, const std::string& vs, const std::string& fs)
+    {
+        data_->quadShader = ShaderCache::ref().load(shader, vs, fs);
+    }
+
+    void Renderer::setActiveQuadShader(const ShaderRef& shader)
+    {
+        data_->quadShader = shader;
+    }
+
+    void Renderer::setActiveTextShader(const std::string& shader, const std::string& vs, const std::string& fs)
+    {
+        data_->textShader = ShaderCache::ref().load(shader, vs, fs);
+    }
+
+    void Renderer::setActiveTextShader(const ShaderRef& shader)
+    {
+        data_->textShader = shader;
+    }
 }
