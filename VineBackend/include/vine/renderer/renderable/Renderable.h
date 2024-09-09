@@ -43,9 +43,10 @@ namespace vine
         bool isVisible() const { return state_.visible; }
         void setVisible(bool visible) { state_.visible = visible; }
 
-        const ShaderRef& getShader() const { return shader_; }
+        ShaderRef getShader() const { return shader_; }
+        const std::string& getShaderName() const { return shaderName_; }
+
         void setShader(const std::string& name);
-        void setShader(const ShaderRef& shader) { shader_ = shader; }
 
         const glm::mat4& getTransform() const { return transform_; }
 
@@ -54,6 +55,8 @@ namespace vine
 
     private:
         ShaderRef shader_;
+        std::string shaderName_;
+
         glm::mat4 transform_;
 
         RenderableState state_;

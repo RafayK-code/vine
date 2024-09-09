@@ -20,6 +20,7 @@ namespace vine
             resTex->load();
 
         texture_ = resTex->getTexture();
+        setShader("QuadShader");
     }
 
     Sprite::~Sprite()

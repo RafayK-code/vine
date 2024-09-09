@@ -7,6 +7,7 @@ namespace vine
     Quad::Quad(const RenderableState& state)
         : Renderable(state)
     {
+        setShader("QuadShader");
     }
 
     Quad::~Quad()

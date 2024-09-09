@@ -27,6 +27,10 @@ namespace vine
         
         void beginScene(const OrthographicCamera& camera);
         void endScene();
+
+        void startBatch();
+        void nextBatch();
+
         void flush();
         
         void drawQuad(const glm::vec2& position, const glm::vec2& scale, const glm::vec4& color);
@@ -47,11 +51,17 @@ namespace vine
 
         void drawText(const std::string& text, FontRef font, const glm::mat4& trnasform, const TextParams& params);
 
+        ShaderRef getActiveQuadShader() const { return data_->quadShader; }
+        ShaderRef getActiveTextShader() const { return data_->textShader; }
+
+        void setActiveQuadShader(const std::string& shader, const std::string& vs, const std::string& fs);
+        void setActiveQuadShader(const ShaderRef& shader);
+
+        void setActiveTextShader(const std::string& shader, const std::string& vs, const std::string& fs);
+        void setActiveTextShader(const ShaderRef& shader);
+
     private:
         Renderer(SDL_Window* window);
-
-        void startBatch();
-        void nextBatch();
 
     private:
         struct QuadVertex

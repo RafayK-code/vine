@@ -17,6 +17,7 @@ namespace vine
             resFont->load();
 
         font_ = resFont->getFont();
+        setShader("TextShader");
     }
 
     Text::~Text()
