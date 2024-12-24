@@ -27,7 +27,7 @@ public:
     {
         using namespace vine;
 
-        createSpritesFromSheet("assets/spritesheets/demo/sheet.xml");
+        RenderableManager::ref().createSpritesFromSheet("assets/spritesheets/demo/sheet.xml");
         Renderable* s = RenderableManager::ref().getRenderable("wall_texture_gold.png");
 
         s->setPosition({ 200.0f, 200.0f });

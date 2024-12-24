@@ -33,6 +33,8 @@ namespace vine
         Renderable* getRenderable(const std::string& name);
         void removeRenderable(const std::string& name);
 
+        void createSpritesFromSheet(const std::string& sheet, const RenderableState& defaultState = RenderableState());
+
     private:
         RenderableManager();
 
