@@ -24,14 +24,14 @@
 
 namespace vine
 {
-    Application::Application()
+    Application::Application(const ApplicationCreationSettings& settings)
     {
         Logger::init();
         DBG_ASSERT(SDL_Init(SDL_INIT_VIDEO) == 0, "SDL could not be initialized");
 
         ResourceManager::init();
 
-        window_ = new Window({ "Hello World", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 1280, 720 });
+        window_ = new Window(settings.windowProps);
         DBG_INFO("Window created successfully");
 
         Renderer::init(window_->getNativePtr());
@@ -45,45 +45,22 @@ namespace vine
         });
 
         running_ = true;
-
-        createSpritesFromSheet("assets/spritesheets/demo/sheet.xml");
-        Renderable* s = RenderableManager::ref().getRenderable("wall_texture_gold.png");
-
-        s->setPosition({ 200.0f, 200.0f });
-        s->setScale({ 100.0f, 100.0f });
-
-        Quad* quad = new Quad(RenderableState());
-        quad->setPosition({ 600.0f, 500.0f });
-        quad->setScale({ 100.0f, 100.0f });
-        quad->setColor({ 1.0f, 0.0f, 0.0f, 1.0f });
-        RenderableManager::ref().addRenderable("Quad", quad);
-
-        Handle handle = ResourceManager::ref().createAndLoadResource<ResourceFont>({ "assets/fonts/opensans/OpenSans-Regular.ttf" });
-        Text* text = new Text(handle, TextState());
-        text->setPosition({ 0.0f, 600.0f });
-        text->setLayer(1.0f);
-        text->setScale({ 50.0f,50.0f });
-        text->setText("hello\nworld!");
-        text->setLineSpacing(-0.1f);
-
-        RenderableManager::ref().addRenderable("Text", text);
     }
 
     Application::~Application()
     {
         RenderableManager::shutdown();
         Renderer::shutdown();
-        delete window_;
+        if (window_)
+            delete window_;
         ResourceManager::shutdown();
         SDL_Quit();
         DBG_INFO("Application successfully shutdown");
         Logger::shutdown();
     }
 
-    void Application::run()
+    void Application::tick()
     {
-        onTick();
-
         SDL_Event e;
         while (SDL_PollEvent(&e))
         {
@@ -93,12 +70,7 @@ namespace vine
             }
         }
 
-        Renderer::ref().clear();
-        OrthographicCamera cam(0, 1280, 0, 720, -0.1f, -100.0f);
-        Renderer::ref().beginScene(cam);
-        // z is how many units away from the screen --> maybe renderer can handle the flip?
-        RenderableManager::ref().render();
-        Renderer::ref().endScene();
+        onTick();
 
         window_->tick();
     }

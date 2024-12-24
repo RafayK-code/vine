@@ -12,7 +12,7 @@ namespace vine
         app->onInit();
         while (app->isRunning())
         {
-            app->run();
+            app->tick();
         }
         app->onShutdown();
         delete app;

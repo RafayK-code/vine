@@ -5,19 +5,26 @@
 
 namespace vine
 {
+    struct ApplicationCreationSettings
+    {
+        WindowProps windowProps;
+    };
+
     class Application
     {
     public:
-        Application();
+        Application(const ApplicationCreationSettings& settings);
         virtual ~Application();
 
         virtual void onInit() {}
         virtual void onTick() {}
         virtual void onShutdown() {}
 
-        void run();
+        void tick();
 
         bool isRunning() const { return running_; }
+
+        Window* getWindow() const { return window_; }
 
     private:
         bool running_;
