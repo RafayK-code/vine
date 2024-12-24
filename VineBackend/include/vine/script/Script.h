@@ -5,17 +5,20 @@
 
 namespace vine
 {
-	class Script
-	{
-	public:
-		Script(sol::state& lua);
-		~Script();
+    class Script
+    {
+    public:
+        Script(const std::string& file);
+        ~Script();
 
-		void loadScript(const std::string& script);
+        bool run();
+        bool runFunction(const std::string& function);
 
-	private:
-		const std::string luaFile_;
+        sol::state& getState() { return luaState_; }
+        const std::string& getName() const { return luaFile_; }
 
-		sol::state& lua_;
-	};
+    private:
+        const std::string luaFile_;
+        sol::state luaState_;
+    };
 }

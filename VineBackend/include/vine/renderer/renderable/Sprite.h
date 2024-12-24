@@ -39,6 +39,4 @@ namespace vine
         TextureRef texture_;
         Handle textureHandle_;
     };
-
-    void createSpritesFromSheet(const std::string& sheet, const RenderableState& defaultState = RenderableState());
 }
