@@ -1,17 +1,6 @@
 #include <SDL.h>
 
-#include <vine/core/Application.h>
-#include <vine/core/EntryPoint.h>
-
-#include <vine/renderer/Renderer.h>
-
-#include <vine/renderer/renderable/RenderableManager.h>
-#include <vine/renderer/renderable/Sprite.h>
-#include <vine/renderer/renderable/Quad.h>
-#include <vine/renderer/renderable/Text.h>
-
-#include <vine/resource/ResourceManager.h>
-#include <vine/resource/ResourceFont.h>
+#include <Vine.h>
 
 class MyApp : public vine::Application
 {
