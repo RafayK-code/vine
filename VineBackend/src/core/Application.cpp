@@ -15,12 +15,15 @@
 
 #include <vine/renderer/backend/Font.h>
 
+#include <vine/events/AppEvent.h>
+
 #include <iostream>
 
 #include <glad/glad.h>
 #include <glm/gtc/matrix_transform.hpp>
 
 #include <filesystem>
+#include <chrono>
 
 namespace vine
 {
@@ -61,6 +64,15 @@ namespace vine
 
     void Application::tick()
     {
+        static auto lastTime = std::chrono::high_resolution_clock::now();
+        auto currentTime = std::chrono::high_resolution_clock::now();
+
+        float dt = std::chrono::duration<float>(currentTime - lastTime).count();
+        lastTime = currentTime;
+
+        onTick();
+        window_->tick();
+
         SDL_Event e;
         while (SDL_PollEvent(&e))
         {
@@ -70,8 +82,7 @@ namespace vine
             }
         }
 
-        onTick();
-
-        window_->tick();
+        AppTickEvent e(dt);
+        dispatchEvent(e);
     }
 }

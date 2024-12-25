@@ -2,6 +2,7 @@
 
 #include <vine/window/Window.h>
 #include <vine/renderer/GraphicsContext.h>
+#include <vine/events/Event.h>
 
 namespace vine
 {
@@ -10,7 +11,7 @@ namespace vine
         WindowProps windowProps;
     };
 
-    class Application
+    class Application : public EventDispatcher
     {
     public:
         Application(const ApplicationCreationSettings& settings);
