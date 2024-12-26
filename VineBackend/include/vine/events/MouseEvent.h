@@ -10,20 +10,25 @@ namespace vine
     public:
         MouseCode getMouseButton() const { return button_; }
 
+        float getX() const { return mouseX_; }
+        float getY() const { return mouseY_; }
+
     protected:
-        MouseButtonEvent(MouseCode button)
-            : button_(button)
+        MouseButtonEvent(MouseCode button, float x, float y)
+            : button_(button), mouseX_(x), mouseY_(y)
         {
         }
 
         MouseCode button_;
+        float mouseX_;
+        float mouseY_;
     };
 
     class MouseButtonDownEvent : public MouseButtonEvent
     {
     public:
-        MouseButtonDownEvent(MouseCode button)
-            : MouseButtonEvent(button)
+        MouseButtonDownEvent(MouseCode button, float x, float y)
+            : MouseButtonEvent(button, x, y)
         {
         }
 
@@ -35,8 +40,8 @@ namespace vine
     class MouseButtonUpEvent : public MouseButtonEvent
     {
     public:
-        MouseButtonUpEvent(MouseCode button)
-            : MouseButtonEvent(button)
+        MouseButtonUpEvent(MouseCode button, float x, float y)
+            : MouseButtonEvent(button, x, y)
         {
         }
 

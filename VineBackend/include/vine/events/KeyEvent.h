@@ -50,16 +50,21 @@ namespace vine
         std::string getName() const override { return "KeyUpEvent"; }
     };
 
-    class KeyTypedEvent : public KeyEvent
+    class KeyTypedEvent : public Event
     {
     public:
-        KeyTypedEvent(KeyCode keycode)
-            : KeyEvent(keycode)
+        KeyTypedEvent(const std::string& text)
+            : text_(text)
         {
         }
+
+        const std::string& getText() const { return text_; }
 
         EventType getEventType() const override { return EventType::KeyTyped; }
         static EventType getStaticEventType() { return EventType::KeyTyped; }
         std::string getName() const override { return "KeyTypedEvent"; }
+
+    private:
+        std::string text_;
     };
 }

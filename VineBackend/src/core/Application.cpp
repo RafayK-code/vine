@@ -17,6 +17,8 @@
 
 #include <vine/events/AppEvent.h>
 
+#include <vine/controller/KeyboardMouseController.h>
+
 #include <iostream>
 
 #include <glad/glad.h>
@@ -47,11 +49,22 @@ namespace vine
             running_ = false;
         });
 
+        switch (settings.controllerType)
+        {
+        case Controller::Type::Keyboard:
+            controller_ = new KeyboardMouseController();
+            break;
+        default:
+            controller_ = nullptr;
+        }
+
         running_ = true;
     }
 
     Application::~Application()
     {
+        if (controller_)
+            delete controller_;
         RenderableManager::shutdown();
         Renderer::shutdown();
         if (window_)
@@ -73,16 +86,33 @@ namespace vine
         onTick();
         window_->tick();
 
-        SDL_Event e;
-        while (SDL_PollEvent(&e))
-        {
-            if (e.type == SDL_WINDOWEVENT)
-            {
-                window_->dispatchSDLEvents(&e);
-            }
-        }
+        processSDLEvents();
 
         AppTickEvent e(dt);
         dispatchEvent(e);
+    }
+
+    void Application::processSDLEvents()
+    {
+        SDL_Event e;
+        while (SDL_PollEvent(&e))
+        {
+            switch (e.type)
+            {
+            case SDL_WINDOWEVENT:
+                window_->dispatchSDLEvents(&e);
+                break;
+            case SDL_MOUSEMOTION:
+            case SDL_MOUSEBUTTONDOWN:
+            case SDL_MOUSEBUTTONUP:
+            case SDL_MOUSEWHEEL:
+            case SDL_KEYDOWN:
+            case SDL_KEYUP:
+            case SDL_TEXTINPUT:
+                if (controller_->getType() == Controller::Type::Keyboard)
+                    controller_->dispatchSDLEvents(&e);
+                break;
+            }
+        }
     }
 }
