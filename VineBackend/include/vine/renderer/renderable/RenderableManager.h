@@ -5,6 +5,7 @@
 
 #include <crossguid/guid.hpp>
 #include <vector>
+#include <map>
 
 namespace vine
 {
@@ -39,6 +40,17 @@ namespace vine
         RenderableManager();
 
     private:
-        std::unordered_map<std::string, Renderable*> renderables_;
+        using RenderableLookup = std::unordered_map<std::string, Renderable*>;
+
+        class DescendingComparator 
+        {
+        public:
+            bool operator()(const int& lhs, const int& rhs) const 
+            {
+                return lhs > rhs; // Reverse the default order
+            }
+        };
+
+        std::map<int, RenderableLookup, DescendingComparator> renderablesByLayer_;
     };
 }

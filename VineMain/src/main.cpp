@@ -30,8 +30,8 @@ public:
 
         Handle handle = ResourceManager::ref().createAndLoadResource<ResourceFont>({ "assets/fonts/opensans/OpenSans-Regular.ttf" });
         Text* text = new Text(handle, TextState());
-        text->setPosition({ 0.0f, 600.0f });
-        text->setLayer(1.0f);
+        text->setPosition({ 600.0f, 500.0f });
+        text->setLayer(2.0f);
         text->setScale({ 50.0f,50.0f });
         text->setText("hello\nworld!");
         text->setLineSpacing(-0.1f);
