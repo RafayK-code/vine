@@ -43,6 +43,8 @@ namespace vine
 
     void Window::dispatchSDLEvents(const SDL_Event* event)
     {
+        if (event->type != SDL_WINDOWEVENT)
+            return;
 
         switch (event->window.event)
         {

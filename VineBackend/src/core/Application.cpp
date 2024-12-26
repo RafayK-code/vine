@@ -97,22 +97,8 @@ namespace vine
         SDL_Event e;
         while (SDL_PollEvent(&e))
         {
-            switch (e.type)
-            {
-            case SDL_WINDOWEVENT:
-                window_->dispatchSDLEvents(&e);
-                break;
-            case SDL_MOUSEMOTION:
-            case SDL_MOUSEBUTTONDOWN:
-            case SDL_MOUSEBUTTONUP:
-            case SDL_MOUSEWHEEL:
-            case SDL_KEYDOWN:
-            case SDL_KEYUP:
-            case SDL_TEXTINPUT:
-                if (controller_->getType() == Controller::Type::Keyboard)
-                    controller_->dispatchSDLEvents(&e);
-                break;
-            }
+            window_->dispatchSDLEvents(&e);
+            controller_->dispatchSDLEvents(&e);
         }
     }
 }
