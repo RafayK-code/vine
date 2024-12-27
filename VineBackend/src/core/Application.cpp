@@ -39,14 +39,18 @@ namespace vine
         window_ = new Window(settings.windowProps);
         DBG_INFO("Window created successfully");
 
-        Renderer::init(window_->getNativePtr());
-        glViewport(0, 0, window_->getWidth(), window_->getHeight());
+        Renderer::init(window_);
+        Renderer::ref().setViewport({ 0, 0, window_->getWidth(), window_->getHeight() });
         Renderer::ref().setClearColor({ 0.0f, 0.0f, 0.0f, 0.0f });
 
         RenderableManager::init();
 
         window_->addEventCallback<WindowCloseEvent>([this](WindowCloseEvent& e) {
             running_ = false;
+        });
+
+        window_->addEventCallback<WindowResizeEvent>([](WindowResizeEvent& e) {
+            Renderer::ref().setViewport({ 0, 0, e.getWidth(), e.getHeight() });
         });
 
         switch (settings.controllerType)

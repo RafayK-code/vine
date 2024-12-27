@@ -7,7 +7,8 @@
 
 namespace vine
 {
-    Renderer::Renderer(SDL_Window* window)
+    Renderer::Renderer(Window* window)
+        : camera_(0.0f, window->getWidth(), 0.0f, window->getHeight(), -0.1f, -100.0f)
     {
         context_.createContext(window);
 
@@ -85,8 +86,8 @@ namespace vine
 
         data_->textShader = ShaderCache::ref().load("TextShader", "assets/shaders/text.vs", "assets/shaders/text.fs");
 
-        //glEnable(GL_DEPTH_TEST);
-        //glDepthFunc(GL_LESS);
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LESS);
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -97,7 +98,7 @@ namespace vine
         context_.destroyContext();
     }
 
-    void Renderer::init(SDL_Window* window)
+    void Renderer::init(Window* window)
     {
         getHiddenPtr() = new Renderer(window);
         getHiddenPtr()->initStatics();
@@ -106,6 +107,11 @@ namespace vine
     void Renderer::shutdown()
     {
         destroySingleton();
+    }
+
+    void Renderer::setViewport(const glm::vec4& dimensions)
+    {
+        glViewport(dimensions.x, dimensions.y, dimensions.z, dimensions.w);
     }
 
     void Renderer::setClearColor(const glm::vec4& color)
@@ -118,13 +124,13 @@ namespace vine
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
-    void Renderer::beginScene(const OrthographicCamera& camera)
+    void Renderer::beginScene()
     {
         data_->quadShader->bind();
-        data_->quadShader->uploadUniformMat4("u_ViewProjection", camera.getViewProjectionMatrix());
+        data_->quadShader->uploadUniformMat4("u_ViewProjection", camera_.getViewProjectionMatrix());
 
         data_->textShader->bind();
-        data_->textShader->uploadUniformMat4("u_ViewProjection", camera.getViewProjectionMatrix());
+        data_->textShader->uploadUniformMat4("u_ViewProjection", camera_.getViewProjectionMatrix());
 
         startBatch();
     }
@@ -183,117 +189,6 @@ namespace vine
         startBatch();
     }
 
-    void Renderer::drawQuad(const glm::vec2& position, const glm::vec2& scale, const glm::vec4& color)
-    {
-        drawQuad({ position.x, position.y, 0.0f }, scale, color);
-    }
-
-    void Renderer::drawQuad(const glm::vec3& position, const glm::vec2& scale, const glm::vec4& color)
-    {
-        data_->quadVertexBufferPtr->position = position;
-        data_->quadVertexBufferPtr->color = color;
-        data_->quadVertexBufferPtr->texCoord = { 0.0f, 0.0f };
-        data_->quadVertexBufferPtr->texIndex = 0.0f;
-        data_->quadVertexBufferPtr++;
-
-        data_->quadVertexBufferPtr->position = { position.x + scale.x, position.y, position.z };
-        data_->quadVertexBufferPtr->color = color;
-        data_->quadVertexBufferPtr->texCoord = { 1.0f, 0.0f };
-        data_->quadVertexBufferPtr->texIndex = 0.0f;
-        data_->quadVertexBufferPtr++;
-
-        data_->quadVertexBufferPtr->position = { position.x + scale.x, position.y + scale.y, position.z };
-        data_->quadVertexBufferPtr->color = color;
-        data_->quadVertexBufferPtr->texCoord = { 1.0f, 1.0f };
-        data_->quadVertexBufferPtr->texIndex = 0.0f;
-        data_->quadVertexBufferPtr++;
-
-        data_->quadVertexBufferPtr->position = { position.x, position.y + scale.y, position.z };
-        data_->quadVertexBufferPtr->color = color;
-        data_->quadVertexBufferPtr->texCoord = { 0.0f, 1.0f };
-        data_->quadVertexBufferPtr->texIndex = 0.0f;
-        data_->quadVertexBufferPtr++;
-
-        data_->quadIndexCount += 6;
-
-        /*
-        data_->flatColorShader->bind();
-        data_->flatColorShader->uploadUniformFloat4("u_Color", color);
-
-        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), { scale.x, scale.y, 1.0f });
-        data_->flatColorShader->uploadUniformMat4("u_Transform", transform);
-
-        data_->quadVertexArray->bind();
-        glDrawElements(GL_TRIANGLES, data_->quadVertexArray->getIndexBuffer()->getCount(), GL_UNSIGNED_INT, nullptr);
-        */
-    }
-
-    void Renderer::drawQuad(const glm::vec2& position, const glm::vec2& scale, const TextureRef& texture, glm::vec2 srcPos, glm::vec2 srcScale)
-    {
-        drawQuad({ position.x, position.y, 0.0f }, scale, texture, srcPos, srcScale);
-    }
-
-    void Renderer::drawQuad(const glm::vec3& position, const glm::vec2& scale, const TextureRef& texture, glm::vec2 srcPos, glm::vec2 srcScale)
-    {
-        constexpr glm::vec4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
-
-        float textureIndex = 0.0f;
-
-        for (uint32_t i = 0; i < data_->textureSlotIndex; i++)
-        {
-            if (*data_->textureSlots[i] == *texture)
-            {
-                textureIndex = (float)i;
-                break;
-            }
-        }
-
-        if (textureIndex == 0.0f)
-        {
-            textureIndex = (float)data_->textureSlotIndex;
-            data_->textureSlots[data_->textureSlotIndex] = texture;
-            data_->textureSlotIndex++;
-        }
-
-        data_->quadVertexBufferPtr->position = position;
-        data_->quadVertexBufferPtr->color = color;
-        data_->quadVertexBufferPtr->texCoord = { 0.0f, 0.0f };
-        data_->quadVertexBufferPtr->texIndex = textureIndex;
-        data_->quadVertexBufferPtr++;
-
-        data_->quadVertexBufferPtr->position = { position.x + scale.x, position.y, position.z };
-        data_->quadVertexBufferPtr->color = color;
-        data_->quadVertexBufferPtr->texCoord = { 1.0f, 0.0f };
-        data_->quadVertexBufferPtr->texIndex = textureIndex;
-        data_->quadVertexBufferPtr++;
-
-        data_->quadVertexBufferPtr->position = { position.x + scale.x, position.y + scale.y, position.z };
-        data_->quadVertexBufferPtr->color = color;
-        data_->quadVertexBufferPtr->texCoord = { 1.0f, 1.0f };
-        data_->quadVertexBufferPtr->texIndex = textureIndex;
-        data_->quadVertexBufferPtr++;
-
-        data_->quadVertexBufferPtr->position = { position.x, position.y + scale.y, position.z };
-        data_->quadVertexBufferPtr->color = color;
-        data_->quadVertexBufferPtr->texCoord = { 0.0f, 1.0f };
-        data_->quadVertexBufferPtr->texIndex = textureIndex;
-        data_->quadVertexBufferPtr++;
-
-        data_->quadIndexCount += 6;
-
-        /*
-        data_->textureShader->bind();
-        data_->textureShader->uploadUniformInt("u_Texture", 0);
-
-        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), { scale.x, scale.y, 1.0f });
-        data_->textureShader->uploadUniformMat4("u_Transform", transform);
-
-        texture->bind();
-
-        data_->quadVertexArray->bind();
-        glDrawElements(GL_TRIANGLES, data_->quadVertexArray->getIndexBuffer()->getCount(), GL_UNSIGNED_INT, nullptr);
-        */
-    }
     void Renderer::drawQuad(const glm::mat4& transform, const glm::vec4& color)
     {
         constexpr size_t quadVertexCount = 4;

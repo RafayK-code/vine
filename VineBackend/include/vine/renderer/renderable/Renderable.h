@@ -7,13 +7,31 @@
 
 namespace vine
 {
+    using RenderableLayerType = uint32_t;
+
+    namespace Layer
+    {
+        enum : RenderableLayerType
+        {
+            Background = 6,
+            CG = 5,
+            Game = 4,
+            Foreground = 3,
+            Effects = 2,
+            UI = 1
+        };
+
+        bool isValidLayer(RenderableLayerType layer);
+    }
+
     struct RenderableState
     {
         glm::vec2 pos = { 0.0f, 0.0f };
         glm::vec2 scale = { 0.0f, 0.0f };
         float rotation = 0.0f;
         glm::vec4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
-        float layer = 1;    // Used as z axis potentially
+        RenderableLayerType layer = Layer::Game;    // Used as z axis potentially
+        float priority = 0.0f;
         bool visible = true;
     };
 
@@ -37,8 +55,11 @@ namespace vine
         const glm::vec4& getColor() const { return state_.color; }
         void setColor(const glm::vec4& color) { state_.color = color; }
 
-        float getLayer() const { return state_.layer; }
-        void setLayer(float layer) { state_.layer = layer; updateTransform(); }
+        RenderableLayerType getLayer() const { return state_.layer; }
+        void setLayer(RenderableLayerType layer) { state_.layer = layer; updateTransform(); }
+
+        float getPriority() const { return state_.priority; }
+        void setPriority(float priority) { state_.priority = priority; updateTransform(); }
 
         bool isVisible() const { return state_.visible; }
         void setVisible(bool visible) { state_.visible = visible; }

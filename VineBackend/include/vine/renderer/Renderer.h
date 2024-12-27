@@ -7,6 +7,7 @@
 #include <vine/renderer/backend/ShaderCache.h>
 #include <vine/renderer/GraphicsContext.h>
 #include <vine/renderer/backend/Font.h>
+#include <vine/window/Window.h>
 
 #include <array>
 #include <string>
@@ -19,13 +20,16 @@ namespace vine
     public:
         ~Renderer();
 
-        static void init(SDL_Window* window);
+        static void init(Window* window);
         static void shutdown();
 
+        OrthographicCamera& getCamera() { return camera_; }
+
+        void setViewport(const glm::vec4& dimensions);
         void setClearColor(const glm::vec4& color);
         void clear();
         
-        void beginScene(const OrthographicCamera& camera);
+        void beginScene();
         void endScene();
 
         void startBatch();
@@ -33,12 +37,14 @@ namespace vine
 
         void flush();
         
+        /*
         void drawQuad(const glm::vec2& position, const glm::vec2& scale, const glm::vec4& color);
         void drawQuad(const glm::vec3& position, const glm::vec2& scale, const glm::vec4& color);
         
         void drawQuad(const glm::vec2& position, const glm::vec2& scale, const TextureRef& texture, glm::vec2 texPos = { -1.0f, -1.0f }, glm::vec2 texScale = { -1.0f, -1.0f });
         void drawQuad(const glm::vec3& position, const glm::vec2& scale, const TextureRef& texture, glm::vec2 texPos = { -1.0f, -1.0f }, glm::vec2 texScale = { -1.0f, -1.0f });
-        
+        */
+
         void drawQuad(const glm::mat4& transform, const glm::vec4& color);
         void drawQuad(const glm::mat4& transform, const TextureRef& texture, glm::vec2 texPos = { -1.0f, -1.0f }, glm::vec2 texScale = { -1.0f, -1.0f }, const glm::vec4& tintColor = { 1.0f, 1.0f, 1.0f, 1.0f });
 
@@ -61,7 +67,7 @@ namespace vine
         void setActiveTextShader(const ShaderRef& shader);
 
     private:
-        Renderer(SDL_Window* window);
+        Renderer(Window* window);
 
     private:
         struct QuadVertex
@@ -116,5 +122,6 @@ namespace vine
 
         std::unique_ptr<RendererData> data_;
         GraphicsContext context_;
+        OrthographicCamera camera_;
     };
 }

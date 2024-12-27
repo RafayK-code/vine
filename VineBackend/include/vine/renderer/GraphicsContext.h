@@ -1,6 +1,6 @@
 #pragma once
 
-#include <SDL.h>
+#include <vine/window/Window.h>
 
 namespace vine
 {
@@ -10,8 +10,10 @@ namespace vine
         GraphicsContext();
         ~GraphicsContext();
 
-        void createContext(SDL_Window* window);
+        void createContext(Window* window);
         void destroyContext();
+
+        SDL_GLContext getContext() const { return context_; }
 
     private:
         SDL_GLContext context_;

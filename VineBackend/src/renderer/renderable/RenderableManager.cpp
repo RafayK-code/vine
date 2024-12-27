@@ -17,13 +17,21 @@ namespace vine
 {
     RenderableManager::RenderableManager()
     {
+        renderables_.emplace(Layer::Background, new RenderableLayer(Layer::Background));
+        renderables_.emplace(Layer::CG, new RenderableLayer(Layer::CG));
+        renderables_.emplace(Layer::Game, new RenderableLayer(Layer::Game));
+        renderables_.emplace(Layer::Foreground, new RenderableLayer(Layer::Foreground));
+        renderables_.emplace(Layer::Effects, new RenderableLayer(Layer::Effects));
+        renderables_.emplace(Layer::UI, new RenderableLayer(Layer::UI));
     }
 
     RenderableManager::~RenderableManager()
     {
-        for (const auto& layerPair : renderablesByLayer_)
-            for (const auto& pair : layerPair.second)
+        for (const auto& pair : renderables_)
+        {
+            if (pair.second)
                 delete pair.second;
+        }
     }
 
     void RenderableManager::init()
@@ -38,88 +46,26 @@ namespace vine
 
     void RenderableManager::render() const
     {
-        std::unordered_map<std::string, std::vector<Renderable*>> quadRenderablesByShader;
-        std::unordered_map<std::string, std::vector<Renderable*>> textRenderablesByShader;
-
-        for (const auto& layerPair : renderablesByLayer_)
+        for (const auto& pair : renderables_)
         {
-            for (const auto& pair : layerPair.second)
-            {
-                if (!pair.second)
-                    continue;
-
-                std::string shaderName = pair.second->getShaderName();
-                if (dynamic_cast<Text*>(pair.second))
-                    textRenderablesByShader[shaderName].push_back(pair.second);
-                else
-                    quadRenderablesByShader[shaderName].push_back(pair.second);
-            }
-
-            auto textIt = textRenderablesByShader.begin();
-            for (const auto& pair : quadRenderablesByShader)
-            {
-                ShaderRef shader = ShaderCache::ref().get(pair.first);
-                Renderer::ref().setActiveQuadShader(shader);
-
-                for (auto& renderable : pair.second)
-                    renderable->render();
-
-                if (textIt != textRenderablesByShader.end())
-                {
-                    ShaderRef shader = ShaderCache::ref().get(textIt->first);
-                    Renderer::ref().setActiveTextShader(shader);
-
-                    for (auto& renderable : textIt->second)
-                        renderable->render();
-
-                    textIt++;
-                }
-
-                Renderer::ref().nextBatch();
-            }
-
-            while (textIt != textRenderablesByShader.end())
-            {
-                ShaderRef shader = ShaderCache::ref().get(textIt->first);
-                Renderer::ref().setActiveTextShader(shader);
-
-                for (auto& renderable : textIt->second)
-                    renderable->render();
-
-                Renderer::ref().nextBatch();
-                textIt++;
-            }
-
-            quadRenderablesByShader.clear();
-            textRenderablesByShader.clear();
+            if (pair.second)
+                pair.second->render();
         }
     }
 
     Renderable* RenderableManager::addRenderable(const std::string& name, Renderable* renderable)
     {
-        auto it = renderablesByLayer_.find(renderable->getLayer());
-        if (it != renderablesByLayer_.end())
-        {
-            auto it2 = it->second.find(name);
-            if (it2 != it->second.end())
-            {
-                DBG_WARN("Renderable with name: {0} already exists! Freeing renderable passed in, returning existing renderable", name);
-                delete renderable;
-                return it2->second;
-            }
-        }
-
-        renderablesByLayer_[renderable->getLayer()].insert({ name, renderable });
-        return renderable;
+        DBG_ASSERT(Layer::isValidLayer(renderable->getLayer()), "Renderable is not on a valid layer");
+        return renderables_[renderable->getLayer()]->addRenderable(name, renderable);
     }
 
     Renderable* RenderableManager::getRenderable(const std::string& name)
     {
-        for (const auto& pair : renderablesByLayer_)
+        for (const auto& pair : renderables_)
         {
-            auto it = pair.second.find(name);
-            if (it != pair.second.end())
-                return it->second;
+            Renderable* renderable = pair.second->getRenderable(name);
+            if (renderable)
+                return renderable;
         }
 
         return nullptr;
@@ -127,14 +73,13 @@ namespace vine
 
     void RenderableManager::removeRenderable(const std::string& name)
     {
-        for (auto& pair : renderablesByLayer_)
+        for (auto& pair : renderables_)
         {
-            auto it = pair.second.find(name);
-            if (it == pair.second.end())
-                continue;
-
-            delete it->second;
-            pair.second.erase(it);
+            if (pair.second->hasRenderable(name));
+            {
+                pair.second->removeRenderable(name);
+                return;
+            }
         }
     }
 

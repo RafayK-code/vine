@@ -15,9 +15,9 @@ namespace vine
     {
     }
 
-    void GraphicsContext::createContext(SDL_Window* window)
+    void GraphicsContext::createContext(Window* window)
     {
-        context_ = SDL_GL_CreateContext(window);
+        context_ = SDL_GL_CreateContext(window->getNativePtr());
         int status = gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress);
         DBG_ASSERT(status, "Failed to initialize glad");
     }
