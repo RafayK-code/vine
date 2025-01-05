@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <vector>
+#include <memory>
 
 namespace vine
 {
@@ -82,4 +83,7 @@ namespace vine
         std::vector<uint32_t> colorAttachments_;
         uint32_t depthAttachment_;
     };
+
+    using FramebufferRef = std::shared_ptr<Framebuffer>;
+    FramebufferRef createFramebuffer(const FramebufferSpecification& spec);
 }

@@ -74,7 +74,7 @@ namespace vine
         return false;
     }
 
-    static bool framebufferTextureFormatToGL(FramebufferTextureFormat format)
+    static GLenum framebufferTextureFormatToGL(FramebufferTextureFormat format)
     {
         switch (format)
         {
@@ -114,7 +114,7 @@ namespace vine
     {
         if (rendererID_ > 0)
         {
-            glDeleteTextures(1, &rendererID_);
+            glDeleteFramebuffers(1, &rendererID_);
             glDeleteTextures(colorAttachments_.size(), colorAttachments_.data());
             glDeleteTextures(1, &depthAttachment_);
 
@@ -228,5 +228,10 @@ namespace vine
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glDeleteFramebuffers(1, &framebuffer);
+    }
+
+    FramebufferRef createFramebuffer(const FramebufferSpecification& spec)
+    {
+        return std::make_shared<Framebuffer>(spec);
     }
 }

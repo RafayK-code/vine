@@ -19,6 +19,8 @@ namespace vine
     {
     public:
         Sprite(const Handle& textureHandle, const SpriteState& state);
+        Sprite(const TextureRef& texture, const SpriteState& state);
+
         virtual ~Sprite();
 
         virtual void render() const override;

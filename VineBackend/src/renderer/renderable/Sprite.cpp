@@ -21,6 +21,12 @@ namespace vine
         setShader("QuadShader");
     }
 
+    Sprite::Sprite(const TextureRef& texture, const SpriteState& state)
+        : Renderable(state), spritePos_(state.spritePos), spriteScale_(state.spriteScale), textureHandle_(xg::Guid()), texture_(texture)
+    {
+        setShader("QuadShader");
+    }
+
     Sprite::~Sprite()
     {
     }

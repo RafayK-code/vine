@@ -1,6 +1,7 @@
 #include <SDL.h>
 
 #include <Vine.h>
+#include <vine/renderer/backend/Framebuffer.h>
 
 class MyApp : public vine::Application
 {
@@ -15,6 +16,18 @@ public:
     void onInit() override 
     {
         using namespace vine;
+
+        FramebufferSpecification spec;
+        spec.width = 1280;
+        spec.height = 720;
+        spec.attachments = {
+            FramebufferAttachmentSpecification({
+                {FramebufferTextureFormat::RGBA8},
+                {FramebufferTextureFormat::DEPTH24STENCIL8}
+            })
+        };
+
+        framebuffer_ = createFramebuffer(spec);
 
         RenderableManager::ref().createSpritesFromSheet("assets/spritesheets/demo/sheet.xml");
         Renderable* s = RenderableManager::ref().getRenderable("wall_texture_gold.png");
@@ -32,7 +45,7 @@ public:
         Text* text = new Text(handle, TextState());
         text->setPosition({ 600.0f, 500.0f });
         text->setLayer(Layer::Background);
-        text->setScale({ 50.0f,50.0f });
+        text->setScale({ 200.0f,200.0f });
         text->setText("hello\nworld!");
         text->setColor({ 0.0f, 1.0f, 0.0f, 1.0f });
         text->setLineSpacing(-0.1f);
@@ -44,15 +57,20 @@ public:
     {
         using namespace vine;
 
+        //framebuffer_->bind();
         Renderer::ref().clear();
         Renderer::ref().beginScene();
         RenderableManager::ref().render();
         Renderer::ref().endScene();
+        //framebuffer_->unbind();
     }
 
     void onShutdown() override 
     {
     }
+
+private:
+    vine::FramebufferRef framebuffer_ = nullptr;
 };
 
 vine::Application* vine::createApplication(int argc, char** argv)
