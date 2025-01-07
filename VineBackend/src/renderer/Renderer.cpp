@@ -149,7 +149,10 @@ namespace vine
 
             for (uint32_t i = 0; i < data_->textureSlotIndex; i++)
             {
-                data_->textureSlots[i]->bind(i);
+                if (TextureRef* tex = std::get_if<TextureRef>(&data_->textureSlots[i]))
+                    (*tex)->bind(i);
+                else if (FramebufferRef* buf = std::get_if<FramebufferRef>(&data_->textureSlots[i]))
+                    (*buf)->bindToTexture(i);
             }
 
             data_->quadShader->bind();
@@ -210,7 +213,7 @@ namespace vine
         data_->quadIndexCount += 6;
     }
 
-    void Renderer::drawQuad(const glm::mat4& transform, const TextureRef& texture, glm::vec2 srcPos, glm::vec2 srcScale, const glm::vec4& tintColor)
+    void Renderer::drawQuad(const glm::mat4& transform, const TextureRef& texture, const glm::vec2& srcPos, const glm::vec2& srcScale, const glm::vec4& tintColor)
     {
         constexpr size_t quadVertexCount = 4;
         glm::vec2 texCoords[] = { {0.0f, 0.0f}, {1.0f, 0.0f}, {1.0f, 1.0f}, {0.0f, 1.0f} };
@@ -236,10 +239,13 @@ namespace vine
 
         for (uint32_t i = 0; i < data_->textureSlotIndex; i++)
         {
-            if (*data_->textureSlots[i] == *texture)
+            if (TextureRef* tex = std::get_if<TextureRef>(&data_->textureSlots[i]))
             {
-                textureIndex = (float)i;
-                break;
+                if (**tex == *texture)
+                {
+                    textureIndex = (float)i;
+                    break;
+                }
             }
         }
 
@@ -250,6 +256,61 @@ namespace vine
 
             textureIndex = (float)data_->textureSlotIndex;
             data_->textureSlots[data_->textureSlotIndex] = texture;
+            data_->textureSlotIndex++;
+        }
+
+        for (size_t i = 0; i < quadVertexCount; i++)
+        {
+            data_->quadVertexBufferPtr->position = transform * data_->quadVertexPositions[i];
+            data_->quadVertexBufferPtr->color = tintColor;
+            data_->quadVertexBufferPtr->texCoord = texCoords[i];
+            data_->quadVertexBufferPtr->texIndex = textureIndex;
+            data_->quadVertexBufferPtr++;
+        }
+
+        data_->quadIndexCount += 6;
+    }
+
+    void Renderer::drawQuad(const glm::mat4& transform, const FramebufferRef& framebuffer, const glm::vec2& srcPos, const glm::vec2& srcScale, const glm::vec4& tintColor)
+    {
+        constexpr size_t quadVertexCount = 4;
+        glm::vec2 texCoords[] = { {0.0f, 0.0f}, {1.0f, 0.0f}, {1.0f, 1.0f}, {0.0f, 1.0f} };
+
+        if (srcPos.x >= 0.0f && srcPos.y >= 0.0f && srcScale.x >= 0.0f && srcScale.y >= 0.0f)
+        {
+            float srcXNorm = srcPos.x / (float)framebuffer->getSpecification().width;
+            float srcYNorm = srcPos.y / (float)framebuffer->getSpecification().height;
+
+            float srcWNorm = srcScale.x / (float)framebuffer->getSpecification().width;
+            float srcHNorm = srcScale.y / (float)framebuffer->getSpecification().height;
+
+            texCoords[0] = { srcXNorm, srcYNorm };
+            texCoords[1] = { srcXNorm + srcWNorm, srcYNorm };
+            texCoords[2] = { srcXNorm + srcWNorm, srcYNorm + srcHNorm };
+            texCoords[3] = { srcXNorm, srcYNorm + srcHNorm };
+        }
+
+        float textureIndex = 0.0f;
+
+        for (uint32_t i = 0; i < data_->textureSlotIndex; i++)
+        {
+            if (FramebufferRef* buf = std::get_if<FramebufferRef>(&data_->textureSlots[i]))
+            {
+                if (**buf == *framebuffer)
+                {
+                    textureIndex = (float)i;
+                    break;
+                }
+            }
+        }
+
+        if (textureIndex == 0.0f)
+        {
+            if (data_->textureSlotIndex >= data_->maxTextureSlots)
+                nextBatch();
+
+            textureIndex = (float)data_->textureSlotIndex;
+            data_->textureSlots[data_->textureSlotIndex] = framebuffer;
             data_->textureSlotIndex++;
         }
 

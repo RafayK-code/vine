@@ -65,6 +65,9 @@ namespace vine
         void bind() const;
         void unbind() const;
 
+        void bindToTexture(uint32_t slot = 0) const;
+        void unbindToTexture(uint32_t slot = 0) const;
+
         void resize(uint32_t width, uint32_t height);
         int readPixel(uint32_t attachmentIndex, int x, int y);
 
@@ -72,6 +75,8 @@ namespace vine
         uint32_t getColorAttachmentID(uint32_t index = 0) { return colorAttachments_[index]; }
 
         const FramebufferSpecification& getSpecification() const { return specification_; }
+
+        bool operator==(const Framebuffer& other) { return rendererID_ == other.rendererID_; }
 
     private:
         uint32_t rendererID_;

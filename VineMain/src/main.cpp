@@ -3,6 +3,8 @@
 #include <Vine.h>
 #include <vine/renderer/backend/Framebuffer.h>
 
+#include <glm/gtc/matrix_transform.hpp>
+
 class MyApp : public vine::Application
 {
 public:
@@ -57,12 +59,20 @@ public:
     {
         using namespace vine;
 
-        //framebuffer_->bind();
+        framebuffer_->bind();
         Renderer::ref().clear();
         Renderer::ref().beginScene();
         RenderableManager::ref().render();
         Renderer::ref().endScene();
-        //framebuffer_->unbind();
+        framebuffer_->unbind();
+
+        Renderer::ref().clear();
+        Renderer::ref().beginScene();
+        glm::mat4 transform = glm::translate(glm::mat4(1.0f), { 1280.0f / 2.0f, 720.0f / 2.0f, 10 }) *
+            glm::rotate(glm::mat4(1.0f), glm::radians(0.0f), glm::vec3(0.0f, 0.0f, 1.0f)) *
+            glm::scale(glm::mat4(1.0f), { 1280.0f, 720.0f, 1.0f });
+        Renderer::ref().drawQuad(transform, framebuffer_);
+        Renderer::ref().endScene();
     }
 
     void onShutdown() override 

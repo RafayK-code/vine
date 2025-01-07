@@ -187,6 +187,18 @@ namespace vine
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
+    void Framebuffer::bindToTexture(uint32_t slot) const
+    {
+        glActiveTexture(GL_TEXTURE0 + slot);
+        glBindTexture(GL_TEXTURE_2D, colorAttachments_[0]);
+    }
+
+    void Framebuffer::unbindToTexture(uint32_t slot) const
+    {
+        glActiveTexture(GL_TEXTURE0 + slot);
+        glBindTexture(GL_TEXTURE_2D, colorAttachments_[0]);
+    }
+
     void Framebuffer::resize(uint32_t width, uint32_t height)
     {
         if (width == 0 || height == 0 || width > MAX_FRAMEBUFFER_SIZE || height > MAX_FRAMEBUFFER_SIZE)

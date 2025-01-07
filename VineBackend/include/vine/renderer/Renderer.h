@@ -5,12 +5,14 @@
 #include <vine/util/Singleton.h>
 #include <vine/renderer/backend/VertexArray.h>
 #include <vine/renderer/backend/ShaderCache.h>
+#include <vine/renderer/backend/Framebuffer.h>
 #include <vine/renderer/GraphicsContext.h>
 #include <vine/renderer/backend/Font.h>
 #include <vine/window/Window.h>
 
 #include <array>
 #include <string>
+#include <variant>
 
 namespace vine
 {
@@ -46,7 +48,8 @@ namespace vine
         */
 
         void drawQuad(const glm::mat4& transform, const glm::vec4& color);
-        void drawQuad(const glm::mat4& transform, const TextureRef& texture, glm::vec2 texPos = { -1.0f, -1.0f }, glm::vec2 texScale = { -1.0f, -1.0f }, const glm::vec4& tintColor = { 1.0f, 1.0f, 1.0f, 1.0f });
+        void drawQuad(const glm::mat4& transform, const TextureRef& texture, const glm::vec2& texPos = { -1.0f, -1.0f }, const glm::vec2& texScale = { -1.0f, -1.0f }, const glm::vec4& tintColor = { 1.0f, 1.0f, 1.0f, 1.0f });
+        void drawQuad(const glm::mat4& transform, const FramebufferRef& framebuffer, const glm::vec2& texPos = { -1.0f, -1.0f }, const glm::vec2& texScale = { -1.0f, -1.0f }, const glm::vec4& tintColor = { 1.0f, 1.0f, 1.0f, 1.0f });
 
         struct TextParams
         {
@@ -85,6 +88,8 @@ namespace vine
             glm::vec2 texCoord;
         };
 
+        using RenderTexture = std::variant<TextureRef, FramebufferRef>;
+
         struct RendererData
         {
             const uint32_t maxQuads = 10000;
@@ -110,7 +115,7 @@ namespace vine
             TextVertex* textVertexBufferPtr = nullptr;
 
             TextureRef whiteTexture;
-            std::array<TextureRef, maxTextureSlots> textureSlots;
+            std::array<RenderTexture, maxTextureSlots> textureSlots;
             uint32_t textureSlotIndex = 1;
 
             glm::vec4 quadVertexPositions[4];
