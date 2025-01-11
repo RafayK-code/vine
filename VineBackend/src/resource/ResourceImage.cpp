@@ -3,7 +3,7 @@
 namespace vine
 {
     ResourceImage::ResourceImage(const ResourceCreationData& data)
-        : Resource(data)
+        : Resource(data), texture_(nullptr)
     {
         creationData_->type = ResourceDataType::ResourceDataTypeImage;
     }

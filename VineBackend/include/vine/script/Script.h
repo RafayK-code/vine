@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <memory>
 #include <sol/sol.hpp>
 
 namespace vine
@@ -21,4 +22,7 @@ namespace vine
         const std::string luaFile_;
         sol::state luaState_;
     };
+
+    using ScriptRef = std::shared_ptr<Script>;
+    ScriptRef createScript(const std::string& file);
 }

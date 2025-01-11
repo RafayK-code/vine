@@ -47,4 +47,9 @@ namespace vine
             return false;
         }
     }
+
+    ScriptRef createScript(const std::string& file)
+    {
+        return std::make_shared<Script>(file);
+    }
 }

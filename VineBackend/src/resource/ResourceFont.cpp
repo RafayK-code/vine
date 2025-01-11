@@ -3,7 +3,7 @@
 namespace vine
 {
     ResourceFont::ResourceFont(const ResourceCreationData& data)
-        : Resource(data)
+        : Resource(data), font_(nullptr)
     {
         creationData_->type = ResourceDataType::ResourceDataTypeFont;
     }

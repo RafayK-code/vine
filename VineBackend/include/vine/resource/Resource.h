@@ -13,6 +13,7 @@ namespace vine
         ResourceDataTypeNone = 0,
         ResourceDataTypeImage,
         ResourceDataTypeFont,
+        ResourceDataTypeScript,
     };
 
     class ResourceCreationData
