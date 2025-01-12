@@ -53,6 +53,11 @@ file(GLOB VINE_CONTROLLER
     "${VINE_BACKEND_SRC_PATH}/controller/*.cpp"
 )
 
+file(GLOB VINE_TWEEN
+    "${VINE_BACKEND_INC_PATH}/vine/tween/*.h"
+    "${VINE_BACKEND_SRC_PATH}/tween/*.cpp"
+)
+
 source_group("core" FILES ${VINE_CORE})
 source_group("core\\codes" FILES ${VINE_CORE_CODES})
 source_group("events" FILES ${VINE_EVENTS})
@@ -64,3 +69,4 @@ source_group("window" FILES ${VINE_WINDOW})
 source_group("resource" FILES ${VINE_RESOURCE})
 source_group("script" FILES ${VINE_SCRIPT})
 source_group("controller" FILES ${VINE_CONTROLLER})
+source_group("tween" FILES ${VINE_TWEEN})
