@@ -21,6 +21,8 @@ namespace vine
     {
     public:
         Text(const Handle& fontHandle, const TextState& state);
+        Text(const FontRef& font, const TextState& state);
+
         virtual ~Text();
 
         virtual void render() const;

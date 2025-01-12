@@ -20,6 +20,12 @@ namespace vine
         setShader("TextShader");
     }
 
+    Text::Text(const FontRef& font, const TextState& state)
+        : Renderable(state), fontHandle_(xg::Guid()), text_(state.text), kerning_(state.kerning), lineSpacing_(state.lineSpacing), font_(font)
+    {
+        setShader("TextShader";)
+    }
+
     Text::~Text()
     {
     }
