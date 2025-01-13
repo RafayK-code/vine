@@ -20,23 +20,13 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${VINE_MAIN_SRC_PATH})
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/VineBackend/include)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE VineBackend)
-target_link_libraries(${PROJECT_NAME} PRIVATE lua_static)
-target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2)
-if(TARGET SDL2::SDL2main)
-    target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2main)
-endif()
-target_link_libraries(${PROJECT_NAME} PRIVATE sol2::sol2)
-target_link_libraries(${PROJECT_NAME} PRIVATE spdlog)
-target_link_libraries(${PROJECT_NAME} PRIVATE glad)
-target_link_libraries(${PROJECT_NAME} PRIVATE stb)
-target_link_libraries(${PROJECT_NAME} PRIVATE pugixml)
-target_link_libraries(${PROJECT_NAME} PRIVATE crossguid)
-target_link_libraries(${PROJECT_NAME} PRIVATE msdf-atlas-gen)
 
 add_custom_target(
     copy_assets ALL
     COMMAND ${CMAKE_COMMAND} -E copy_directory
     "${VINE_MAIN_ASSETS_PATH}" "${CMAKE_BINARY_DIR}/${PROJECT_NAME}/assets"
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    "${VINE_MAIN_ASSETS_PATH}" "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/assets"
     COMMENT "Copying assets to output directory"
 )
 
