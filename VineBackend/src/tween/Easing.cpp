@@ -201,7 +201,7 @@ namespace vine
             float p = totalTime * 0.3f;
             float s = p / 4.0f;
             currTime--;
-            return -(delta * Math::pow(2.0f, 10.0f * currTime) * Math::sin((currTime * totalTime - s) * 2.0f * Math::PI / p)) + initial;
+            return -(delta * Math::pow(2.0f, 10.0f * currTime) * Math::sin((currTime * totalTime - s) * Math::TWO_PI / p)) + initial;
         }
 
         float Elastic::easeOut(float currTime, float initial, float delta, float totalTime)
@@ -215,7 +215,7 @@ namespace vine
 
             float p = totalTime * 0.3f;
             float s = p / 4.0f;
-            return delta * Math::pow(2.0f, -10.0f * currTime) * Math::sin((currTime * totalTime - s) * 2.0f * Math::PI / p) + delta + initial;
+            return delta * Math::pow(2.0f, -10.0f * currTime) * Math::sin((currTime * totalTime - s) * Math::TWO_PI / p) + delta + initial;
         }
 
         float Elastic::easeInOut(float currTime, float initial, float delta, float totalTime)
@@ -231,10 +231,11 @@ namespace vine
             float a = delta;
             float s = p / 4.0f;
             currTime--;
-            if (currTime < 1.0f)
-                return -0.5f * a * Math::pow(2.0f, 10.0f * currTime) * Math::sin((currTime * totalTime - s) * 2.0f * Math::PI / p) + initial;
 
-            return a * Math::pow(2.0f, -10.0f * currTime) * Math::sin((currTime * totalTime - s) * 2.0f * Math::PI / p) / 2.0f + delta + initial;
+            if (currTime < 0.0f)
+                return -0.5f * (a * Math::pow(2.0f, 10.0f * currTime) * Math::sin((currTime * totalTime - s) * Math::TWO_PI / p)) + initial;
+
+            return a * Math::pow(2.0f, -10.0f * currTime) * Math::sin((currTime * totalTime - s) * Math::TWO_PI / p) * 0.5f + delta + initial;
         }
 
         float Bounce::easeIn(float currTime, float initial, float delta, float totalTime)

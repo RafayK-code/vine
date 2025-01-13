@@ -26,6 +26,9 @@
 #include <vine/resource/ResourceImage.h>
 #include <vine/resource/ResourceManager.h>
 
+#include <vine/tween/Easing.h>
+
 #include <vine/window/Window.h>
 
 #include <vine/util/Singleton.h>
+#include <vine/util/Math.h>

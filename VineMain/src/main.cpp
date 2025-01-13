@@ -38,7 +38,7 @@ public:
         s->setScale({ 100.0f, 100.0f });
 
         Quad* quad = new Quad(RenderableState());
-        quad->setPosition({ 600.0f, 500.0f });
+        quad->setPosition({ 400.0f, 500.0f });
         quad->setScale({ 100.0f, 100.0f });
         quad->setColor({ 1.0f, 0.0f, 0.0f, 0.7f });
         RenderableManager::ref().addRenderable("Quad", quad);
@@ -55,9 +55,21 @@ public:
         RenderableManager::ref().addRenderable("Text", text);
     }
 
-    void onTick() override 
+    void onTick(float dt) override 
     {
         using namespace vine;
+
+        elapsedTime_ += dt * direction_;
+        if (elapsedTime_ > duration_ || elapsedTime_ < 0.0f)
+        {
+            direction_ *= -1; // Reverse direction
+            elapsedTime_ = glm::clamp(elapsedTime_, 0.0f, duration_);
+        }
+
+        // Apply linear easing
+        float easedX = easing::Elastic::easeInOut(elapsedTime_, startX_, endX_ - startX_, duration_);
+
+        RenderableManager::ref().getRenderable("Quad")->setPosition({ easedX, 500.0f });
 
         framebuffer_->bind();
         Renderer::ref().clear();
@@ -81,6 +93,12 @@ public:
 
 private:
     vine::FramebufferRef framebuffer_ = nullptr;
+
+    float startX_ = 800.0f;
+    float endX_ = 400.0f;
+    float duration_ = 2.5f;
+    float elapsedTime_ = 0.0f;
+    int direction_ = 1; // Move right initially
 };
 
 vine::Application* vine::createApplication(int argc, char** argv)

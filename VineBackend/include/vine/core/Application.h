@@ -20,7 +20,7 @@ namespace vine
         virtual ~Application();
 
         virtual void onInit() {}
-        virtual void onTick() {}
+        virtual void onTick(float dt) {}
         virtual void onShutdown() {}
 
         void tick();

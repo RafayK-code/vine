@@ -87,11 +87,11 @@ namespace vine
         float dt = std::chrono::duration<float>(currentTime - lastTime).count();
         lastTime = currentTime;
 
-        onTick();
         window_->tick();
 
         processSDLEvents();
 
+        onTick(dt);
         AppTickEvent e(dt);
         dispatchEvent(e);
     }
