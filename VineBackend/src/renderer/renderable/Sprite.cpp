@@ -29,4 +29,9 @@ namespace vine
     {
         Renderer::ref().drawQuad(getTransform(), texture_, getSpritePos(), getSpriteScale(), getColor());
     }
+
+    Renderable* Sprite::clone() const
+    {
+        return new Sprite(*this);
+    }
 }

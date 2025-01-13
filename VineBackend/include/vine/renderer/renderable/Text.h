@@ -22,7 +22,8 @@ namespace vine
 
         virtual ~Text();
 
-        virtual void render() const;
+        virtual void render() const override;
+        virtual Renderable* clone() const override;
 
         const std::string& getText() const { return text_; }
         void setText(const std::string& text) { text_ = text; }

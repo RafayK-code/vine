@@ -37,6 +37,11 @@ public:
         s->setPosition({ 200.0f, 200.0f });
         s->setScale({ 100.0f, 100.0f });
 
+        Renderable* s2 = s->clone();
+        s2->setPosition({ 400.0f, 200.0f });
+        s2->setScale({150.0f, 150.0f});
+        RenderableManager::ref().addRenderable("Sprite2", s2);
+
         Quad* quad = new Quad(RenderableState());
         quad->setPosition({ 400.0f, 500.0f });
         quad->setScale({ 100.0f, 100.0f });

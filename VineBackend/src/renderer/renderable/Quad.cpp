@@ -18,4 +18,9 @@ namespace vine
     {
         Renderer::ref().drawQuad(getTransform(), getColor());
     }
+
+    Renderable* Quad::clone() const
+    {
+        return new Quad(*this);
+    }
 }

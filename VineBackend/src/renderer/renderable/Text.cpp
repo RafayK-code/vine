@@ -28,4 +28,9 @@ namespace vine
     {
         Renderer::ref().drawText(text_, font_, getTransform(), { getColor(), kerning_, lineSpacing_ });
     }
+
+    Renderable* Text::clone() const
+    {
+        return new Text(*this);
+    }
 }

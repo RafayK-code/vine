@@ -42,6 +42,7 @@ namespace vine
         virtual ~Renderable();
 
         virtual void render() const = 0;
+        virtual Renderable* clone() const = 0;
 
         const glm::vec2& getPosition() const { return state_.pos; }
         void setPosition(const glm::vec2& pos) { state_.pos = pos; updateTransform(); }
