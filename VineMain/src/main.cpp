@@ -67,7 +67,7 @@ public:
         }
 
         // Apply linear easing
-        float easedX = easing::Elastic::easeInOut(elapsedTime_, startX_, endX_ - startX_, duration_);
+        float easedX = easing::Circular::easeInOut(elapsedTime_, startX_, endX_ - startX_, duration_);
 
         RenderableManager::ref().getRenderable("Quad")->setPosition({ easedX, 500.0f });
 

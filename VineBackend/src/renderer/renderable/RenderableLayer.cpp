@@ -46,7 +46,10 @@ namespace vine
             Renderer::ref().setActiveQuadShader(shader);
 
             for (auto& renderable : pair.second)
-                renderable->render();
+            {
+                if (renderable->isVisible())
+                    renderable->render();
+            }
 
             if (textIt != textRenderablesByShader.end())
             {
