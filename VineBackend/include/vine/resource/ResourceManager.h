@@ -2,9 +2,8 @@
 
 #include <vine/resource/Resource.h>
 #include <vine/util/Singleton.h>
-#include <vine/renderer/renderable/Sprite.h>
 
-#include <unordered_map>
+#include <map>
 
 namespace vine
 {
@@ -17,10 +16,10 @@ namespace vine
         static void init();
         static void shutdown();
 
-        Handle addResource(Resource* resource);
+        ResourceHandle addResource(Resource* resource);
 
         template<typename T, typename CreationT = ResourceCreationData>
-        Handle createResource(const CreationT& data)
+        ResourceHandle createResource(const CreationT& data)
         {
             Resource* res = new T(data);
             resources_.insert({ res->getHandle(), res });
@@ -28,7 +27,7 @@ namespace vine
         }
 
         template<typename T, typename CreationT = ResourceCreationData>
-        Handle createAndLoadResource(const CreationT& data)
+        ResourceHandle createAndLoadResource(const CreationT& data)
         {
             Resource* res = new T(data);
             resources_.insert({ res->getHandle(), res });
@@ -36,20 +35,20 @@ namespace vine
             return res->getHandle();
         }
 
-        Resource* getResource(const Handle& handle);
+        Resource* getResource(const ResourceHandle& handle);
 
         template<typename T>
-        T* getResource(const Handle& handle)
+        T* getResource(const ResourceHandle& handle)
         {
             return dynamic_cast<T*>(getResource(handle));
         }
 
-        void removeResource(const Handle& handle);
+        void removeResource(ResourceHandle& handle);
 
     private:
         ResourceManager();
 
     private:
-        std::unordered_map<Handle, Resource*> resources_;
+        std::map<ResourceHandle, Resource*> resources_;
     };
 }

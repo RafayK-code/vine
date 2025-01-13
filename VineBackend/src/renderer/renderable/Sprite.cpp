@@ -8,22 +8,16 @@
 
 namespace vine
 {
-    Sprite::Sprite(const Handle& textureHandle, const SpriteState& state)
-        : Renderable(state), spritePos_(state.spritePos), spriteScale_(state.spriteScale), textureHandle_(textureHandle)
+    Sprite::Sprite(const ResourceHandle& textureHandle, const SpriteState& state)
+        : Renderable(state), spritePos_(state.spritePos), spriteScale_(state.spriteScale)
     {
-        ResourceImage* resTex = ResourceManager::ref().getResource<ResourceImage>(textureHandle_);
-        DBG_ASSERT(resTex, "Texture resource with given handle could not be found");
+        res_ = ResourceManager::ref().getResource<ResourceImage>(textureHandle);
+        DBG_ASSERT(res_, "Texture resource with given handle could not be found");
 
-        if (!resTex->isLoaded())
-            resTex->load();
+        if (!res_->isLoaded())
+            res_->load();
 
-        texture_ = resTex->getTexture();
-        setShader("QuadShader");
-    }
-
-    Sprite::Sprite(const TextureRef& texture, const SpriteState& state)
-        : Renderable(state), spritePos_(state.spritePos), spriteScale_(state.spriteScale), textureHandle_(xg::Guid()), texture_(texture)
-    {
+        texture_ = res_->getTexture();
         setShader("QuadShader");
     }
 

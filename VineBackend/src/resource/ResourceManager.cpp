@@ -24,7 +24,7 @@ namespace vine
         destroySingleton();
     }
 
-    Handle ResourceManager::addResource(Resource* resource)
+    ResourceHandle ResourceManager::addResource(Resource* resource)
     {
         auto it = resources_.find(resource->getHandle());
         if (it != resources_.end())
@@ -37,7 +37,7 @@ namespace vine
         return resource->getHandle();
     }
 
-    Resource* ResourceManager::getResource(const Handle& handle)
+    Resource* ResourceManager::getResource(const ResourceHandle& handle)
     {
         auto it = resources_.find(handle);
         if (it == resources_.end())
@@ -46,13 +46,14 @@ namespace vine
         return it->second;
     }
 
-    void ResourceManager::removeResource(const Handle& handle)
+    void ResourceManager::removeResource(ResourceHandle& handle)
     {
         auto it = resources_.find(handle);
         if (it == resources_.end())
             return;
 
         delete it->second;
+        handle.invalidate();
         resources_.erase(it);
     }
 }

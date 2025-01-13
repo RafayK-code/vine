@@ -7,22 +7,16 @@
 
 namespace vine
 {
-    Text::Text(const Handle& fontHandle, const TextState& state)
-        : Renderable(state), fontHandle_(fontHandle), text_(state.text), kerning_(state.kerning), lineSpacing_(state.lineSpacing)
+    Text::Text(const ResourceHandle& fontHandle, const TextState& state)
+        : Renderable(state), text_(state.text), kerning_(state.kerning), lineSpacing_(state.lineSpacing)
     {
-        ResourceFont* resFont = ResourceManager::ref().getResource<ResourceFont>(fontHandle_);
-        DBG_ASSERT(resFont, "Font resource with given handle could not be found");
+        res_ = ResourceManager::ref().getResource<ResourceFont>(fontHandle);
+        DBG_ASSERT(res_, "Font resource with given handle could not be found");
 
-        if (!resFont->isLoaded())
-            resFont->load();
+        if (!res_->isLoaded())
+            res_->load();
 
-        font_ = resFont->getFont();
-        setShader("TextShader");
-    }
-
-    Text::Text(const FontRef& font, const TextState& state)
-        : Renderable(state), fontHandle_(xg::Guid()), text_(state.text), kerning_(state.kerning), lineSpacing_(state.lineSpacing), font_(font)
-    {
+        font_ = res_->getFont();
         setShader("TextShader");
     }
 

@@ -83,13 +83,13 @@ namespace vine
         }
     }
 
-    void RenderableManager::createSpritesFromSheet(const std::string& sheet, const RenderableState& defaultState)
+    ResourceHandle RenderableManager::createSpritesFromSheet(const std::string& sheet, const RenderableState& defaultState)
     {
         pugi::xml_document doc;
         doc.load_file(sheet.c_str());
 
         pugi::xml_node textureAtlas = doc.child("TextureAtlas");
-        Handle handle = ResourceManager::ref().createAndLoadResource<ResourceImage>({ textureAtlas.attribute("imagePath").as_string() });
+        ResourceHandle handle = ResourceManager::ref().createAndLoadResource<ResourceImage>({ textureAtlas.attribute("imagePath").as_string() });
 
         for (pugi::xml_node spriteNode = textureAtlas.child("sprite"); spriteNode; spriteNode = spriteNode.next_sibling("sprite"))
         {
@@ -115,5 +115,7 @@ namespace vine
 
             RenderableManager::ref().addRenderable(name, new Sprite(handle, state));
         }
+
+        return handle;
     }
 }

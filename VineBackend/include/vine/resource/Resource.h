@@ -6,7 +6,7 @@
 
 namespace vine
 {
-    using Handle = xg::Guid;
+    //using Handle = xg::Guid;
 
     enum class ResourceDataType
     {
@@ -26,32 +26,49 @@ namespace vine
 
         virtual ResourceCreationData* clone() const;
 
+        virtual bool operator<(const ResourceCreationData& other) const;
+
         std::string file;
         ResourceDataType type;
+    };
+
+    class ResourceHandle
+    {
+    public:
+        ResourceHandle();
+        ~ResourceHandle();
+
+        bool isValid() const { return guid_.isValid(); }
+        void invalidate() { guid_ = xg::Guid(); }
+
+        bool operator<(const ResourceHandle& other) const;
+        bool operator==(const ResourceHandle& other) const;
+
+    private:
+        xg::Guid guid_;
     };
 
     class ResourceManager;
 
     class Resource
     {
-        friend class ResourceManager;
     public:
         virtual ~Resource();
 
         virtual void load() = 0;
         virtual void unload() = 0;
 
-        const Handle& getHandle() const { return handle_; }
         bool isLoaded() const { return loaded_; }
 
         const ResourceCreationData* getCreationData() const { return creationData_; }
+        const ResourceHandle& getHandle() const { return handle_; }
 
     protected:
         Resource(const ResourceCreationData& data);
 
     protected:
-        Handle handle_;
         bool loaded_;
+        ResourceHandle handle_;
 
         ResourceCreationData* creationData_;
     };

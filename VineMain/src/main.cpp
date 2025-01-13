@@ -43,7 +43,7 @@ public:
         quad->setColor({ 1.0f, 0.0f, 0.0f, 0.7f });
         RenderableManager::ref().addRenderable("Quad", quad);
 
-        Handle handle = ResourceManager::ref().createAndLoadResource<ResourceFont>({ "assets/fonts/opensans/OpenSans-Regular.ttf" });
+        ResourceHandle handle = ResourceManager::ref().createResource<ResourceFont>({ "assets/fonts/opensans/OpenSans-Regular.ttf" });
         Text* text = new Text(handle, TextState());
         text->setPosition({ 600.0f, 500.0f });
         text->setLayer(Layer::Background);

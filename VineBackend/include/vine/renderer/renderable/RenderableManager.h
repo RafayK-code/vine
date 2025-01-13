@@ -2,16 +2,14 @@
 
 #include <vine/renderer/renderable/Renderable.h>
 #include <vine/renderer/renderable/RenderableLayer.h>
+#include <vine/resource/Resource.h>
 #include <vine/util/Singleton.h>
 
-#include <crossguid/guid.hpp>
 #include <vector>
 #include <map>
 
 namespace vine
 {
-    using Handle = xg::Guid;
-
     class RenderableManager : public Singleton<RenderableManager>
     {
         friend class Singleton<RenderableManager>;
@@ -35,7 +33,7 @@ namespace vine
         Renderable* getRenderable(const std::string& name);
         void removeRenderable(const std::string& name);
 
-        void createSpritesFromSheet(const std::string& sheet, const RenderableState& defaultState = RenderableState());
+        ResourceHandle createSpritesFromSheet(const std::string& sheet, const RenderableState& defaultState = RenderableState());
 
     private:
         RenderableManager();

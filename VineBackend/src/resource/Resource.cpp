@@ -23,8 +23,32 @@ namespace vine
         return new ResourceCreationData(*this);
     }
 
+    bool ResourceCreationData::operator<(const ResourceCreationData& other) const
+    {
+        return file < other.file;
+    }
+
+    ResourceHandle::ResourceHandle()
+        : guid_(xg::newGuid())
+    {
+    }
+
+    ResourceHandle::~ResourceHandle()
+    {
+    }
+
+    bool ResourceHandle::operator<(const ResourceHandle& other) const
+    {
+        return guid_ < other.guid_;
+    }
+
+    bool ResourceHandle::operator==(const ResourceHandle& other) const
+    {
+        return guid_ == other.guid_;
+    }
+
     Resource::Resource(const ResourceCreationData& data)
-        : handle_(xg::newGuid()), loaded_(false)
+        : loaded_(false)
     {
         creationData_ = data.clone();
     }
