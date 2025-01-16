@@ -4,7 +4,7 @@ namespace vine
 {
     namespace easing
     {
-        using EasingFunc = float(*)(float, float, float, float);
+        using EasingFunction = float(*)(float, float, float, float);
 
         class Linear
         {

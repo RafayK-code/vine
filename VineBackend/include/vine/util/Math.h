@@ -2,8 +2,15 @@
 
 #include <cmath>
 
+#include <glm/glm.hpp>
+
 namespace vine
 {
+    using Vec2 = glm::vec2;
+    using Vec3 = glm::vec3;
+    using Vec4 = glm::vec4;
+    using Color = glm::vec4;
+
     class Math
     {
     public:
@@ -35,5 +42,8 @@ namespace vine
 
             return val;
         }
+
+        static inline Color normalizeColor(const Color& color) { return color / 255.0f; }
+        static inline Color denormalizeColor(const Color& color) { return glm::round(color * 255.0f); }
     };
 }
