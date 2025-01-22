@@ -8,9 +8,10 @@
 
 namespace vine
 {
-    Sprite::Sprite(const ResourceHandle& textureHandle, const SpriteState& state)
+    Sprite::Sprite(const std::string& file , const SpriteState& state)
         : Renderable(state), spritePos_(state.spritePos), spriteScale_(state.spriteScale)
     {
+        /*
         res_ = ResourceManager::ref().getResource<ResourceImage>(textureHandle);
         DBG_ASSERT(res_, "Texture resource with given handle could not be found");
 
@@ -18,6 +19,12 @@ namespace vine
             res_->load();
 
         texture_ = res_->getTexture();
+        setShader("QuadShader");
+        */
+
+        texture_ = ResourceImage::create(file);
+        texture_->load();
+
         setShader("QuadShader");
     }
 

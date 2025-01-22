@@ -23,9 +23,24 @@ namespace vine
         return new ResourceCreationData(*this);
     }
 
-    bool ResourceCreationData::operator<(const ResourceCreationData& other) const
+    bool ResourceCreationData::isEqual(const ResourceCreationData& other) const
+    {
+        return file == other.file;
+    }
+
+    bool ResourceCreationData::isLess(const ResourceCreationData& other) const
     {
         return file < other.file;
+    }
+
+    bool ResourceCreationData::operator==(const ResourceCreationData& other) const
+    {
+        return this->isEqual(other);
+    }
+
+    bool ResourceCreationData::operator<(const ResourceCreationData& other) const
+    {
+        return this->isLess(other);
     }
 
     ResourceHandle::ResourceHandle()

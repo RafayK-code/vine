@@ -4,6 +4,8 @@
 
 #include <stb/stb_image.h>
 
+#include <vine/resource/ResourceImage.h>
+
 namespace vine
 {
     static GLenum vineImageFormatToGLInternalFormat(ImageFormat format)
@@ -129,15 +131,5 @@ namespace vine
     {
         glActiveTexture(GL_TEXTURE0 + slot);
         glBindTexture(GL_TEXTURE_2D, rendererID_);
-    }
-
-    TextureRef createTexture(const TextureSpecification& spec)
-    {
-        return std::make_shared<Texture>(spec);
-    }
-
-    TextureRef createTexture(const std::string& path)
-    {
-        return std::make_shared<Texture>(path);
     }
 }

@@ -1,5 +1,8 @@
 #pragma once
 
+#include <vine/sys/RefCounted.h>
+#include <vine/sys/Ref.h>
+
 #include <crossguid/guid.hpp>
 #include <utility>
 #include <string>
@@ -26,7 +29,11 @@ namespace vine
 
         virtual ResourceCreationData* clone() const;
 
-        virtual bool operator<(const ResourceCreationData& other) const;
+        virtual bool isEqual(const ResourceCreationData& other) const;
+        virtual bool isLess(const ResourceCreationData& other) const;
+
+        bool operator==(const ResourceCreationData& other) const;
+        bool operator<(const ResourceCreationData& other) const;
 
         std::string file;
         ResourceDataType type;
@@ -50,25 +57,27 @@ namespace vine
 
     class ResourceManager;
 
-    class Resource
+    class Resource : public RefCounted
     {
     public:
+        Resource(const ResourceCreationData& data);
         virtual ~Resource();
 
-        virtual void load() = 0;
+        virtual void reload() = 0;
         virtual void unload() = 0;
 
         bool isLoaded() const { return loaded_; }
 
+        const std::string& getFile() const { return creationData_->file; }
         const ResourceCreationData* getCreationData() const { return creationData_; }
+
         const ResourceHandle& getHandle() const { return handle_; }
 
     protected:
-        Resource(const ResourceCreationData& data);
-
-    protected:
-        bool loaded_;
         ResourceHandle handle_;
+        bool loaded_;
+
+    private:
 
         ResourceCreationData* creationData_;
     };

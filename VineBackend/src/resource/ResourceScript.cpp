@@ -5,7 +5,7 @@ namespace vine
     ResourceScript::ResourceScript(const ResourceCreationData& data)
         : Resource(data), script_(nullptr)
     {
-        creationData_->type = ResourceDataType::ResourceDataTypeScript;
+        //creationData_->type = ResourceDataType::ResourceDataTypeScript;
     }
 
     ResourceScript::~ResourceScript()
@@ -18,7 +18,7 @@ namespace vine
         if (loaded_)
             return;
 
-        script_ = createScript(creationData_->file);
+        script_ = createScript(getCreationData()->file);
         loaded_ = true;
     }
 

@@ -27,8 +27,8 @@ namespace vine
 
         bool isRunning() const { return running_; }
 
-        Window* getWindow() const { return window_; }
-        Controller* getController() const{ return controller_; }
+        Window* getWindow() { return window_; }
+        Controller* getController() { return controller_; }
 
     private:
         void processSDLEvents();

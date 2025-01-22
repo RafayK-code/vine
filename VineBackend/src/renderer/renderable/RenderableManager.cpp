@@ -85,6 +85,7 @@ namespace vine
 
     ResourceHandle RenderableManager::createSpritesFromSheet(const std::string& sheet, const RenderableState& defaultState)
     {
+        /*
         pugi::xml_document doc;
         doc.load_file(sheet.c_str());
 
@@ -117,5 +118,8 @@ namespace vine
         }
 
         return handle;
+        */
+
+        return ResourceHandle();
     }
 }

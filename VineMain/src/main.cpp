@@ -31,6 +31,11 @@ public:
 
         framebuffer_ = createFramebuffer(spec);
 
+        getWindow()->addEventCallback<WindowResizeEvent>([this](WindowResizeEvent& e) {
+            framebuffer_->resize(e.getWidth(), e.getHeight());
+        });
+
+        /*
         RenderableManager::ref().createSpritesFromSheet("assets/spritesheets/demo/sheet.xml");
         Renderable* s = RenderableManager::ref().getRenderable("wall_texture_gold.png");
 
@@ -41,6 +46,7 @@ public:
         s2->setPosition({ 400.0f, 200.0f });
         s2->setScale({150.0f, 150.0f});
         RenderableManager::ref().addRenderable("Sprite2", s2);
+        */
 
         Quad* quad = new Quad(RenderableState());
         quad->setPosition({ 400.0f, 500.0f });
@@ -72,7 +78,7 @@ public:
         }
 
         // Apply linear easing
-        float easedX = easing::Circular::easeInOut(elapsedTime_, startX_, endX_ - startX_, duration_);
+        float easedX = easing::Elastic::easeInOut(elapsedTime_, startX_, endX_ - startX_, duration_);
 
         RenderableManager::ref().getRenderable("Quad")->setPosition({ easedX, 500.0f });
 

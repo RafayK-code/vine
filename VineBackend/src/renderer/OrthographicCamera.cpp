@@ -25,6 +25,6 @@ namespace vine
         glm::mat4 transform = glm::translate(glm::mat4(1.0f), position_) * glm::rotate(glm::mat4(1.0f), rotation_, glm::vec3(0.0f, 0.0f, 1.0f));
 
         viewMatrix_ = glm::inverse(transform);
-        viewProjectionMatrix_ = projectionMatrix_ * viewMatrix_;
+        viewProjectionMatrix_ = viewMatrix_ * projectionMatrix_;
     }
 }

@@ -8,7 +8,7 @@
 namespace vine
 {
     Renderer::Renderer(Window* window)
-        : camera_(0.0f, window->getWidth(), 0.0f, window->getHeight(), -0.1f, -100.0f)
+        : camera_(0.0f, window->getWidth(), 0.0f, window->getHeight(), -0.0f, -100.0f) // remember that NDC is left handed
     {
         context_.createContext(window);
 
@@ -63,9 +63,8 @@ namespace vine
 
 
         //texture stuff
-        data_->whiteTexture = createTexture(TextureSpecification());
-        uint32_t whiteTextureData = 0xffffffff;
-        data_->whiteTexture->setData(&whiteTextureData, sizeof(uint32_t));
+        data_->whiteTexture = ResourceImage::createBuiltinWhite();
+        data_->whiteTexture->load();
 
         data_->textureSlots[0] = data_->whiteTexture;
 
@@ -149,7 +148,7 @@ namespace vine
 
             for (uint32_t i = 0; i < data_->textureSlotIndex; i++)
             {
-                if (TextureRef* tex = std::get_if<TextureRef>(&data_->textureSlots[i]))
+                if (Ref<ResourceImage>* tex = std::get_if<Ref<ResourceImage>>(&data_->textureSlots[i]))
                     (*tex)->bind(i);
                 else if (FramebufferRef* buf = std::get_if<FramebufferRef>(&data_->textureSlots[i]))
                     (*buf)->bindToTexture(i);
@@ -213,7 +212,7 @@ namespace vine
         data_->quadIndexCount += 6;
     }
 
-    void Renderer::drawQuad(const glm::mat4& transform, const TextureRef& texture, const glm::vec2& srcPos, const glm::vec2& srcScale, const glm::vec4& tintColor)
+    void Renderer::drawQuad(const glm::mat4& transform, const Ref<ResourceImage>& texture, const glm::vec2& srcPos, const glm::vec2& srcScale, const glm::vec4& tintColor)
     {
         constexpr size_t quadVertexCount = 4;
         glm::vec2 texCoords[] = { {0.0f, 0.0f}, {1.0f, 0.0f}, {1.0f, 1.0f}, {0.0f, 1.0f} };
@@ -239,9 +238,9 @@ namespace vine
 
         for (uint32_t i = 0; i < data_->textureSlotIndex; i++)
         {
-            if (TextureRef* tex = std::get_if<TextureRef>(&data_->textureSlots[i]))
+            if (Ref<ResourceImage>* tex = std::get_if<Ref<ResourceImage>>(&data_->textureSlots[i]))
             {
-                if (**tex == *texture)
+                if ((*tex)->getRendererID() == texture->getRendererID())
                 {
                     textureIndex = (float)i;
                     break;

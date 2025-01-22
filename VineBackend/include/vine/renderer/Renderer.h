@@ -9,6 +9,7 @@
 #include <vine/renderer/GraphicsContext.h>
 #include <vine/renderer/backend/Font.h>
 #include <vine/window/Window.h>
+#include <vine/resource/ResourceImage.h>
 
 #include <array>
 #include <string>
@@ -48,7 +49,7 @@ namespace vine
         */
 
         void drawQuad(const glm::mat4& transform, const glm::vec4& color);
-        void drawQuad(const glm::mat4& transform, const TextureRef& texture, const glm::vec2& texPos = { -1.0f, -1.0f }, const glm::vec2& texScale = { -1.0f, -1.0f }, const glm::vec4& tintColor = { 1.0f, 1.0f, 1.0f, 1.0f });
+        void drawQuad(const glm::mat4& transform, const Ref<ResourceImage>& texture, const glm::vec2& texPos = { -1.0f, -1.0f }, const glm::vec2& texScale = { -1.0f, -1.0f }, const glm::vec4& tintColor = { 1.0f, 1.0f, 1.0f, 1.0f });
         void drawQuad(const glm::mat4& transform, const FramebufferRef& framebuffer, const glm::vec2& texPos = { -1.0f, -1.0f }, const glm::vec2& texScale = { -1.0f, -1.0f }, const glm::vec4& tintColor = { 1.0f, 1.0f, 1.0f, 1.0f });
 
         struct TextParams
@@ -88,7 +89,7 @@ namespace vine
             glm::vec2 texCoord;
         };
 
-        using RenderTexture = std::variant<TextureRef, FramebufferRef>;
+        using RenderTexture = std::variant<Ref<ResourceImage>, FramebufferRef>;
 
         struct RendererData
         {
@@ -114,7 +115,7 @@ namespace vine
             TextVertex* textVertexBufferBase = nullptr;
             TextVertex* textVertexBufferPtr = nullptr;
 
-            TextureRef whiteTexture;
+            Ref<ResourceImage> whiteTexture;
             std::array<RenderTexture, maxTextureSlots> textureSlots;
             uint32_t textureSlotIndex = 1;
 

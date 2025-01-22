@@ -28,7 +28,7 @@ namespace vine
         spec.format = ImageFormat::RGB8;
         spec.generateMips = false;
 
-        TextureRef tex = createTexture(spec);
+        TextureRef tex = createRef<Texture>(spec);
         tex->setData((void*)bitmap.pixels, bitmap.width * bitmap.height * 3);
         return tex;
     }

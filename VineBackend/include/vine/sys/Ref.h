@@ -21,8 +21,8 @@ namespace vine
         Ref(const Ref<T>& rptr);
         Ref<T>& operator=(const Ref<T>& rptr);
 
-        Ref(Ref<T>&& rptr);
-        Ref<T>& operator=(Ref<T>&& other);
+        Ref(Ref<T>&& rptr) noexcept;
+        Ref<T>& operator=(Ref<T>&& other) noexcept;
 
         T* get() { return rcPtr_; }
         T* operator->() { return rcPtr_; }
@@ -125,14 +125,14 @@ namespace vine
     }
 
     template <typename T>
-    Ref<T>::Ref(Ref<T>&& rptr)
+    Ref<T>::Ref(Ref<T>&& rptr) noexcept
     {
         rcPtr_ = rptr.rcPtr_;
         rptr.rcPtr_ = nullptr;
     }
 
     template <typename T>
-    Ref<T>& Ref<T>::operator=(Ref<T>&& rptr)
+    Ref<T>& Ref<T>::operator=(Ref<T>&& rptr) noexcept
     {
         if (this != &rptr)
         {

@@ -32,14 +32,19 @@ namespace vine
     Application::Application(const ApplicationCreationSettings& settings)
     {
         Logger::init();
+        DBG_INFO("Logging initialized");
+
         DBG_ASSERT(SDL_Init(SDL_INIT_VIDEO) == 0, "SDL could not be initialized");
 
         ResourceManager::init();
+        DBG_INFO("Resource manager initialized");
 
         window_ = new Window(settings.windowProps);
         DBG_INFO("Window created successfully");
 
         Renderer::init(window_);
+        DBG_INFO("Renderer initialized");
+
         Renderer::ref().setViewport({ 0, 0, window_->getWidth(), window_->getHeight() });
         Renderer::ref().setClearColor({ 0.0f, 0.0f, 0.0f, 0.0f });
 
@@ -63,6 +68,7 @@ namespace vine
         }
 
         running_ = true;
+        DBG_INFO("Application startup successful");
     }
 
     Application::~Application()

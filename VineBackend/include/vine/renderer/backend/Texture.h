@@ -1,11 +1,16 @@
 #pragma once
 
+#include <vine/sys/Ref.h>
+
 #include <string>
 #include <glad/glad.h>
 #include <memory>
 
+#include <vine/resource/ResourceImage.h>
+
 namespace vine
 {
+    /*
     enum class ImageFormat
     {
         None = 0,
@@ -22,8 +27,11 @@ namespace vine
         ImageFormat format = ImageFormat::RGBA8;
         bool generateMips = true;
     };
+    */
 
-    class Texture
+    struct TextureSpecification;
+
+    class Texture : public RefCounted
     {
     public:
         Texture(const TextureSpecification& spec);
@@ -55,7 +63,5 @@ namespace vine
         GLenum dataFormat_;
     };
 
-    using TextureRef = std::shared_ptr<Texture>;
-    TextureRef createTexture(const TextureSpecification& spec);
-    TextureRef createTexture(const std::string& path);
+    using TextureRef = Ref<Texture>;
 }

@@ -1,25 +1,31 @@
 #pragma once
 
 #include <vine/resource/Resource.h>
-#include <vine/renderer/backend/Font.h>
+#include <vine/resource/ResourceImage.h>
 
 namespace vine
 {
+    struct MSDFData;
+
     class ResourceFont : public Resource
     {
         friend class ResourceManager;
     public:
-        ~ResourceFont();
+        static Ref<ResourceFont> create(const std::string& file);
+
+        virtual ~ResourceFont();
 
         virtual void load() override;
         virtual void unload() override;
 
-        FontRef getFont() const { return font_; }
+        const MSDFData* getData() const { return data_; }
+        const Ref<ResourceImage>& getAtlasTexture() const { return atlasTexture_; }
 
     protected:
         ResourceFont(const ResourceCreationData& data);
 
     private:
-        FontRef font_;
+        MSDFData* data_;
+        Ref<ResourceImage> atlasTexture_;
     };
 }
