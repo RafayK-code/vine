@@ -5,6 +5,8 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
+//#define DEMO_FRAMEBUFFER
+
 class MyApp : public vine::Application
 {
 public:
@@ -19,6 +21,7 @@ public:
     {
         using namespace vine;
 
+#ifdef DEMO_FRAMEBUFFER
         FramebufferSpecification spec;
         spec.width = 1280;
         spec.height = 720;
@@ -34,6 +37,8 @@ public:
         getWindow()->addEventCallback<WindowResizeEvent>([this](WindowResizeEvent& e) {
             framebuffer_->resize(e.getWidth(), e.getHeight());
         });
+
+#endif
 
         /*
         RenderableManager::ref().createSpritesFromSheet("assets/spritesheets/demo/sheet.xml");
@@ -54,8 +59,9 @@ public:
         quad->setColor({ 1.0f, 0.0f, 0.0f, 0.7f });
         RenderableManager::ref().addRenderable("Quad", quad);
 
-        ResourceHandle handle = ResourceManager::ref().createResource<ResourceFont>({ "assets/fonts/opensans/OpenSans-Regular.ttf" });
-        Text* text = new Text(handle, TextState());
+        //ResourceHandle handle = ResourceManager::ref().createResource<ResourceFont>({ "assets/fonts/opensans/OpenSans-Regular.ttf" });
+        
+        Text* text = new Text("assets/fonts/opensans/OpenSans-Regular.ttf", TextState());
         text->setPosition({ 600.0f, 500.0f });
         text->setLayer(Layer::Background);
         text->setScale({ 200.0f,200.0f });
@@ -64,6 +70,7 @@ public:
         text->setLineSpacing(-0.1f);
 
         RenderableManager::ref().addRenderable("Text", text);
+        
     }
 
     void onTick(float dt) override 
@@ -82,13 +89,21 @@ public:
 
         RenderableManager::ref().getRenderable("Quad")->setPosition({ easedX, 500.0f });
 
+#ifdef DEMO_FRAMEBUFFER
         framebuffer_->bind();
+#endif
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         Renderer::ref().clear();
         Renderer::ref().beginScene();
         RenderableManager::ref().render();
         Renderer::ref().endScene();
+#ifdef DEMO_FRAMEBUFFER
         framebuffer_->unbind();
+#endif
 
+#ifdef DEMO_FRAMEBUFFER
+        glDisable(GL_BLEND);
         Renderer::ref().clear();
         Renderer::ref().beginScene();
         glm::mat4 transform = glm::translate(glm::mat4(1.0f), { 1280.0f / 2.0f, 720.0f / 2.0f, 10 }) *
@@ -96,6 +111,7 @@ public:
             glm::scale(glm::mat4(1.0f), { 1280.0f, 720.0f, 1.0f });
         Renderer::ref().drawQuad(transform, framebuffer_);
         Renderer::ref().endScene();
+#endif
     }
 
     void onShutdown() override 

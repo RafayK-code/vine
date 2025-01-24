@@ -75,6 +75,7 @@ namespace vine
         friend class ResourceManager;
     public:
         static Ref<ResourceImage> create(const std::string& filename, const TextureSamplerSettings& settings = TextureSamplerSettings());
+        static Ref<ResourceImage> createFromBytes(const void* bytes, const std::string& name, const TextureSpecification& spec, const TextureSamplerSettings& settings = TextureSamplerSettings());
         static Ref<ResourceImage> createBuiltinWhite();
 
         virtual ~ResourceImage();
@@ -97,8 +98,9 @@ namespace vine
         ResourceImage(const ResourceCreationData& data);
 
     private:
+        void loadFromFile();
         void loadBuiltinWhite();
-        void loadFromData();
+        void loadFromBytes(const void* bytes);
 
     private:
         uint32_t rendererID_;
@@ -108,7 +110,6 @@ namespace vine
 
         TextureSpecification spec_;
 
-        void* rawData_;
         bool allowReload_;
     };
 }

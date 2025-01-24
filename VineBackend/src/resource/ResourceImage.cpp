@@ -94,7 +94,7 @@ namespace vine
     }
 
     ResourceImage::ResourceImage(const ResourceCreationData& data)
-        : Resource(data), internalFormat_(0), dataFormat_(0), rendererID_(0), rawData_(nullptr), allowReload_(false)
+        : Resource(data), internalFormat_(0), dataFormat_(0), rendererID_(0), allowReload_(false)
     {
     }
 
@@ -108,8 +108,34 @@ namespace vine
         if (loaded_ || !allowReload_)
             return;
 
+        loaded_ = true;
+    }
+
+    void ResourceImage::unload()
+    {
+        if (!loaded_)
+            return;
+
+        glDeleteTextures(1, &rendererID_);
+        loaded_ = false;
+    }
+
+    void ResourceImage::bind(uint32_t slot) const
+    {
+        glActiveTexture(GL_TEXTURE0 + slot);
+        glBindTexture(GL_TEXTURE_2D, rendererID_);
+    }
+
+    void ResourceImage::unbind(uint32_t slot) const
+    {
+        glActiveTexture(GL_TEXTURE0 + slot);
+        glBindTexture(GL_TEXTURE_2D, 0);
+    }
+
+    void ResourceImage::loadFromFile()
+    {
         const ResourceImageCreationData* data = dynamic_cast<const ResourceImageCreationData*>(getCreationData());
-        
+
         if (data->file == BUILTIN_WHITE_TEXTURE_KEY)
         {
             loadBuiltinWhite();
@@ -143,42 +169,11 @@ namespace vine
 
         DBG_ASSERT(internalFormat_ & dataFormat_, "Format not supported");
 
-        glGenTextures(1, &rendererID_);
-        glBindTexture(GL_TEXTURE_2D, rendererID_);
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, util::vineFilterModeToGLFilterMode(data->samplerSettings.minFilter));
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, util::vineFilterModeToGLFilterMode(data->samplerSettings.magFilter));
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, util::vineWrapModeToGLWrapMode(data->samplerSettings.sWrap));
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, util::vineWrapModeToGLWrapMode(data->samplerSettings.tWrap));
-
-        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat_, spec_.width, spec_.height, 0, dataFormat_, GL_UNSIGNED_BYTE, bytes);
-        glGenerateMipmap(GL_TEXTURE_2D);
+        loadFromBytes(bytes);
 
         stbi_image_free(bytes);
 
         loaded_ = true;
-    }
-
-    void ResourceImage::unload()
-    {
-        if (!loaded_)
-            return;
-
-        glDeleteTextures(1, &rendererID_);
-        loaded_ = false;
-    }
-
-    void ResourceImage::bind(uint32_t slot) const
-    {
-        glActiveTexture(GL_TEXTURE0 + slot);
-        glBindTexture(GL_TEXTURE_2D, rendererID_);
-    }
-
-    void ResourceImage::unbind(uint32_t slot) const
-    {
-        glActiveTexture(GL_TEXTURE0 + slot);
-        glBindTexture(GL_TEXTURE_2D, 0);
     }
 
     void ResourceImage::loadBuiltinWhite()
@@ -188,30 +183,15 @@ namespace vine
         dataFormat_ = util::vineImageFormatToGLDataFormat(spec_.format);
         internalFormat_ = util::vineImageFormatToGLInternalFormat(spec_.format);
 
-        glGenTextures(1, &rendererID_);
-        glBindTexture(GL_TEXTURE_2D, rendererID_);
-
-        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat_, spec_.width, spec_.height, 0, dataFormat_, GL_UNSIGNED_BYTE, nullptr);
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-        if (spec_.generateMips)
-            glGenerateMipmap(GL_TEXTURE_2D);
-
         uint32_t whiteTex = 0xffffffff;
-        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat_, spec_.width, spec_.height, 0, dataFormat_, GL_UNSIGNED_BYTE, &whiteTex);
+        loadFromBytes(&whiteTex);
+
+        loaded_ = true;
     }
 
 
-    void ResourceImage::loadFromData()
+    void ResourceImage::loadFromBytes(const void* bytes)
     {
-        if (rawData_ == nullptr)
-            return;
-
         const ResourceImageCreationData* data = dynamic_cast<const ResourceImageCreationData*>(getCreationData());
 
         glGenTextures(1, &rendererID_);
@@ -223,15 +203,34 @@ namespace vine
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, util::vineWrapModeToGLWrapMode(data->samplerSettings.sWrap));
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, util::vineWrapModeToGLWrapMode(data->samplerSettings.tWrap));
 
-        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat_, spec_.width, spec_.height, 0, dataFormat_, GL_UNSIGNED_BYTE, rawData_);
+        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat_, spec_.width, spec_.height, 0, dataFormat_, GL_UNSIGNED_BYTE, bytes);
         if (spec_.generateMips)
             glGenerateMipmap(GL_TEXTURE_2D);
+
+        loaded_ = true;
     }
 
     Ref<ResourceImage> ResourceImage::create(const std::string& file, const TextureSamplerSettings& settings)
     {
         ResourceImageCreationData data = ResourceImageCreationData(file, settings);
-        return Ref<ResourceImage>(new ResourceImage(data));
+        ResourceImage* res = new ResourceImage(data);
+        res->loadFromFile();
+
+        return Ref<ResourceImage>(res);
+    }
+
+    Ref<ResourceImage> ResourceImage::createFromBytes(const void* bytes, const std::string& name, const TextureSpecification& spec, const TextureSamplerSettings& settings)
+    {
+        ResourceImageCreationData data = ResourceImageCreationData(name, settings);
+        ResourceImage* res = new ResourceImage(data);
+        res->spec_ = spec;
+
+        res->dataFormat_ = util::vineImageFormatToGLDataFormat(spec.format);
+        res->internalFormat_ = util::vineImageFormatToGLInternalFormat(spec.format);
+
+        res->loadFromBytes(bytes);
+
+        return Ref<ResourceImage>(res);
     }
 
     Ref<ResourceImage> ResourceImage::createBuiltinWhite()
@@ -241,6 +240,10 @@ namespace vine
         settings.sWrap = settings.tWrap = TextureWrapMode::Repeat;
 
         ResourceImageCreationData data = ResourceImageCreationData(std::string(BUILTIN_WHITE_TEXTURE_KEY), settings);
-        return Ref<ResourceImage>(new ResourceImage(data));
+
+        ResourceImage* res = new ResourceImage(data);
+        res->loadBuiltinWhite();
+
+        return Ref<ResourceImage>(res);
     }
 }

@@ -15,7 +15,7 @@ namespace vine
 
         virtual ~ResourceFont();
 
-        virtual void load() override;
+        virtual void reload() override;
         virtual void unload() override;
 
         const MSDFData* getData() const { return data_; }
@@ -23,6 +23,9 @@ namespace vine
 
     protected:
         ResourceFont(const ResourceCreationData& data);
+
+    private:
+        void loadFromFont();
 
     private:
         MSDFData* data_;

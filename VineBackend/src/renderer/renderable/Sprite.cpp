@@ -23,8 +23,6 @@ namespace vine
         */
 
         texture_ = ResourceImage::create(file);
-        texture_->load();
-
         setShader("QuadShader");
     }
 

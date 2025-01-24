@@ -64,7 +64,6 @@ namespace vine
 
         //texture stuff
         data_->whiteTexture = ResourceImage::createBuiltinWhite();
-        data_->whiteTexture->load();
 
         data_->textureSlots[0] = data_->whiteTexture;
 
@@ -88,8 +87,11 @@ namespace vine
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LESS);
 
+        /*
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        */
+        glDisable(GL_BLEND);
     }
 
     Renderer::~Renderer()
@@ -325,11 +327,11 @@ namespace vine
         data_->quadIndexCount += 6;
     }
 
-    void Renderer::drawText(const std::string& text, FontRef font, const glm::mat4& transform, const TextParams& params)
+    void Renderer::drawText(const std::string& text, const Ref<ResourceFont>& font, const glm::mat4& transform, const TextParams& params)
     {
         const msdf_atlas::FontGeometry& fontGeomtry = font->getData()->fontGeometry;
         const msdfgen::FontMetrics& metrics = fontGeomtry.getMetrics();
-        TextureRef fontAtlas = font->getAtlasTexture();
+        Ref<ResourceImage> fontAtlas = font->getAtlasTexture();
 
         data_->fontAtlasTexture = fontAtlas;
 

@@ -7,16 +7,10 @@
 
 namespace vine
 {
-    Text::Text(const ResourceHandle& fontHandle, const TextState& state)
+    Text::Text(const std::string& fontfile, const TextState& state)
         : Renderable(state), text_(state.text), kerning_(state.kerning), lineSpacing_(state.lineSpacing)
     {
-        res_ = ResourceManager::ref().getResource<ResourceFont>(fontHandle);
-        DBG_ASSERT(res_, "Font resource with given handle could not be found");
-
-        if (!res_->isLoaded())
-            res_->load();
-
-        font_ = res_->getFont();
+        font_ = ResourceFont::create(fontfile);
         setShader("TextShader");
     }
 

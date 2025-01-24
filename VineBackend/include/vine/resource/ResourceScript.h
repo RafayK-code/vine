@@ -5,13 +5,14 @@
 
 namespace vine
 {
+    /*
     class ResourceScript : public Resource
     {
         friend class ResourceManager;
     public:
         ~ResourceScript();
 
-        virtual void load() override;
+        virtual void reload() override;
         virtual void unload() override;
 
         ScriptRef getScript() const { return script_; }
@@ -22,4 +23,5 @@ namespace vine
     private:
         ScriptRef script_;
     };
+    */
 }

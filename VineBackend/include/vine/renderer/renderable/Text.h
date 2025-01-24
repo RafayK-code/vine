@@ -1,7 +1,6 @@
 #pragma once
 
 #include <vine/renderer/renderable/Renderable.h>
-#include <vine/renderer/backend/Font.h>
 #include <vine/resource/ResourceFont.h>
 
 #include <string>
@@ -18,7 +17,7 @@ namespace vine
     class Text : public Renderable
     {
     public:
-        Text(const ResourceHandle& fontHandle, const TextState& state);
+        Text(const std::string& fontfile, const TextState& state);
 
         virtual ~Text();
 
@@ -34,15 +33,13 @@ namespace vine
         float getLineSpacing() const { return lineSpacing_; }
         void setLineSpacing(float lineSpacing) { lineSpacing_ = lineSpacing; }
 
-        const FontRef& getFont() const { return font_; }
-        const ResourceFont* getResource() const { return res_; }
+        const Ref<ResourceFont>& getFont() const { return font_; }
 
     private:
         std::string text_;
         float kerning_;
         float lineSpacing_;
 
-        FontRef font_;
-        ResourceFont* res_;
+        Ref<ResourceFont> font_;
     };
 }

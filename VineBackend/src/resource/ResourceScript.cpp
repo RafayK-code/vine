@@ -2,6 +2,7 @@
 
 namespace vine
 {
+    /*
     ResourceScript::ResourceScript(const ResourceCreationData& data)
         : Resource(data), script_(nullptr)
     {
@@ -30,4 +31,5 @@ namespace vine
         script_ = nullptr;
         loaded_ = false;
     }
+    */
 }

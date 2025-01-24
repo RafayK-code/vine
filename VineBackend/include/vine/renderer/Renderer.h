@@ -10,6 +10,7 @@
 #include <vine/renderer/backend/Font.h>
 #include <vine/window/Window.h>
 #include <vine/resource/ResourceImage.h>
+#include <vine/resource/ResourceFont.h>
 
 #include <array>
 #include <string>
@@ -59,7 +60,7 @@ namespace vine
             float lineSpacing = 0.0f;
         };
 
-        void drawText(const std::string& text, FontRef font, const glm::mat4& trnasform, const TextParams& params);
+        void drawText(const std::string& text, const Ref<ResourceFont>& font, const glm::mat4& trnasform, const TextParams& params);
 
         ShaderRef getActiveQuadShader() const { return data_->quadShader; }
         ShaderRef getActiveTextShader() const { return data_->textShader; }
@@ -121,7 +122,7 @@ namespace vine
 
             glm::vec4 quadVertexPositions[4];
 
-            TextureRef fontAtlasTexture;
+            Ref<ResourceImage> fontAtlasTexture;
 
             ~RendererData() { delete[] quadVertexBufferBase; }
         };
