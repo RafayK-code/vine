@@ -10,7 +10,7 @@ namespace vine
     class RenderableLayer
     {
     public:
-        RenderableLayer(RenderableLayerType layer);
+        RenderableLayer(RenderableLayerLevel layer);
         ~RenderableLayer();
 
         void render() const;
@@ -28,10 +28,10 @@ namespace vine
         bool hasRenderable(const std::string& name) const;
         void removeRenderable(const std::string& name);
 
-        RenderableLayerType getLayer() const { return layer_; }
+        RenderableLayerLevel getLayer() const { return layer_; }
 
     private:
-        RenderableLayerType layer_;
+        RenderableLayerLevel layer_;
 
         std::unordered_map<std::string, Renderable*> renderables_;
     };

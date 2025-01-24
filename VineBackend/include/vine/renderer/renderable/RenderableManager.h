@@ -42,12 +42,12 @@ namespace vine
         class DescendingComparator 
         {
         public:
-            bool operator()(const RenderableLayerType& lhs, const RenderableLayerType& rhs) const
+            bool operator()(const RenderableLayerLevel& lhs, const RenderableLayerLevel& rhs) const
             {
                 return lhs > rhs; // Reverse the default order
             }
         };
 
-        std::map<RenderableLayerType, RenderableLayer*, DescendingComparator> renderables_;
+        std::map<RenderableLayerLevel, RenderableLayer*, DescendingComparator> renderables_;
     };
 }

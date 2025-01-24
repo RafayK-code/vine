@@ -18,23 +18,6 @@ namespace vine
 
         ResourceHandle addResource(Resource* resource);
 
-        template<typename T, typename CreationT = ResourceCreationData>
-        ResourceHandle createResource(const CreationT& data)
-        {
-            Resource* res = new T(data);
-            resources_.insert({ res->getHandle(), res });
-            return res->getHandle();
-        }
-
-        template<typename T, typename CreationT = ResourceCreationData>
-        ResourceHandle createAndLoadResource(const CreationT& data)
-        {
-            Resource* res = new T(data);
-            resources_.insert({ res->getHandle(), res });
-            res->load();
-            return res->getHandle();
-        }
-
         Resource* getResource(const ResourceHandle& handle);
 
         template<typename T>

@@ -8,7 +8,7 @@
 
 namespace vine
 {
-    RenderableLayer::RenderableLayer(RenderableLayerType layer)
+    RenderableLayer::RenderableLayer(RenderableLayerLevel layer)
         : layer_(layer)
     {
     }

@@ -8,7 +8,7 @@ namespace vine
 {
     namespace Layer
     {
-        bool isValidLayer(RenderableLayerType layer)
+        bool isValidLayer(RenderableLayerLevel layer)
         {
             return layer >= 1 && layer <= 6;
         }
