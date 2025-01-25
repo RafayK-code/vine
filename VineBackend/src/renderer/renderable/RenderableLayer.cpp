@@ -66,7 +66,10 @@ namespace vine
             Renderer::ref().setActiveTextShader(shader);
 
             for (auto& renderable : textIt->second)
-                renderable->render();
+            {
+                if (renderable->isVisible())
+                    renderable->render();
+            }
 
             Renderer::ref().nextBatch();
             textIt++;

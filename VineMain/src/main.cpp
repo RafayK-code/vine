@@ -53,7 +53,7 @@ public:
         RenderableManager::ref().addRenderable("Sprite2", s2);
         */
 
-        quad_ = new Quad(RenderableState());
+        quad_ = createRef<Quad>(RenderableState());
         quad_->setPosition({ 400.0f, 500.0f });
         quad_->setScale({ 100.0f, 100.0f });
         quad_->setColor({ 1.0f, 0.0f, 0.0f, 0.7f });
@@ -62,18 +62,19 @@ public:
         quad2_ = quad_->clone().dynamicCast<Quad>();
         quad2_->setPosition({ 400.0f, 200.0f });
 
-        //ResourceHandle handle = ResourceManager::ref().createResource<ResourceFont>({ "assets/fonts/opensans/OpenSans-Regular.ttf" });
-        
-        text_ = new Text("assets/fonts/opensans/OpenSans-Regular.ttf", TextState());
-        text_->setPosition({ 600.0f, 500.0f });
+        text_ = createRef<Text>("assets/fonts/opensans/OpenSans-Regular.ttf", TextState());
+        text_->setPosition({ 200.0f, 400.0f });
         text_->setLayer(Layer::Background);
-        text_->setScale({ 300.0f, 300.0f });
+        text_->setScale({ 50.0f, 50.0f });
         text_->setText("hello\nWorld!");
         text_->setColor({ 0.0f, 1.0f, 0.0f, 1.0f });
         text_->setLineSpacing(0.0f);
+        text_->setVisible(false);
 
-        //RenderableManager::ref().addRenderable("Text", text);
-        
+        text2_ = text_->clone().dynamicCast<Text>();
+        text2_->setPosition({ 200.0f, 200.0f });
+        text2_->setText("welcome");
+        text2_->setVisible(true);
     }
 
     void onTick(float dt) override 
@@ -87,17 +88,12 @@ public:
             elapsedTime_ = vine::Math::clamp(elapsedTime_, 0.0f, duration_);
         }
 
-        // Apply linear easing
         float easedX = easing::Elastic::easeInOut(elapsedTime_, startX_, endX_ - startX_, duration_);
         quad_->setPosition({ easedX, 500.0f });
-
-        //RenderableManager::ref().getRenderable("Quad")->setPosition({ easedX, 500.0f });
 
 #ifdef DEMO_FRAMEBUFFER
         framebuffer_->bind();
 #endif
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         Renderer::ref().clear();
         Renderer::ref().beginScene();
         RenderableManager::ref().render();
@@ -127,6 +123,7 @@ private:
     vine::Ref<vine::Quad> quad_;
     vine::Ref<vine::Quad> quad2_;
     vine::Ref<vine::Text> text_;
+    vine::Ref<vine::Text> text2_;
 
     float startX_ = 800.0f;
     float endX_ = 400.0f;
