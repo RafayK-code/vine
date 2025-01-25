@@ -11,17 +11,6 @@ namespace vine
     Sprite::Sprite(const std::string& file , const SpriteState& state)
         : Renderable(state), spritePos_(state.spritePos), spriteScale_(state.spriteScale)
     {
-        /*
-        res_ = ResourceManager::ref().getResource<ResourceImage>(textureHandle);
-        DBG_ASSERT(res_, "Texture resource with given handle could not be found");
-
-        if (!res_->isLoaded())
-            res_->load();
-
-        texture_ = res_->getTexture();
-        setShader("QuadShader");
-        */
-
         texture_ = ResourceImage::create(file);
         setShader("QuadShader");
     }
@@ -35,8 +24,20 @@ namespace vine
         Renderer::ref().drawQuad(getTransform(), texture_, getSpritePos(), getSpriteScale(), getColor());
     }
 
-    Renderable* Sprite::clone() const
+    Ref<Renderable> Sprite::clone() const
     {
-        return new Sprite(*this);
+        SpriteState state;
+        state.pos = getState().pos;
+        state.scale = getState().scale;
+        state.rotation = getState().rotation;
+        state.color = getState().color;
+        state.layer = getState().layer;
+        state.priority = getState().priority;
+        state.visible = getState().visible;
+        state.spritePos = spritePos_;
+        state.spriteScale = spriteScale_;
+
+        Sprite* sprite = new Sprite(texture_->getFile(), state);
+        return Ref<Sprite>(sprite);
     }
 }

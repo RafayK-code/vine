@@ -15,11 +15,6 @@ namespace vine
 
     RenderableLayer::~RenderableLayer()
     {
-        for (const auto& pair : renderables_)
-        {
-            if (pair.second)
-                delete pair.second;
-        }
     }
 
     void RenderableLayer::render() const
@@ -27,16 +22,16 @@ namespace vine
         std::unordered_map<std::string, std::vector<Renderable*>> quadRenderablesByShader;
         std::unordered_map<std::string, std::vector<Renderable*>> textRenderablesByShader;
 
-        for (const auto& pair : renderables_)
+        for (Renderable* r : renderables_)
         {
-            if (!pair.second)
+            if (!r)
                 continue;
 
-            std::string shaderName = pair.second->getShaderName();
-            if (dynamic_cast<Text*>(pair.second))
-                textRenderablesByShader[shaderName].push_back(pair.second);
+            std::string shaderName = r->getShaderName();
+            if (dynamic_cast<Text*>(r))
+                textRenderablesByShader[shaderName].push_back(r);
             else
-                quadRenderablesByShader[shaderName].push_back(pair.second);
+                quadRenderablesByShader[shaderName].push_back(r);
         }
 
         auto textIt = textRenderablesByShader.begin();
@@ -78,43 +73,20 @@ namespace vine
         }
     }
 
-    Renderable* RenderableLayer::addRenderable(const std::string& name, Renderable* renderable)
+    void RenderableLayer::add(Renderable* renderable)
     {
-        auto it = renderables_.find(name);
-        if (it != renderables_.end())
+        renderables_.push_back(renderable);
+    }
+
+    void RenderableLayer::remove(Renderable* renderable)
+    {
+        for (RenderableList::const_iterator itr = renderables_.begin(); itr != renderables_.end(); itr++)
         {
-            DBG_WARN("Renderable with name: {0} already exists! Freeing renderable passed in, returning existing renderable", name);
-            delete renderable;
-            return it->second;
+            if (*itr == renderable)
+            {
+                renderables_.erase(itr);
+                break;
+            }
         }
-
-        renderables_.insert({ name, renderable });
-        return renderable;
-    }
-
-    Renderable* RenderableLayer::getRenderable(const std::string& name)
-    {
-        auto it = renderables_.find(name);
-        if (it == renderables_.end())
-            return nullptr;
-
-        return it->second;
-    }
-
-    bool RenderableLayer::hasRenderable(const std::string& name) const
-    {
-        return renderables_.find(name) != renderables_.end();
-    }
-
-    void RenderableLayer::removeRenderable(const std::string& name)
-    {
-        auto it = renderables_.find(name);
-        if (it == renderables_.end())
-            return;
-
-        if (it->second)
-            delete it->second;
-
-        renderables_.erase(name);
     }
 }

@@ -23,8 +23,21 @@ namespace vine
         Renderer::ref().drawText(text_, font_, getTransform(), { getColor(), kerning_, lineSpacing_ });
     }
 
-    Renderable* Text::clone() const
+    Ref<Renderable> Text::clone() const
     {
-        return new Text(*this);
+        TextState state;
+        state.pos = getState().pos;
+        state.scale = getState().scale;
+        state.rotation = getState().rotation;
+        state.color = getState().color;
+        state.layer = getState().layer;
+        state.priority = getState().priority;
+        state.visible = getState().visible;
+        state.text = text_;
+        state.kerning = kerning_;
+        state.lineSpacing = lineSpacing_;
+
+        Text* text = new Text(font_->getFile(), state);
+        return Ref<Text>(text);
     }
 }

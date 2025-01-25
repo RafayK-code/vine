@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vine/renderer/backend/Shader.h>
+#include <vine/sys/Ref.h>
 
 #include <glm/glm.hpp>
 #include <string>
@@ -30,19 +31,21 @@ namespace vine
         glm::vec2 scale = { 0.0f, 0.0f };
         float rotation = 0.0f;
         glm::vec4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
-        RenderableLayerLevel layer = Layer::Game;    // Used as z axis potentially
+        RenderableLayerLevel layer = Layer::Game;
         float priority = 0.0f;
         bool visible = true;
     };
 
-    class Renderable
+    class Renderable : public RefCounted
     {
     public:
         Renderable(const RenderableState& state);
         virtual ~Renderable();
 
         virtual void render() const = 0;
-        virtual Renderable* clone() const = 0;
+        virtual Ref<Renderable> clone() const = 0;
+
+        const RenderableState& getState() const { return state_; }
 
         const glm::vec2& getPosition() const { return state_.pos; }
         void setPosition(const glm::vec2& pos) { state_.pos = pos; updateTransform(); }
@@ -57,7 +60,7 @@ namespace vine
         void setColor(const glm::vec4& color) { state_.color = color; }
 
         RenderableLayerLevel getLayer() const { return state_.layer; }
-        void setLayer(RenderableLayerLevel layer) { state_.layer = layer; updateTransform(); }
+        void setLayer(RenderableLayerLevel layer);
 
         float getPriority() const { return state_.priority; }
         void setPriority(float priority) { state_.priority = priority; updateTransform(); }

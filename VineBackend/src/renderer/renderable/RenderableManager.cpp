@@ -53,34 +53,10 @@ namespace vine
         }
     }
 
-    Renderable* RenderableManager::addRenderable(const std::string& name, Renderable* renderable)
+    RenderableLayer* RenderableManager::getLayer(RenderableLayerLevel layer)
     {
-        DBG_ASSERT(Layer::isValidLayer(renderable->getLayer()), "Renderable is not on a valid layer");
-        return renderables_[renderable->getLayer()]->addRenderable(name, renderable);
-    }
-
-    Renderable* RenderableManager::getRenderable(const std::string& name)
-    {
-        for (const auto& pair : renderables_)
-        {
-            Renderable* renderable = pair.second->getRenderable(name);
-            if (renderable)
-                return renderable;
-        }
-
-        return nullptr;
-    }
-
-    void RenderableManager::removeRenderable(const std::string& name)
-    {
-        for (auto& pair : renderables_)
-        {
-            if (pair.second->hasRenderable(name));
-            {
-                pair.second->removeRenderable(name);
-                return;
-            }
-        }
+        DBG_ASSERT(Layer::isValidLayer(layer), "Renderable is not on a valid layer");
+        return renderables_.find(layer)->second;
     }
 
     ResourceHandle RenderableManager::createSpritesFromSheet(const std::string& sheet, const RenderableState& defaultState)

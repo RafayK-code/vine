@@ -11,6 +11,6 @@ namespace vine
         virtual ~Quad();
 
         virtual void render() const override;
-        virtual Renderable* clone() const override;
+        virtual Ref<Renderable> clone() const override;
     };
 }

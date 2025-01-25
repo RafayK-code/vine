@@ -20,7 +20,7 @@ namespace vine
         virtual ~Sprite();
 
         virtual void render() const override;
-        virtual Renderable* clone() const override;
+        virtual Ref<Renderable> clone() const override;
 
         const glm::vec2& getSpritePos() const { return spritePos_; }
         void setSpritePos(const glm::vec2& spritePos) { spritePos_ = spritePos; }

@@ -15,24 +15,15 @@ namespace vine
 
         void render() const;
 
-        Renderable* addRenderable(const std::string& name, Renderable* renderable);
-
-        template<typename T, typename... Args>
-        Renderable* createRenderable(const std::string& name, Args&&... args)
-        {
-            Renderable* renderable = new T(std::forward<Args>(args)...);
-            return addRenderable(name, renderable);
-        }
-
-        Renderable* getRenderable(const std::string& name);
-        bool hasRenderable(const std::string& name) const;
-        void removeRenderable(const std::string& name);
+        void add(Renderable* renderable);
+        void remove(Renderable* renderable);
 
         RenderableLayerLevel getLayer() const { return layer_; }
 
     private:
         RenderableLayerLevel layer_;
 
-        std::unordered_map<std::string, Renderable*> renderables_;
+        using RenderableList = std::vector<Renderable*>;
+        RenderableList renderables_;
     };
 }

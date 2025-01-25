@@ -21,17 +21,7 @@ namespace vine
 
         void render() const;
 
-        Renderable* addRenderable(const std::string& name, Renderable* renderable);
-        
-        template<typename T, typename... Args>
-        Renderable* createRenderable(const std::string& name, Args&&... args)
-        {
-            Renderable* renderable = new T(std::forward<Args>(args)...);
-            return addRenderable(name, renderable);
-        }
-
-        Renderable* getRenderable(const std::string& name);
-        void removeRenderable(const std::string& name);
+        RenderableLayer* getLayer(RenderableLayerLevel layer);
 
         ResourceHandle createSpritesFromSheet(const std::string& sheet, const RenderableState& defaultState = RenderableState());
 

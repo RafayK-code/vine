@@ -1,5 +1,6 @@
 #include <vine/renderer/renderable/Renderable.h>
 
+#include <vine/renderer/renderable/RenderableManager.h>
 #include <vine/renderer/backend/ShaderCache.h>
 
 #include <glm/gtc/matrix_transform.hpp>
@@ -17,11 +18,21 @@ namespace vine
     Renderable::Renderable(const RenderableState& state)
         : state_(state)
     {
+        RenderableManager::ref().getLayer(state_.layer)->add(this);
         updateTransform();
     }
 
     Renderable::~Renderable()
     {
+        RenderableManager::ref().getLayer(state_.layer)->remove(this);
+    }
+
+    void Renderable::setLayer(RenderableLayerLevel layer)
+    {
+        RenderableManager::ref().getLayer(state_.layer)->remove(this);
+        state_.layer = layer;
+        RenderableManager::ref().getLayer(state_.layer)->add(this);
+        updateTransform();
     }
 
     void Renderable::setShader(const std::string& name)
