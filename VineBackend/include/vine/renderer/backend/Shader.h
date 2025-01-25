@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vine/sys/Ref.h>
+
 #include <string>
 #include <glm/glm.hpp>
 #include <unordered_map>
@@ -7,7 +9,7 @@
 
 namespace vine
 {
-    class Shader
+    class Shader : public RefCounted
     {
     public:
         Shader(const std::string& name, const std::string& vertexPath, const std::string& fragmentPath);
@@ -17,7 +19,7 @@ namespace vine
         void bind() const;
         void unbind() const;
 
-        const std::string& getName() { return name_; }
+        const std::string& getName() const { return name_; }
 
         void uploadUniformInt(const std::string& name, int value);
         void uploadUniformIntArray(const std::string& name, int* values, uint32_t count);
@@ -40,6 +42,6 @@ namespace vine
         std::unordered_map<std::string, int> uniformCache_;
     };
 
-    using ShaderRef = std::shared_ptr<Shader>;
+    using ShaderRef = Ref<Shader>;
     ShaderRef createShader(const std::string& name, const std::string& vertexPath, const std::string& fragmentPath);
 }
