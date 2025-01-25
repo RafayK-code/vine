@@ -24,36 +24,43 @@ namespace vine
         destroySingleton();
     }
 
-    ResourceHandle ResourceManager::addResource(Resource* resource)
+    Resource* ResourceManager::get(const ResourceCreationData& filename)
     {
-        auto it = resources_.find(resource->getHandle());
-        if (it != resources_.end())
+        auto it = resources_.find(&filename);
+
+        while (it != resources_.end())
         {
-            DBG_WARN("Resource already exists in manager");
-            return resource->getHandle();
+            if (it->first->isEqual(filename))
+                return it->second;
+
+            it++;
         }
 
-        resources_.insert({ resource->getHandle(), resource });
-        return resource->getHandle();
+        return nullptr;
     }
 
-    Resource* ResourceManager::getResource(const ResourceHandle& handle)
+    void ResourceManager::add(Resource* resource)
     {
-        auto it = resources_.find(handle);
-        if (it == resources_.end())
-            return nullptr;
-
-        return it->second;
-    }
-
-    void ResourceManager::removeResource(ResourceHandle& handle)
-    {
-        auto it = resources_.find(handle);
-        if (it == resources_.end())
+        Resource* res = get(*resource->getCreationData());
+        if (res != nullptr)
             return;
 
-        delete it->second;
-        handle.invalidate();
-        resources_.erase(it);
+        resources_.insert({ resource->getCreationData(), resource });
+    }
+
+    void ResourceManager::remove(Resource* resource)
+    {
+        auto it = resources_.find(resource->getCreationData());
+
+        while (it != resources_.end())
+        {
+            if (it->first->isEqual(*resource->getCreationData()))
+            {
+                resources_.erase(it);
+                break;
+            }
+
+            it++;
+        }
     }
 }

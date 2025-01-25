@@ -1,5 +1,6 @@
 #include <vine/resource/ResourceFont.h>
 
+#include <vine/resource/ResourceManager.h>
 #include <vine/core/Logger.h>
 
 #include <vector>
@@ -149,7 +150,7 @@ namespace vine
             }
         }
 
-        atlasTexture_ = createAndCacheAtlas<uint8_t, float, 3, msdf_atlas::msdfGenerator>("Test", (float)emSize, data_->glyphs, data_->fontGeometry, width, height);
+        atlasTexture_ = createAndCacheAtlas<uint8_t, float, 3, msdf_atlas::msdfGenerator>("tex_" + data->file, (float)emSize, data_->glyphs, data_->fontGeometry, width, height);
         msdfgen::destroyFont(font);
         msdfgen::deinitializeFreetype(ft);
     }
@@ -158,8 +159,13 @@ namespace vine
     {
         ResourceCreationData data = ResourceCreationData(file);
         data.type = ResourceDataType::ResourceDataTypeFont;
-        ResourceFont* res = new ResourceFont(data);
-        res->loadFromFont();
+        ResourceFont* res = dynamic_cast<ResourceFont*>(ResourceManager::ref().get(data));
+        
+        if (!res)
+        {
+            res = new ResourceFont(data);
+            res->loadFromFont();
+        }
 
         return Ref<ResourceFont>(res);
     }

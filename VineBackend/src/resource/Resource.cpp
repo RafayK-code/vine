@@ -66,10 +66,13 @@ namespace vine
         : loaded_(false)
     {
         creationData_ = data.clone();
+        ResourceManager::ref().add(this);
     }
 
     Resource::~Resource()
     {
+        ResourceManager::ref().remove(this);
+
         if (creationData_)
             delete creationData_;
     }

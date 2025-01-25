@@ -16,22 +16,25 @@ namespace vine
         static void init();
         static void shutdown();
 
-        ResourceHandle addResource(Resource* resource);
+        Resource* get(const ResourceCreationData& filename);
 
-        Resource* getResource(const ResourceHandle& handle);
-
-        template<typename T>
-        T* getResource(const ResourceHandle& handle)
-        {
-            return dynamic_cast<T*>(getResource(handle));
-        }
-
-        void removeResource(ResourceHandle& handle);
+        void add(Resource* resource);
+        void remove(Resource* resource);
 
     private:
         ResourceManager();
 
     private:
-        std::map<ResourceHandle, Resource*> resources_;
+        class ResourceCreationCompare
+        {
+        public:
+            bool operator()(const ResourceCreationData* lhs, const ResourceCreationData* rhs) const
+            {
+                return lhs->isLess(*rhs);
+            }
+        };
+
+        using ResourceMap = std::map<const ResourceCreationData*, Resource*, ResourceCreationCompare>;
+        ResourceMap resources_;
     };
 }

@@ -1,5 +1,6 @@
 #include <vine/resource/ResourceImage.h>
 
+#include <vine/resource/ResourceManager.h>
 #include <vine/core/Logger.h>
 #include <vine/sys/Ref.h>
 
@@ -213,8 +214,13 @@ namespace vine
     Ref<ResourceImage> ResourceImage::create(const std::string& file, const TextureSamplerSettings& settings)
     {
         ResourceImageCreationData data = ResourceImageCreationData(file, settings);
-        ResourceImage* res = new ResourceImage(data);
-        res->loadFromFile();
+        ResourceImage* res = dynamic_cast<ResourceImage*>(ResourceManager::ref().get(data));
+
+        if (!res)
+        {
+            res = new ResourceImage(data);
+            res->loadFromFile();
+        }
 
         return Ref<ResourceImage>(res);
     }
@@ -222,13 +228,18 @@ namespace vine
     Ref<ResourceImage> ResourceImage::createFromBytes(const void* bytes, const std::string& name, const TextureSpecification& spec, const TextureSamplerSettings& settings)
     {
         ResourceImageCreationData data = ResourceImageCreationData(name, settings);
-        ResourceImage* res = new ResourceImage(data);
-        res->spec_ = spec;
+        ResourceImage* res = dynamic_cast<ResourceImage*>(ResourceManager::ref().get(data));
 
-        res->dataFormat_ = util::vineImageFormatToGLDataFormat(spec.format);
-        res->internalFormat_ = util::vineImageFormatToGLInternalFormat(spec.format);
+        if (!res)
+        {
+            res = new ResourceImage(data);
+            res->spec_ = spec;
 
-        res->loadFromBytes(bytes);
+            res->dataFormat_ = util::vineImageFormatToGLDataFormat(spec.format);
+            res->internalFormat_ = util::vineImageFormatToGLInternalFormat(spec.format);
+
+            res->loadFromBytes(bytes);
+        }
 
         return Ref<ResourceImage>(res);
     }
@@ -240,9 +251,13 @@ namespace vine
         settings.sWrap = settings.tWrap = TextureWrapMode::Repeat;
 
         ResourceImageCreationData data = ResourceImageCreationData(std::string(BUILTIN_WHITE_TEXTURE_KEY), settings);
+        ResourceImage* res = dynamic_cast<ResourceImage*>(ResourceManager::ref().get(data));
 
-        ResourceImage* res = new ResourceImage(data);
-        res->loadBuiltinWhite();
+        if (!res)
+        {
+            res = new ResourceImage(data);
+            res->loadBuiltinWhite();
+        }
 
         return Ref<ResourceImage>(res);
     }

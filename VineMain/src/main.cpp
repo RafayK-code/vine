@@ -53,23 +53,26 @@ public:
         RenderableManager::ref().addRenderable("Sprite2", s2);
         */
 
-        Quad* quad = new Quad(RenderableState());
-        quad->setPosition({ 400.0f, 500.0f });
-        quad->setScale({ 100.0f, 100.0f });
-        quad->setColor({ 1.0f, 0.0f, 0.0f, 0.7f });
-        RenderableManager::ref().addRenderable("Quad", quad);
+        quad_ = new Quad(RenderableState());
+        quad_->setPosition({ 400.0f, 500.0f });
+        quad_->setScale({ 100.0f, 100.0f });
+        quad_->setColor({ 1.0f, 0.0f, 0.0f, 0.7f });
+        //RenderableManager::ref().addRenderable("Quad", quad);
+
+        quad2_ = quad_->clone().dynamicCast<Quad>();
+        quad2_->setPosition({ 400.0f, 200.0f });
 
         //ResourceHandle handle = ResourceManager::ref().createResource<ResourceFont>({ "assets/fonts/opensans/OpenSans-Regular.ttf" });
         
-        Text* text = new Text("assets/fonts/opensans/OpenSans-Regular.ttf", TextState());
-        text->setPosition({ 600.0f, 500.0f });
-        text->setLayer(Layer::Background);
-        text->setScale({ 200.0f,200.0f });
-        text->setText("hello\nworld!");
-        text->setColor({ 0.0f, 1.0f, 0.0f, 1.0f });
-        text->setLineSpacing(-0.1f);
+        text_ = new Text("assets/fonts/opensans/OpenSans-Regular.ttf", TextState());
+        text_->setPosition({ 600.0f, 500.0f });
+        text_->setLayer(Layer::Background);
+        text_->setScale({ 300.0f, 300.0f });
+        text_->setText("hello\nWorld!");
+        text_->setColor({ 0.0f, 1.0f, 0.0f, 1.0f });
+        text_->setLineSpacing(0.0f);
 
-        RenderableManager::ref().addRenderable("Text", text);
+        //RenderableManager::ref().addRenderable("Text", text);
         
     }
 
@@ -81,13 +84,14 @@ public:
         if (elapsedTime_ > duration_ || elapsedTime_ < 0.0f)
         {
             direction_ *= -1; // Reverse direction
-            elapsedTime_ = glm::clamp(elapsedTime_, 0.0f, duration_);
+            elapsedTime_ = vine::Math::clamp(elapsedTime_, 0.0f, duration_);
         }
 
         // Apply linear easing
         float easedX = easing::Elastic::easeInOut(elapsedTime_, startX_, endX_ - startX_, duration_);
+        quad_->setPosition({ easedX, 500.0f });
 
-        RenderableManager::ref().getRenderable("Quad")->setPosition({ easedX, 500.0f });
+        //RenderableManager::ref().getRenderable("Quad")->setPosition({ easedX, 500.0f });
 
 #ifdef DEMO_FRAMEBUFFER
         framebuffer_->bind();
@@ -120,6 +124,9 @@ public:
 
 private:
     vine::FramebufferRef framebuffer_ = nullptr;
+    vine::Ref<vine::Quad> quad_;
+    vine::Ref<vine::Quad> quad2_;
+    vine::Ref<vine::Text> text_;
 
     float startX_ = 800.0f;
     float endX_ = 400.0f;
