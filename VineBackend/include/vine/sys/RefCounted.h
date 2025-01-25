@@ -8,7 +8,7 @@ namespace vine
     {
     public:
         RefCounted();
-        ~RefCounted();
+        virtual ~RefCounted();
 
         uint32_t getRefCount() const { return refCount_; }
 
