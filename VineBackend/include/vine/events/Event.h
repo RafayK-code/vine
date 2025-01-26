@@ -6,74 +6,39 @@
 
 namespace vine
 {
-    enum EventType
-    {
-        None = -1,
-        WindowClose, WindowResize, WindowFocus, WindowLostFocus, WindowMoved,
-        AppTick, AppRender,
-        KeyDown, KeyUp, KeyTyped,
-        MouseButtonDown, MouseButtonUp, MouseMoved, MouseScrolled,
-    };
-
-    class Event
+    class AbstractEvent
     {
     public:
-        virtual ~Event() = default;
+        AbstractEvent() = default;
+        virtual ~AbstractEvent() = default;
 
-        virtual EventType getEventType() const = 0;
-        virtual std::string getName() const = 0;
-    };
-
-    template<typename E>
-    using EventCallbackFn = std::function<void(E&)>;
-    
-    using CallbackID = uint64_t;
-
-    class EventDispatcher
-    {
-    public:
-        EventDispatcher();
-        ~EventDispatcher();
-
-        template<typename E>
-        CallbackID addEventCallback(const EventCallbackFn<E>& callback)
-        {
-            BaseEventCallbackFn cbWrapper = [callback](Event* e)
-            {
-                if (E* event = dynamic_cast<E*>(e))
-                    callback(*event);
-            };
-
-            callbackFns_[E::getStaticEventType()].push_back(cbWrapper);
-            return generateCallbackID<E>();
-        }
-
-        void removeEventCallback(CallbackID callback);
+        virtual uint32_t getThisEventTypeID() const = 0;
 
     protected:
-        template<typename E>
-        void dispatchEvent(E& e)
+
+        static uint32_t getNewEventTypeID()
         {
-            std::vector<BaseEventCallbackFn> eCallbacks = callbackFns_[E::getStaticEventType()];
-            for (const auto& callback : eCallbacks)
-            {
-                callback(&e);
-            }
+            static uint32_t newID = 0;
+            return newID++;
+        }
+    };
+
+    template <typename T>
+    class Event : public AbstractEvent
+    {
+    public:
+        Event() = default;
+        virtual ~Event() = default;
+
+        uint32_t getThisEventTypeID() const override
+        {
+            return Event::getEventTypeID();
         }
 
-    private:
-        template<typename E>
-        CallbackID generateCallbackID()
+        static uint32_t getEventTypeID()
         {
-            uint32_t high = E::getStaticEventType();
-            uint32_t low = callbackFns_[E::getStaticEventType()].size() - 1;
-
-            return ((CallbackID)high << 32) | low;
+            static uint32_t typeID = getNewEventTypeID();
+            return typeID;
         }
-
-        using BaseEventCallbackFn = std::function<void(Event*)>;
-
-    private:
-        std::vector<std::vector<BaseEventCallbackFn>> callbackFns_;
     };
 }

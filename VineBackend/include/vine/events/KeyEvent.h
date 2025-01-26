@@ -5,7 +5,7 @@
 
 namespace vine
 {
-    class KeyEvent : public Event
+    class KeyEvent : public Event<KeyEvent>
     {
     public:
         KeyCode getKeyCode() const { return keyCode_; }
@@ -29,10 +29,6 @@ namespace vine
 
         bool isRepeat() const { return repeat_; }
 
-        EventType getEventType() const override { return EventType::KeyDown; }
-        static EventType getStaticEventType() { return EventType::KeyDown; }
-        std::string getName() const override { return "KeyDownEvent"; }
-
     private:
         bool repeat_;
     };
@@ -44,13 +40,9 @@ namespace vine
             : KeyEvent(keycode)
         {
         }
-
-        EventType getEventType() const override { return EventType::KeyUp; }
-        static EventType getStaticEventType() { return EventType::KeyUp; }
-        std::string getName() const override { return "KeyUpEvent"; }
     };
 
-    class KeyTypedEvent : public Event
+    class KeyTypedEvent : public Event<KeyTypedEvent>
     {
     public:
         KeyTypedEvent(const std::string& text)
@@ -59,10 +51,6 @@ namespace vine
         }
 
         const std::string& getText() const { return text_; }
-
-        EventType getEventType() const override { return EventType::KeyTyped; }
-        static EventType getStaticEventType() { return EventType::KeyTyped; }
-        std::string getName() const override { return "KeyTypedEvent"; }
 
     private:
         std::string text_;

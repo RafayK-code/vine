@@ -5,7 +5,7 @@
 
 namespace vine
 {
-    class MouseButtonEvent : public Event
+    class MouseButtonEvent : public Event<MouseButtonEvent>
     {
     public:
         MouseCode getMouseButton() const { return button_; }
@@ -31,10 +31,6 @@ namespace vine
             : MouseButtonEvent(button, x, y)
         {
         }
-
-        EventType getEventType() const override { return EventType::MouseButtonDown; }
-        static EventType getStaticEventType() { return EventType::MouseButtonDown; }
-        std::string getName() const override { return "MouseButtonDownEvent"; }
     };
 
     class MouseButtonUpEvent : public MouseButtonEvent
@@ -44,13 +40,9 @@ namespace vine
             : MouseButtonEvent(button, x, y)
         {
         }
-
-        EventType getEventType() const override { return EventType::MouseButtonUp; }
-        static EventType getStaticEventType() { return EventType::MouseButtonUp; }
-        std::string getName() const override { return "MouseButtonUpEvent"; }
     };
 
-    class MouseMovedEvent : public Event
+    class MouseMovedEvent : public Event<MouseMovedEvent>
     {
     public:
         MouseMovedEvent(float x, float y)
@@ -61,16 +53,12 @@ namespace vine
         float getX() const { return mouseX_; }
         float getY() const { return mouseY_; }
 
-        EventType getEventType() const override { return EventType::MouseMoved; }
-        static EventType getStaticEventType() { return EventType::MouseMoved; }
-        std::string getName() const override { return "MouseMovedEvent"; }
-
     private:
         float mouseX_;
         float mouseY_;
     };
 
-    class MouseScrolledEvent : public Event
+    class MouseScrolledEvent : public Event<MouseMovedEvent>
     {
     public:
         MouseScrolledEvent(float xOffset, float yOffset)
@@ -80,10 +68,6 @@ namespace vine
 
         float getXOffset() const { return xOffset_; }
         float getYOffset() const { return yOffset_; }
-
-        EventType getEventType() const override { return EventType::MouseScrolled; }
-        static EventType getStaticEventType() { return EventType::MouseScrolled; }
-        std::string getName() const override { return "MouseScrolledEvent"; }
 
     private:
         float xOffset_;

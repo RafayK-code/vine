@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vine/events/Event.h>
+#include <vine/events/EventDispatcher.h>
 
 #include <SDL.h>
 
