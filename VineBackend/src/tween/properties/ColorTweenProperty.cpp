@@ -19,4 +19,14 @@ namespace vine
     {
 
     }
+
+    void ColorTweenProperty::prepareForUse()
+    {
+
+    }
+
+    AbstractTweenProperty* ColorTweenProperty::clone()
+    {
+        return new ColorTweenProperty(*this);
+    }
 }

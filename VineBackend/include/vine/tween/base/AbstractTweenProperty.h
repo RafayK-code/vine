@@ -20,6 +20,9 @@ namespace vine
         void setEaseFunction(easing::EasingFunction easeFunc) { easeFunc_ = easeFunc; }
         easing::EasingFunction getEaseFunction() const { return easeFunc_; }
 
+        virtual void prepareForUse() = 0;
+        virtual AbstractTweenProperty* clone() = 0;
+
     protected:
         Tween* owner_;
         bool initialized_;
