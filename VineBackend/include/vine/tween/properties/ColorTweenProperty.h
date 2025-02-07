@@ -1,12 +1,12 @@
 #pragma once
 
-#include <vine/tween/base/AbstractTweenProperty.h>
+#include <vine/tween/properties/TweenProperty.h>
 
-#include <vine/tween/base/AbstractTweenTarget.h>
+#include <vine/tween/targets/TweenTarget.h>
 
 namespace vine
 {
-    class ColorTweenProperty : AbstractTweenProperty
+    class ColorTweenProperty : public TweenProperty
     {
     public:
         ColorTweenProperty(const Color& endValue);
@@ -16,13 +16,13 @@ namespace vine
         virtual void tick(float totalElapsedTime) override;
 
         virtual void prepareForUse() override;
-        virtual AbstractTweenProperty* clone() override;
+        virtual TweenProperty* clone() override;
 
     private:
         Color startValue_;
         Color endValue_;
         Color diffValue_;
 
-        AbstractTweenTarget* target_;
+        TweenTarget* target_;
     };
 }

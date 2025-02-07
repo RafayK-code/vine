@@ -22,15 +22,19 @@ namespace vine
     class KeyDownEvent : public KeyEvent
     {
     public:
-        KeyDownEvent(KeyCode keycode, bool isRepeat = false)
-            : KeyEvent(keycode), repeat_(isRepeat)
+        KeyDownEvent(KeyCode keycode)
+            : KeyEvent(keycode)
         {
         }
+    };
 
-        bool isRepeat() const { return repeat_; }
-
-    private:
-        bool repeat_;
+    class KeyHeldEvent : public KeyEvent
+    {
+    public:
+        KeyHeldEvent(KeyCode keycode)
+            : KeyEvent(keycode)
+        {
+        }
     };
 
     class KeyUpEvent : public KeyEvent

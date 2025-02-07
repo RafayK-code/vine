@@ -5,13 +5,13 @@
 
 namespace vine
 {
-    class AbstractTweenTarget : public RefCounted
+    class TweenTarget : public RefCounted
     {
     public:
-        virtual ~AbstractTweenTarget() = default;
+        virtual ~TweenTarget() = default;
 
         virtual const Vec2& getPosition() const = 0;
-        virtual void setPosition(const Vec2& pos) const = 0;
+        virtual void setPosition(const Vec2& pos) = 0;
 
         virtual const Vec2& getScale() const = 0;
         virtual void setScale(const Vec2& scale) = 0;

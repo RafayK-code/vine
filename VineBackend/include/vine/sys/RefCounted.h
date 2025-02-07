@@ -20,6 +20,6 @@ namespace vine
         void decRef();
 
     private:
-        std::atomic<uint32_t> refCount_;
+        uint32_t refCount_;
     };
 }

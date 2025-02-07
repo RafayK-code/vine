@@ -8,6 +8,7 @@ namespace vine
     KeyboardMouseController::KeyboardMouseController()
         : state_(State::Default)
     {
+        SDL_StopTextInput();
     }
 
     KeyboardMouseController::~KeyboardMouseController()
@@ -20,8 +21,16 @@ namespace vine
         {
         case SDL_KEYDOWN:
         {
-            KeyDownEvent e(event->key.keysym.sym);
-            dispatchEvent(e);
+            if (!event->key.repeat)
+            {
+                KeyDownEvent e(event->key.keysym.sym);
+                dispatchEvent(e);
+            }
+            else
+            {
+                KeyHeldEvent e(event->key.keysym.sym);
+                dispatchEvent(e);
+            }
             break;
         }
         case SDL_KEYUP:

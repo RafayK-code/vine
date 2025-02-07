@@ -46,6 +46,8 @@ namespace vine
         uint32_t getRefCount() const { return rcPtr_->getRefCount(); }
         bool null() const { return rcPtr_ == nullptr; }
 
+        explicit operator bool() const { return rcPtr_ != nullptr; }
+
         template <typename T2>
         operator Ref<T2>() { return rcPtr_; }
 

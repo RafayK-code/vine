@@ -5,6 +5,9 @@
 #include <vine/core/codes/KeyCodes.h>
 #include <vine/core/codes/MouseCodes.h>
 
+#include <vine/controller/Controller.h>
+#include <vine/controller/KeyboardMouseController.h>
+
 #include <vine/events/Event.h>
 #include <vine/events/AppEvent.h>
 #include <vine/events/KeyEvent.h>
@@ -30,6 +33,8 @@
 #include <vine/sys/RefCounted.h>
 
 #include <vine/tween/Easing.h>
+#include <vine/tween/Tween.h>
+#include <vine/tween/targets/RenderableTweenTarget.h>
 
 #include <vine/window/Window.h>
 

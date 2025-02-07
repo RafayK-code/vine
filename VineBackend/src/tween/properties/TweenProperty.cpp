@@ -1,19 +1,19 @@
-#include <vine/tween/base/AbstractTweenProperty.h>
+#include <vine/tween/properties/TweenProperty.h>
 
 #include <vine/tween/Tween.h>
 
 namespace vine
 {
-    AbstractTweenProperty::AbstractTweenProperty()
+    TweenProperty::TweenProperty()
         : owner_(nullptr), initialized_(false), easeFunc_(nullptr)
     {
     }
 
-    AbstractTweenProperty::~AbstractTweenProperty()
+    TweenProperty::~TweenProperty()
     {
     }
 
-    void AbstractTweenProperty::init(Tween* owner)
+    void TweenProperty::init(Tween* owner)
     {
         owner_ = owner;
         initialized_ = true;

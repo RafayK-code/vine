@@ -59,6 +59,37 @@ public:
         quad_->setColor({ 1.0f, 0.0f, 0.0f, 0.7f });
         //RenderableManager::ref().addRenderable("Quad", quad);
 
+        getController()->addEventCallback<KeyTypedEvent>([this](KeyTypedEvent& e) {
+            DBG_INFO("Key typed text: {0}", e.getText());
+            typedText_ += e.getText();
+            text2_->setText(typedText_);
+        });
+
+        getController()->addEventCallback<KeyDownEvent>([this](KeyDownEvent& e) {
+            DBG_INFO("Key down: {0}, {1}", e.getKeyCode(), e.getThisEventTypeID());
+            if (e.getKeyCode() == Key::Backspace)
+            {
+                if (!typedText_.empty())
+                    typedText_.pop_back();
+                text2_->setText(typedText_);
+            }
+            else if (e.getKeyCode() == Key::Enter)
+            {
+                typedText_ += '\n';
+                text2_->setText(typedText_);
+            }
+        });
+
+        getController()->addEventCallback<KeyHeldEvent>([this](KeyHeldEvent& e) {
+            DBG_INFO("Key down: {0}", e.getKeyCode());
+            if (e.getKeyCode() == Key::Backspace)
+            {
+                if (!typedText_.empty())
+                    typedText_.pop_back();
+                text2_->setText(typedText_);
+            }
+        });
+
         quad2_ = quad_->clone().dynamicCast<Quad>();
         quad2_->setPosition({ 400.0f, 200.0f });
 
@@ -69,27 +100,32 @@ public:
         text_->setText("hello\nWorld!");
         text_->setColor({ 0.0f, 1.0f, 0.0f, 1.0f });
         text_->setLineSpacing(0.0f);
-        text_->setVisible(false);
 
         text2_ = text_->clone().dynamicCast<Text>();
         text2_->setPosition({ 200.0f, 200.0f });
-        text2_->setText("welcome");
-        text2_->setVisible(true);
+        text2_->setText(typedText_);
+
+        TweenTarget* target = new RenderableTweenTarget(quad_);
+        TweenConfig config;
+        config
+            .position(Vec2(800.0f, 500.0f))
+            .setEase(easing::Elastic::easeInOut)
+            .setLoopType(TweenLoopType::Restart)
+            .setIterations(2);
+
+        tween_ = new Tween(target, duration_, config);
+        tween_->play();
+
+        SDL_StopTextInput();
+
+        dynamic_cast<KeyboardMouseController*>(getController())->setState(KeyboardMouseController::State::Typing);
     }
 
     void onTick(float dt) override 
     {
         using namespace vine;
 
-        elapsedTime_ += dt * direction_;
-        if (elapsedTime_ > duration_ || elapsedTime_ < 0.0f)
-        {
-            direction_ *= -1; // Reverse direction
-            elapsedTime_ = vine::Math::clamp(elapsedTime_, 0.0f, duration_);
-        }
-
-        float easedX = easing::Elastic::easeInOut(elapsedTime_, startX_, endX_ - startX_, duration_);
-        quad_->setPosition({ easedX, 500.0f });
+        tween_->tick(dt);
 
 #ifdef DEMO_FRAMEBUFFER
         framebuffer_->bind();
@@ -125,11 +161,15 @@ private:
     vine::Ref<vine::Text> text_;
     vine::Ref<vine::Text> text2_;
 
+    vine::Tween* tween_;
+
     float startX_ = 800.0f;
     float endX_ = 400.0f;
     float duration_ = 2.5f;
     float elapsedTime_ = 0.0f;
     int direction_ = 1; // Move right initially
+
+    std::string typedText_;
 };
 
 vine::Application* vine::createApplication(int argc, char** argv)
