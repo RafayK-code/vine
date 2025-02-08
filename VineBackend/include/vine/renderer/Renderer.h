@@ -28,6 +28,7 @@ namespace vine
         static void shutdown();
 
         OrthographicCamera& getCamera() { return camera_; }
+        const OrthographicCamera& getCamera() const { return camera_; }
 
         void setViewport(const glm::vec4& dimensions);
         void setClearColor(const glm::vec4& color);
