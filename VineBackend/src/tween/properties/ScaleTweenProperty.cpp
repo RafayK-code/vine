@@ -32,7 +32,7 @@ namespace vine
         float easedTime = easeFunc_(totalElapsedTime, 0.0f, 1.0f, owner_->getDuration());
         Vec2 scale = Math::unclampedVec2Lerp(easedTime, startValue_, diffValue_);
 
-        target_->setPosition(scale);
+        target_->setScale(scale);
     }
 
     void ScaleTweenProperty::prepareForUse()
@@ -40,7 +40,7 @@ namespace vine
         if (!target_)
             return;
 
-        startValue_ = target_->getPosition();
+        startValue_ = target_->getScale();
         diffValue_ = endValue_ - startValue_;
     }
 
