@@ -19,11 +19,13 @@ namespace vine
         virtual void destroy() override;
         virtual void rewind(bool skipDelay = true) override;
 
+        virtual void goTo(float time) override;
+
         virtual void addTweenProperty(TweenProperty* propetry);
         virtual void removeTweenProperty(TweenProperty* property) override;
         virtual bool containsTweenProperty(TweenProperty* property) const override;
 
-        virtual const TweenProperties& getTweenProperties() const override;
+        virtual void getTweenProperties(TweenProperties& list) const override;
         void clearTweenProperties();
 
         Ref<TweenTarget> getTarget() { return target_; }

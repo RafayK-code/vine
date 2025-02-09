@@ -59,6 +59,95 @@ public:
         quad_->setColor({ 1.0f, 0.0f, 0.0f, 0.7f });
         //RenderableManager::ref().addRenderable("Quad", quad);
 
+        Renderer::ref().getCamera().setPosition({ 640, 360, 0.0f });
+        setupEventCallbacks();
+
+        quad2_ = quad_->clone().dynamicCast<Quad>();
+        quad2_->setPosition({ 400.0f, 200.0f });
+
+        text_ = createRef<Text>("assets/fonts/opensans/OpenSans-Regular.ttf", TextState());
+        text_->setPosition({ 200.0f, 400.0f });
+        text_->setLayer(Layer::Background);
+        text_->setScale({ 50.0f, 50.0f });
+        text_->setText("hello\nWorld!");
+        text_->setColor({ 0.0f, 1.0f, 0.0f, 1.0f });
+        text_->setLineSpacing(0.0f);
+
+        text2_ = text_->clone().dynamicCast<Text>();
+        text2_->setPosition({ 200.0f, 200.0f });
+        text2_->setText(typedText_);
+
+        TweenTarget* target = new RenderableTweenTarget(quad_);
+        TweenConfig config;
+        config
+            .position(Vec2(800.0f, 500.0f))
+            .scale(Vec2(200.0f, 200.0f))
+            .setEase(easing::Quadratic::easeInOut);
+
+        TweenConfig config2;
+        config2
+            .color(Color(0.0f, 0.0f, 1.0f, 1.0f))
+            .setEase(easing::Quadratic::easeInOut);
+
+        tween_ = new Tween(target, duration_, config);
+        tween2_ = new Tween(target, duration_, config2);
+        //tween_->play();
+
+        TweenChainConfig config3;
+        config3
+            .setLoopType(TweenLoopType::PingPong)
+            .setIterations(-1);
+
+        chain_ = new TweenChain(config3);
+        chain_->append(tween_);
+        chain_->append(tween2_);
+
+        chain_->play();
+
+        SDL_StopTextInput();
+
+        dynamic_cast<KeyboardMouseController*>(getController())->setState(KeyboardMouseController::State::Typing);
+    }
+
+    void onTick(float dt) override 
+    {
+        using namespace vine;
+
+        chain_->tick(dt);
+
+#ifdef DEMO_FRAMEBUFFER
+        framebuffer_->bind();
+#endif
+        Renderer::ref().clear();
+        Renderer::ref().beginScene();
+        RenderableManager::ref().render();
+        Renderer::ref().endScene();
+#ifdef DEMO_FRAMEBUFFER
+        framebuffer_->unbind();
+#endif
+
+#ifdef DEMO_FRAMEBUFFER
+        glDisable(GL_BLEND);
+        Renderer::ref().clear();
+        Renderer::ref().beginScene();
+        glm::mat4 transform = glm::translate(glm::mat4(1.0f), { 1280.0f / 2.0f, 720.0f / 2.0f, 10 }) *
+            glm::rotate(glm::mat4(1.0f), glm::radians(0.0f), glm::vec3(0.0f, 0.0f, 1.0f)) *
+            glm::scale(glm::mat4(1.0f), { 1280.0f, 720.0f, 1.0f });
+        Renderer::ref().drawQuad(transform, framebuffer_);
+        Renderer::ref().endScene();
+#endif
+    }
+
+    void onShutdown() override 
+    {
+        delete tween_;
+    }
+
+private:
+    void setupEventCallbacks()
+    {
+        using namespace vine;
+
         getController()->addEventCallback<KeyTypedEvent>([this](KeyTypedEvent& e) {
             DBG_INFO("Key typed text: {0}", e.getText());
             typedText_ += e.getText();
@@ -90,68 +179,41 @@ public:
             }
         });
 
-        quad2_ = quad_->clone().dynamicCast<Quad>();
-        quad2_->setPosition({ 400.0f, 200.0f });
+        getController()->addEventCallback<MouseMovedEvent>([this](MouseMovedEvent& e) {
+            if (mouseHeld)
+            {
+                Vec2 delta = { e.getX() - startPos.x, startPos.y - e.getY() };
 
-        text_ = createRef<Text>("assets/fonts/opensans/OpenSans-Regular.ttf", TextState());
-        text_->setPosition({ 200.0f, 400.0f });
-        text_->setLayer(Layer::Background);
-        text_->setScale({ 50.0f, 50.0f });
-        text_->setText("hello\nWorld!");
-        text_->setColor({ 0.0f, 1.0f, 0.0f, 1.0f });
-        text_->setLineSpacing(0.0f);
+                Vec3 v = Renderer::ref().getCamera().getPosition();
+                Vec3 newPos = v - Vec3(delta, 0.0f);
+                Renderer::ref().getCamera().setPosition(newPos);
+                DBG_INFO("NewPos: x={0}, y={1}", newPos.x, newPos.y);
 
-        text2_ = text_->clone().dynamicCast<Text>();
-        text2_->setPosition({ 200.0f, 200.0f });
-        text2_->setText(typedText_);
+                startPos.x = e.getX();
+                startPos.y = e.getY();
+            }
+        });
 
-        TweenTarget* target = new RenderableTweenTarget(quad_);
-        TweenConfig config;
-        config
-            .position(Vec2(800.0f, 500.0f))
-            .setEase(easing::Elastic::easeInOut)
-            .setLoopType(TweenLoopType::Restart)
-            .setIterations(2);
+        getController()->addEventCallback<MouseButtonDownEvent>([this](MouseButtonDownEvent& e) {
+            DBG_INFO("Mouse down");
+            startPos.x = e.getX();
+            startPos.y = e.getY();
+            mouseHeld = true;
+        });
 
-        tween_ = new Tween(target, duration_, config);
-        tween_->play();
+        getController()->addEventCallback<MouseButtonUpEvent>([this](MouseButtonUpEvent& e) {
+            DBG_INFO("Mouse unheld");
+            mouseHeld = false;
+        });
 
-        SDL_StopTextInput();
+        getController()->addEventCallback<MouseScrolledEvent>([this](MouseScrolledEvent& e) {
+            DBG_INFO("Mouse scrolled: {0} | {1}", e.getXOffset(), e.getYOffset());
 
-        dynamic_cast<KeyboardMouseController*>(getController())->setState(KeyboardMouseController::State::Typing);
-    }
+            curZoom_ += 0.05f * e.getYOffset();
+            curZoom_ = Math::clamp(curZoom_, 0.50f, 2.0f);
 
-    void onTick(float dt) override 
-    {
-        using namespace vine;
-
-        tween_->tick(dt);
-
-#ifdef DEMO_FRAMEBUFFER
-        framebuffer_->bind();
-#endif
-        Renderer::ref().clear();
-        Renderer::ref().beginScene();
-        RenderableManager::ref().render();
-        Renderer::ref().endScene();
-#ifdef DEMO_FRAMEBUFFER
-        framebuffer_->unbind();
-#endif
-
-#ifdef DEMO_FRAMEBUFFER
-        glDisable(GL_BLEND);
-        Renderer::ref().clear();
-        Renderer::ref().beginScene();
-        glm::mat4 transform = glm::translate(glm::mat4(1.0f), { 1280.0f / 2.0f, 720.0f / 2.0f, 10 }) *
-            glm::rotate(glm::mat4(1.0f), glm::radians(0.0f), glm::vec3(0.0f, 0.0f, 1.0f)) *
-            glm::scale(glm::mat4(1.0f), { 1280.0f, 720.0f, 1.0f });
-        Renderer::ref().drawQuad(transform, framebuffer_);
-        Renderer::ref().endScene();
-#endif
-    }
-
-    void onShutdown() override 
-    {
+            Renderer::ref().getCamera().setZoom(curZoom_);
+        });
     }
 
 private:
@@ -162,14 +224,17 @@ private:
     vine::Ref<vine::Text> text2_;
 
     vine::Tween* tween_;
+    vine::Tween* tween2_;
 
-    float startX_ = 800.0f;
-    float endX_ = 400.0f;
+    vine::TweenChain* chain_;
     float duration_ = 2.5f;
-    float elapsedTime_ = 0.0f;
-    int direction_ = 1; // Move right initially
 
     std::string typedText_;
+
+    vine::Vec2 startPos = { 0.0f, 0.0f };
+    bool mouseHeld = false;
+
+    float curZoom_ = 1.0f;
 };
 
 vine::Application* vine::createApplication(int argc, char** argv)

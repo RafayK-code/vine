@@ -79,7 +79,13 @@ namespace vine
         return state[scancode] != 0;
     }
 
-    glm::vec2 KeyboardMouseController::getMousePos() const
+    bool KeyboardMouseController::isMouseButtonDown(MouseCode button) const
+    {
+        uint32_t mouseState = SDL_GetMouseState(nullptr, nullptr);
+        return (mouseState & SDL_BUTTON(button)) != 0;
+    }
+
+    Vec2 KeyboardMouseController::getMousePos() const
     {
         int x, y;
         SDL_GetMouseState(&x, &y);

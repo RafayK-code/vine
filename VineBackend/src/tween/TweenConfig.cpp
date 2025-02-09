@@ -8,7 +8,7 @@
 namespace vine
 {
     TweenConfig::TweenConfig()
-        : iterations_(1), delay_(0), loopType_(TweenLoopType::None), easeFunc_(easing::Linear::easeNone)
+        : iterations_(1), delay_(0), loopType_(TweenLoopType::Restart), easeFunc_(easing::Linear::easeNone)
     {
     }
 

@@ -21,7 +21,7 @@ set(MSDF_PATH ${CMAKE_CURRENT_SOURCE_DIR}/external/msdf-atlas-gen)
 
 add_subdirectory(${MSDF_PATH})
 add_subdirectory(${LUA_PATH})
-add_subdirectory(${SDL_PATH})
+add_subdirectory(${SDL_PATH} EXCLUDE_FROM_ALL)
 add_subdirectory(${SOL2_PATH})
 add_subdirectory(${SPDLOG_PATH})
 add_subdirectory(${GLM_PATH})

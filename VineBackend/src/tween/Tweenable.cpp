@@ -91,4 +91,27 @@ namespace vine
         rewind(skipDelay);
         state_ = TweenState::Running;
     }
+
+    void Tweenable::goTo(float time)
+    {
+        if (loopType_ == TweenLoopType::PingPong)
+            time = Math::clamp(time, 0.0f, totalDuration_ * 2);
+        else
+            time = Math::clamp(time, 0.0f, totalDuration_);
+
+        totalElapsedTime_ = time;
+        elapsedTime_ = totalElapsedTime_;
+
+        if (iterations_ > 0 || iterations_ < 0)
+        {
+            completedIterations_ = (int)Math::floor(totalElapsedTime_ / duration_);
+            if (loopType_ == TweenLoopType::PingPong)
+                isLoopingBackOnPingPong_ = completedIterations_ % 2 != 0;
+
+            if (iterations_ < 0 || (iterations_ > 0 && completedIterations_ < iterations_ + 1))
+                elapsedTime_ = std::fmod(totalElapsedTime_, duration_);
+        }
+
+        tick(0.0f);
+    }
 }

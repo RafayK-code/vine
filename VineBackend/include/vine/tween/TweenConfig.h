@@ -1,27 +1,12 @@
 #pragma once
 
 #include <vine/tween/properties/TweenProperty.h>
+#include <vine/tween/TweenEnums.h>
 
 #include <vine/util/Math.h>
 
 namespace vine
 {
-    enum class TweenLoopType
-    {
-        None,
-        Restart,
-        PingPong,
-    };
-
-    enum class TweenState
-    {
-        None,
-        Running,
-        Paused,
-        Completed,
-        Destroyed,
-    };
-
     using TweenProperties = std::vector<Ref<TweenProperty>>;
 
     class TweenConfig

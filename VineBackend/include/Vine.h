@@ -34,6 +34,7 @@
 
 #include <vine/tween/Easing.h>
 #include <vine/tween/Tween.h>
+#include <vine/tween/TweenChain.h>
 #include <vine/tween/targets/RenderableTweenTarget.h>
 
 #include <vine/window/Window.h>

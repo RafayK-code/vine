@@ -6,7 +6,7 @@
 
 namespace vine
 {
-    class Tweenable
+    class Tweenable : public RefCounted
     {
     public:
         Tweenable();
@@ -23,9 +23,11 @@ namespace vine
 
         void restart(bool skipDelay = true);
 
+        virtual void goTo(float time);
+
         virtual void removeTweenProperty(TweenProperty* property) = 0;
         virtual bool containsTweenProperty(TweenProperty* property) const = 0;
-        virtual const TweenProperties& getTweenProperties() const = 0;
+        virtual void getTweenProperties(TweenProperties& list) const = 0;
 
         void setOnStartHandler(std::function<void()> onStart) { onStart_ = onStart; }
         void setOnTickHandler(std::function<void()> onTick) { onTick_ = onTick; }

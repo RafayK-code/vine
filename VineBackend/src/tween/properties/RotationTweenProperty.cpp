@@ -29,7 +29,7 @@ namespace vine
         if (!target_)
             return;
 
-        float easedTime = easeFunc_(totalElapsedTime, 0.0f, 1.0f, owner_->getDuration());
+        float easedTime = easeFunc_(totalElapsedTime, startValue_, diffValue_, owner_->getDuration());
         target_->setRotation(easedTime);
     }
 
@@ -39,7 +39,7 @@ namespace vine
             return;
 
         startValue_ = target_->getRotation();
-        diffValue_ = endValue_ - startValue_;
+        diffValue_ = Math::deltaAngle(startValue_, endValue_);
     }
 
     TweenProperty* RotationTweenProperty::clone()

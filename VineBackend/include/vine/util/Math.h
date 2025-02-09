@@ -33,6 +33,8 @@ namespace vine
         static inline float ceil(float num) { return std::ceil(num); }
         static inline float round(float num) { return (num > 0) ? std::floor(num + 0.5f) : std::ceil(num - 0.5f); }
 
+        static inline float abs(float num) { return std::abs(num); }
+
         static inline float lerp(float lerp, float a, float b) { return a + lerp * (b - a); }
         static inline float clamp(float val, float min, float max)
         {
@@ -52,6 +54,16 @@ namespace vine
         static inline Vec2 unclampedVec2Lerp(float lerp, const Vec2& a, const Vec2& b)
         {
             return { a.x + b.x * lerp, a.y + b.y * lerp };
+        }
+
+        static inline float deltaAngle(float a, float b)
+        {
+            if (Math::abs(b - a) < Math::PI)
+                return b - a;
+            if (b > a)
+                return b - a - Math::TWO_PI;
+
+            return b - a + Math::TWO_PI;
         }
     };
 }

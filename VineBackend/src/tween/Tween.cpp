@@ -83,9 +83,9 @@ namespace vine
         return itr != properties_.end();
     }
 
-    const TweenProperties& Tween::getTweenProperties() const
+    void Tween::getTweenProperties(TweenProperties& list) const
     {
-        return properties_;
+        list.insert(list.end(), properties_.begin(), properties_.end());
     }
 
     void Tween::clearTweenProperties()
@@ -119,6 +119,14 @@ namespace vine
         delayComplete_ = skipDelay;
         isLoopingBackOnPingPong_ = false;
         completedIterations_ = 0;
+    }
+
+    void Tween::goTo(float time)
+    {
+        delayComplete_ = true;
+        elapsedDelay_ = delay_;
+
+        Tweenable::goTo(time);
     }
 
     void Tween::onStart()
