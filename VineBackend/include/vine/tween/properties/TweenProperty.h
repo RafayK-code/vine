@@ -1,16 +1,17 @@
 #pragma once
 
 #include <vine/tween/Easing.h>
+#include <vine/sys/Ref.h>
 
 namespace vine
 {
     class Tween;
 
-    class AbstractTweenProperty
+    class TweenProperty : public RefCounted
     {
     public:
-        AbstractTweenProperty();
-        virtual ~AbstractTweenProperty();
+        TweenProperty();
+        virtual ~TweenProperty();
 
         virtual void init(Tween* owner);
         virtual void tick(float totalElapsedTime) = 0;
@@ -19,6 +20,9 @@ namespace vine
 
         void setEaseFunction(easing::EasingFunction easeFunc) { easeFunc_ = easeFunc; }
         easing::EasingFunction getEaseFunction() const { return easeFunc_; }
+
+        virtual void prepareForUse() = 0;
+        virtual TweenProperty* clone() = 0;
 
     protected:
         Tween* owner_;

@@ -1,15 +1,14 @@
 #pragma once
 
-#include <cmath>
+#include <vine/renderer/Color.h>
 
-#include <glm/glm.hpp>
+#include <cmath>
 
 namespace vine
 {
     using Vec2 = glm::vec2;
     using Vec3 = glm::vec3;
     using Vec4 = glm::vec4;
-    using Color = glm::vec4;
 
     class Math
     {
@@ -30,7 +29,11 @@ namespace vine
         static inline float pow(float base, float exp) { return std::pow(base, exp); }
         static inline float sqrt(float num) { return std::sqrt(num); }
 
+        static inline float floor(float num) { return std::floor(num); }
+        static inline float ceil(float num) { return std::ceil(num); }
         static inline float round(float num) { return (num > 0) ? std::floor(num + 0.5f) : std::ceil(num - 0.5f); }
+
+        static inline float abs(float num) { return std::abs(num); }
 
         static inline float lerp(float lerp, float a, float b) { return a + lerp * (b - a); }
         static inline float clamp(float val, float min, float max)
@@ -43,7 +46,24 @@ namespace vine
             return val;
         }
 
-        static inline Color normalizeColor(const Color& color) { return color / 255.0f; }
-        static inline Color denormalizeColor(const Color& color) { return glm::round(color * 255.0f); }
+        static inline Color unclampedColorLerp(float lerp, const Color& a, const Color& b)
+        {
+            return { a.r + b.r * lerp, a.g + b.g * lerp, a.b + b.b * lerp, a.a + b.a * lerp };
+        }
+
+        static inline Vec2 unclampedVec2Lerp(float lerp, const Vec2& a, const Vec2& b)
+        {
+            return { a.x + b.x * lerp, a.y + b.y * lerp };
+        }
+
+        static inline float deltaAngle(float a, float b)
+        {
+            if (Math::abs(b - a) < Math::PI)
+                return b - a;
+            if (b > a)
+                return b - a - Math::TWO_PI;
+
+            return b - a + Math::TWO_PI;
+        }
     };
 }

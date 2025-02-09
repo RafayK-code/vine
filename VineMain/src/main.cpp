@@ -59,6 +59,9 @@ public:
         quad_->setColor({ 1.0f, 0.0f, 0.0f, 0.7f });
         //RenderableManager::ref().addRenderable("Quad", quad);
 
+        Renderer::ref().getCamera().setPosition({ 640, 360, 0.0f });
+        setupEventCallbacks();
+
         quad2_ = quad_->clone().dynamicCast<Quad>();
         quad2_->setPosition({ 400.0f, 200.0f });
 
@@ -69,27 +72,48 @@ public:
         text_->setText("hello\nWorld!");
         text_->setColor({ 0.0f, 1.0f, 0.0f, 1.0f });
         text_->setLineSpacing(0.0f);
-        text_->setVisible(false);
 
         text2_ = text_->clone().dynamicCast<Text>();
         text2_->setPosition({ 200.0f, 200.0f });
-        text2_->setText("welcome");
-        text2_->setVisible(true);
+        text2_->setText(typedText_);
+
+        TweenTarget* target = new RenderableTweenTarget(quad_);
+        TweenConfig config;
+        config
+            .position(Vec2(800.0f, 500.0f))
+            .scale(Vec2(200.0f, 200.0f))
+            .setEase(easing::Quadratic::easeInOut);
+
+        TweenConfig config2;
+        config2
+            .color(Color(0.0f, 0.0f, 1.0f, 1.0f))
+            .setEase(easing::Quadratic::easeInOut);
+
+        tween_ = new Tween(target, duration_, config);
+        tween2_ = new Tween(target, duration_, config2);
+        //tween_->play();
+
+        TweenChainConfig config3;
+        config3
+            .setLoopType(TweenLoopType::PingPong)
+            .setIterations(-1);
+
+        chain_ = new TweenChain(config3);
+        chain_->append(tween_);
+        chain_->append(tween2_);
+
+        chain_->play();
+
+        SDL_StopTextInput();
+
+        dynamic_cast<KeyboardMouseController*>(getController())->setState(KeyboardMouseController::State::Typing);
     }
 
     void onTick(float dt) override 
     {
         using namespace vine;
 
-        elapsedTime_ += dt * direction_;
-        if (elapsedTime_ > duration_ || elapsedTime_ < 0.0f)
-        {
-            direction_ *= -1; // Reverse direction
-            elapsedTime_ = vine::Math::clamp(elapsedTime_, 0.0f, duration_);
-        }
-
-        float easedX = easing::Elastic::easeInOut(elapsedTime_, startX_, endX_ - startX_, duration_);
-        quad_->setPosition({ easedX, 500.0f });
+        chain_->tick(dt);
 
 #ifdef DEMO_FRAMEBUFFER
         framebuffer_->bind();
@@ -116,6 +140,80 @@ public:
 
     void onShutdown() override 
     {
+        delete tween_;
+    }
+
+private:
+    void setupEventCallbacks()
+    {
+        using namespace vine;
+
+        getController()->addEventCallback<KeyTypedEvent>([this](KeyTypedEvent& e) {
+            DBG_INFO("Key typed text: {0}", e.getText());
+            typedText_ += e.getText();
+            text2_->setText(typedText_);
+        });
+
+        getController()->addEventCallback<KeyDownEvent>([this](KeyDownEvent& e) {
+            DBG_INFO("Key down: {0}, {1}", e.getKeyCode(), e.getThisEventTypeID());
+            if (e.getKeyCode() == Key::Backspace)
+            {
+                if (!typedText_.empty())
+                    typedText_.pop_back();
+                text2_->setText(typedText_);
+            }
+            else if (e.getKeyCode() == Key::Enter)
+            {
+                typedText_ += '\n';
+                text2_->setText(typedText_);
+            }
+        });
+
+        getController()->addEventCallback<KeyHeldEvent>([this](KeyHeldEvent& e) {
+            DBG_INFO("Key down: {0}", e.getKeyCode());
+            if (e.getKeyCode() == Key::Backspace)
+            {
+                if (!typedText_.empty())
+                    typedText_.pop_back();
+                text2_->setText(typedText_);
+            }
+        });
+
+        getController()->addEventCallback<MouseMovedEvent>([this](MouseMovedEvent& e) {
+            if (mouseHeld)
+            {
+                Vec2 delta = { e.getX() - startPos.x, startPos.y - e.getY() };
+
+                Vec3 v = Renderer::ref().getCamera().getPosition();
+                Vec3 newPos = v - Vec3(delta, 0.0f);
+                Renderer::ref().getCamera().setPosition(newPos);
+                DBG_INFO("NewPos: x={0}, y={1}", newPos.x, newPos.y);
+
+                startPos.x = e.getX();
+                startPos.y = e.getY();
+            }
+        });
+
+        getController()->addEventCallback<MouseButtonDownEvent>([this](MouseButtonDownEvent& e) {
+            DBG_INFO("Mouse down");
+            startPos.x = e.getX();
+            startPos.y = e.getY();
+            mouseHeld = true;
+        });
+
+        getController()->addEventCallback<MouseButtonUpEvent>([this](MouseButtonUpEvent& e) {
+            DBG_INFO("Mouse unheld");
+            mouseHeld = false;
+        });
+
+        getController()->addEventCallback<MouseScrolledEvent>([this](MouseScrolledEvent& e) {
+            DBG_INFO("Mouse scrolled: {0} | {1}", e.getXOffset(), e.getYOffset());
+
+            curZoom_ += 0.05f * e.getYOffset();
+            curZoom_ = Math::clamp(curZoom_, 0.50f, 2.0f);
+
+            Renderer::ref().getCamera().setZoom(curZoom_);
+        });
     }
 
 private:
@@ -125,11 +223,18 @@ private:
     vine::Ref<vine::Text> text_;
     vine::Ref<vine::Text> text2_;
 
-    float startX_ = 800.0f;
-    float endX_ = 400.0f;
+    vine::Tween* tween_;
+    vine::Tween* tween2_;
+
+    vine::TweenChain* chain_;
     float duration_ = 2.5f;
-    float elapsedTime_ = 0.0f;
-    int direction_ = 1; // Move right initially
+
+    std::string typedText_;
+
+    vine::Vec2 startPos = { 0.0f, 0.0f };
+    bool mouseHeld = false;
+
+    float curZoom_ = 1.0f;
 };
 
 vine::Application* vine::createApplication(int argc, char** argv)

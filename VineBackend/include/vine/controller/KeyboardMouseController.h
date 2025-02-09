@@ -2,8 +2,11 @@
 
 #include <vine/controller/Controller.h>
 #include <vine/core/codes/KeyCodes.h>
+#include <vine/core/codes/MouseCodes.h>
 
-#include <glm/glm.hpp>
+#include <vine/util/Math.h>
+
+#include <bitset>
 
 namespace vine
 {
@@ -16,8 +19,10 @@ namespace vine
         virtual void dispatchSDLEvents(const SDL_Event* event) override;
         virtual Type getType() const override { return Type::Keyboard; }
 
-        glm::vec2 getMousePos() const;
+        Vec2 getMousePos() const;
+
         bool isKeyDown(KeyCode key) const;
+        bool isMouseButtonDown(MouseCode button) const;
 
         enum class State
         {
