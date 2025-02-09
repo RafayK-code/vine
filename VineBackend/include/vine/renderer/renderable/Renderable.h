@@ -2,6 +2,7 @@
 
 #include <vine/renderer/backend/Shader.h>
 #include <vine/sys/Ref.h>
+#include <vine/renderer/Color.h>
 
 #include <glm/glm.hpp>
 #include <string>
@@ -30,7 +31,7 @@ namespace vine
         glm::vec2 pos = { 0.0f, 0.0f };
         glm::vec2 scale = { 0.0f, 0.0f };
         float rotation = 0.0f;
-        glm::vec4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
+        Color color = { 1.0f, 1.0f, 1.0f, 1.0f };
         RenderableLayerLevel layer = Layer::Game;
         float priority = 0.0f;
         bool visible = true;
@@ -56,8 +57,8 @@ namespace vine
         float getRotation() const { return state_.rotation; }
         void setRotation(float rotation) { state_.rotation = rotation; updateTransform(); }
 
-        const glm::vec4& getColor() const { return state_.color; }
-        void setColor(const glm::vec4& color) { state_.color = color; }
+        const Color& getColor() const { return state_.color; }
+        void setColor(const Color& color) { state_.color = color; }
 
         RenderableLayerLevel getLayer() const { return state_.layer; }
         void setLayer(RenderableLayerLevel layer);

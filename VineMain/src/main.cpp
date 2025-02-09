@@ -66,7 +66,7 @@ public:
         quad2_->setPosition({ 400.0f, 200.0f });
 
         text_ = createRef<Text>("assets/fonts/opensans/OpenSans-Regular.ttf", TextState());
-        text_->setPosition({ 200.0f, 400.0f });
+        text_->setPosition({ 850.0f, 500.0f });
         text_->setLayer(Layer::Background);
         text_->setScale({ 50.0f, 50.0f });
         text_->setText("hello\nWorld!");
@@ -86,7 +86,7 @@ public:
 
         TweenConfig config2;
         config2
-            .color(Color(0.0f, 0.0f, 1.0f, 1.0f))
+            .color(Color(1.0f, 0.0f, 0.0f, 0.7f))
             .setEase(easing::Quadratic::easeInOut);
 
         tween_ = new Tween(target, duration_, config);

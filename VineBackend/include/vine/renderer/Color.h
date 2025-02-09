@@ -18,6 +18,6 @@ namespace vine
         bool isNormalized() const { return normalized_; }
 
     private:
-        bool normalized_;
+        bool normalized_ = true;
     };
 }
