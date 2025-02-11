@@ -53,40 +53,33 @@ public:
         RenderableManager::ref().addRenderable("Sprite2", s2);
         */
 
-        quad_ = createRef<Quad>(RenderableState());
-        quad_->setPosition({ 400.0f, 500.0f });
-        quad_->setScale({ 100.0f, 100.0f });
-        quad_->setColor({ 1.0f, 0.0f, 0.0f, 0.7f });
+        QuadRenderableBuilder builder;
+        quad_ = builder.setPosition({ 400.0f, 500.0f }).setScale({ 100.0f, 100.0f }).setColor({ 1.0f, 0.0f, 0.0f, 0.7f }).createT();
+        quad2_ = builder.setPosition({ 400.0f, 200.0f }).createT();
+
         //RenderableManager::ref().addRenderable("Quad", quad);
 
         Renderer::ref().getCamera().setPosition({ 640, 360, 0.0f });
         setupEventCallbacks();
 
-        quad2_ = quad_->clone().dynamicCast<Quad>();
-        quad2_->setPosition({ 400.0f, 200.0f });
+        TextRenderableBuilder tBuilder("assets/fonts/opensans/OpenSans-Regular.ttf");
+        text_ = tBuilder
+            .setPosition({ 850.0f, 500.0f }).setLayer(Layer::Background).setScale({ 30.0f, 30.0f }).setText("Hello\nWorld!")
+            .setColor({ 0.0f, 1.0f, 0.0f, 1.0f }).createT();
 
-        text_ = createRef<Text>("assets/fonts/opensans/OpenSans-Regular.ttf", TextState());
-        text_->setPosition({ 850.0f, 500.0f });
-        text_->setLayer(Layer::Background);
-        text_->setScale({ 50.0f, 50.0f });
-        text_->setText("hello\nWorld!");
-        text_->setColor({ 0.0f, 1.0f, 0.0f, 1.0f });
-        text_->setLineSpacing(0.0f);
-
-        text2_ = text_->clone().dynamicCast<Text>();
-        text2_->setPosition({ 200.0f, 200.0f });
-        text2_->setText(typedText_);
+        quad3_ = builder.setPosition({ 850.0f, 500.0f }).setScale({ 30.0f, 30.0f }).createT();
+        text2_ = tBuilder.setPosition({ 200.0f, 200.0f }).setText(typedText_).createT();
 
         TweenTarget* target = new RenderableTweenTarget(quad_);
         TweenConfig config;
         config
             .position(Vec2(800.0f, 500.0f))
             .scale(Vec2(200.0f, 200.0f))
-            .setEase(easing::Quadratic::easeInOut);
+            .setEase(easing::Bounce::easeOut);
 
         TweenConfig config2;
         config2
-            .color(Color(1.0f, 0.0f, 0.0f, 0.7f))
+            .color(Color(1.0f, 0.0f, 1.0f, 0.7f))
             .setEase(easing::Quadratic::easeInOut);
 
         tween_ = new Tween(target, duration_, config);
@@ -96,7 +89,7 @@ public:
         TweenChainConfig config3;
         config3
             .setLoopType(TweenLoopType::PingPong)
-            .setIterations(-1);
+            .setIterations(0);
 
         chain_ = new TweenChain(config3);
         chain_->append(tween_);
@@ -140,7 +133,7 @@ public:
 
     void onShutdown() override 
     {
-        delete tween_;
+        delete chain_;
     }
 
 private:
@@ -182,7 +175,7 @@ private:
         getController()->addEventCallback<MouseMovedEvent>([this](MouseMovedEvent& e) {
             if (mouseHeld)
             {
-                Vec2 delta = { e.getX() - startPos.x, startPos.y - e.getY() };
+                Vec2 delta = Vec2(e.getX() - startPos.x, startPos.y - e.getY()) / curZoom_;
 
                 Vec3 v = Renderer::ref().getCamera().getPosition();
                 Vec3 newPos = v - Vec3(delta, 0.0f);
@@ -218,8 +211,11 @@ private:
 
 private:
     vine::FramebufferRef framebuffer_ = nullptr;
+
     vine::Ref<vine::Quad> quad_;
     vine::Ref<vine::Quad> quad2_;
+    vine::Ref<vine::Quad> quad3_;
+
     vine::Ref<vine::Text> text_;
     vine::Ref<vine::Text> text2_;
 

@@ -24,6 +24,10 @@
 #include <vine/renderer/renderable/Text.h>
 #include <vine/renderer/renderable/RenderableManager.h>
 
+#include <vine/renderer/renderable/builder/QuadRenderableBuilder.h>
+#include <vine/renderer/renderable/builder/SpriteRenderableBuilder.h>
+#include <vine/renderer/renderable/builder/TextRenderableBuilder.h>
+
 #include <vine/resource/Resource.h>
 #include <vine/resource/ResourceFont.h>
 #include <vine/resource/ResourceImage.h>

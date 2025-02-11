@@ -8,8 +8,8 @@
 
 namespace vine
 {
-    Sprite::Sprite(const std::string& file , const SpriteState& state)
-        : Renderable(state), spritePos_(state.spritePos), spriteScale_(state.spriteScale)
+    Sprite::Sprite(const std::string& file , const RenderableState& state, const Rect& atlasRect)
+        : Renderable(state), atlasRect_(atlasRect)
     {
         texture_ = ResourceImage::create(file);
         setShader("QuadShader");
@@ -21,23 +21,11 @@ namespace vine
 
     void Sprite::render() const
     {
-        Renderer::ref().drawQuad(getTransform(), texture_, getSpritePos(), getSpriteScale(), getColor());
+        Renderer::ref().drawQuad(getTransform(), texture_, { atlasRect_.x, atlasRect_.y }, { atlasRect_.w, atlasRect_.h }, getColor());
     }
 
     Ref<Renderable> Sprite::clone() const
     {
-        SpriteState state;
-        state.pos = getState().pos;
-        state.scale = getState().scale;
-        state.rotation = getState().rotation;
-        state.color = getState().color;
-        state.layer = getState().layer;
-        state.priority = getState().priority;
-        state.visible = getState().visible;
-        state.spritePos = spritePos_;
-        state.spriteScale = spriteScale_;
-
-        Sprite* sprite = new Sprite(texture_->getFile(), state);
-        return Ref<Sprite>(sprite);
+        return Ref<Sprite>(new Sprite(*this));
     }
 }

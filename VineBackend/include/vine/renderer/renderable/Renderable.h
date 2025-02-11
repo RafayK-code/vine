@@ -3,6 +3,7 @@
 #include <vine/renderer/backend/Shader.h>
 #include <vine/sys/Ref.h>
 #include <vine/renderer/Color.h>
+#include <vine/util/Math.h>
 
 #include <glm/glm.hpp>
 #include <string>
@@ -42,6 +43,8 @@ namespace vine
     public:
         Renderable(const RenderableState& state);
         virtual ~Renderable();
+
+        Renderable(const Renderable& other);
 
         virtual void render() const = 0;
         virtual Ref<Renderable> clone() const = 0;

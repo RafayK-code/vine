@@ -7,8 +7,8 @@
 
 namespace vine
 {
-    Text::Text(const std::string& fontfile, const TextState& state)
-        : Renderable(state), text_(state.text), kerning_(state.kerning), lineSpacing_(state.lineSpacing)
+    Text::Text(const std::string& fontfile, const RenderableState& state, const std::string& text, float kerning, float lineSpacing)
+        : Renderable(state), text_(text), kerning_(kerning), lineSpacing_(lineSpacing)
     {
         font_ = ResourceFont::create(fontfile);
         setShader("TextShader");
@@ -25,19 +25,6 @@ namespace vine
 
     Ref<Renderable> Text::clone() const
     {
-        TextState state;
-        state.pos = getState().pos;
-        state.scale = getState().scale;
-        state.rotation = getState().rotation;
-        state.color = getState().color;
-        state.layer = getState().layer;
-        state.priority = getState().priority;
-        state.visible = getState().visible;
-        state.text = text_;
-        state.kerning = kerning_;
-        state.lineSpacing = lineSpacing_;
-
-        Text* text = new Text(font_->getFile(), state);
-        return Ref<Text>(text);
+        return Ref<Text>(new Text(*this));
     }
 }

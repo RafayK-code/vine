@@ -7,17 +7,10 @@
 
 namespace vine
 {
-    struct TextState : public RenderableState
-    {
-        std::string text = "";
-        float kerning = 0.0f;
-        float lineSpacing = 0.0f;
-    };
-
     class Text : public Renderable
     {
     public:
-        Text(const std::string& fontfile, const TextState& state);
+        Text(const std::string& fontfile, const RenderableState& state, const std::string& text = "", float kerning = 0.0f, float lineSpacing = 0.0f);
         virtual ~Text();
 
         virtual void render() const override;

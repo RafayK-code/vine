@@ -27,6 +27,12 @@ namespace vine
         RenderableManager::ref().getLayer(state_.layer)->remove(this);
     }
 
+    Renderable::Renderable(const Renderable& other)
+        : state_(other.state_), transform_(other.transform_), shader_(other.shader_), shaderName_(other.shaderName_)
+    {
+        RenderableManager::ref().getLayer(state_.layer)->add(this);
+    }
+
     void Renderable::setLayer(RenderableLayerLevel layer)
     {
         RenderableManager::ref().getLayer(state_.layer)->remove(this);

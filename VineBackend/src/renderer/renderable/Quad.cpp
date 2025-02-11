@@ -21,7 +21,6 @@ namespace vine
 
     Ref<Renderable> Quad::clone() const
     {
-        Quad* quad = new Quad(getState());
-        return Ref<Quad>(quad);
+        return Ref<Quad>(new Quad(*this));
     }
 }

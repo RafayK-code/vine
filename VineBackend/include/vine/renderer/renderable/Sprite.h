@@ -4,33 +4,31 @@
 #include <vine/renderer/backend/Texture.h>
 #include <vine/resource/ResourceImage.h>
 
+#include <vine/renderer/Rect.h>
+
 namespace vine
 {
     struct SpriteState : public RenderableState
     {
-        glm::vec2 spritePos = { -1.0f, -1.0f };
+        Vec2 spritePos = { -1.0f, -1.0f };
         glm::vec2 spriteScale = { -1.0f, -1.0f };
     };
 
     class Sprite : public Renderable
     {
     public:
-        Sprite(const std::string& file, const SpriteState& state);
+        Sprite(const std::string& file, const RenderableState& state, const Rect& atlasRect = {-1.0f, -1.0f, -1.0f, -1.0f});
 
         virtual ~Sprite();
 
         virtual void render() const override;
         virtual Ref<Renderable> clone() const override;
 
-        const glm::vec2& getSpritePos() const { return spritePos_; }
-        void setSpritePos(const glm::vec2& spritePos) { spritePos_ = spritePos; }
-
-        const glm::vec2& getSpriteScale() const { return spriteScale_; }
-        void setSpriteScale(const glm::vec2& spriteScale) { spriteScale_ = spriteScale; }
+        const Rect& getAtlasRect() const { return atlasRect_; }
+        void setAtlasRect(const Rect& atlasRect) { atlasRect_ = atlasRect; }
 
     private:
-        glm::vec2 spritePos_;
-        glm::vec2 spriteScale_;
+        Rect atlasRect_;
 
         Ref<ResourceImage> texture_;
     };
