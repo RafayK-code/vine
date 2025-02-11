@@ -20,7 +20,7 @@ namespace vine
         updateViewMatrix();
     }
 
-    glm::vec2 OrthographicCamera::screenToWorld(const glm::vec2& screenPos)
+    glm::vec2 OrthographicCamera::screenToWorld(const glm::vec2& screenPos) const
     {
         glm::mat4 inverse = glm::inverse(viewProjectionMatrix_);
         glm::vec4 worldPos = inverse * glm::vec4(screenPos, 0.0f, 1.0f);

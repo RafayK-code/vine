@@ -25,7 +25,7 @@ namespace vine
         const glm::mat4& getViewMatrix() const { return viewMatrix_; }
         const glm::mat4& getViewProjectionMatrix() const { return viewProjectionMatrix_; }
 
-        glm::vec2 screenToWorld(const glm::vec2& screenPos);
+        glm::vec2 screenToWorld(const glm::vec2& screenPos) const;
 
     private:
         void updateViewMatrix();
