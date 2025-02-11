@@ -10,6 +10,12 @@ namespace vine
         RefCounted();
         virtual ~RefCounted();
 
+        RefCounted(const RefCounted& other);
+        RefCounted& operator=(const RefCounted& other);
+
+        RefCounted(RefCounted&& other) noexcept;
+        RefCounted& operator=(RefCounted&& other) noexcept;
+
         uint32_t getRefCount() const { return refCount_; }
 
     private:
@@ -20,6 +26,6 @@ namespace vine
         void decRef();
 
     private:
-        uint32_t refCount_;
+        std::atomic<uint32_t> refCount_;
     };
 }
