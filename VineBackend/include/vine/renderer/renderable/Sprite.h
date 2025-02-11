@@ -8,12 +8,6 @@
 
 namespace vine
 {
-    struct SpriteState : public RenderableState
-    {
-        Vec2 spritePos = { -1.0f, -1.0f };
-        glm::vec2 spriteScale = { -1.0f, -1.0f };
-    };
-
     class Sprite : public Renderable
     {
     public:
