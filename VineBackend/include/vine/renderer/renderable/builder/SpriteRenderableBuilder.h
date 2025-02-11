@@ -14,7 +14,7 @@ namespace vine
 
         virtual Ref<Renderable> create() const override;
 
-        SpriteRenderableBuilder& setAtlasRect(const Rect& atlas);
+        SpriteRenderableBuilder& setAtlasRect(const Rect& atlasRect);
 
     private:
         std::string imgFile_;
