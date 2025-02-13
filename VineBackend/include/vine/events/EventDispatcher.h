@@ -1,71 +1,62 @@
 #pragma once
 
 #include <vine/events/Event.h>
+#include <vine/events/EventListener.h>
+#include <vine/sys/Ref.h>
 
 #include <functional>
+#include <algorithm>
 #include <vector>
+#include <map>
 
 namespace vine
 {
-    template<typename E>
-    using EventCallbackFn = std::function<void(E&)>;
-
     class EventDispatcher
     {
     public:
         EventDispatcher();
         virtual ~EventDispatcher();
 
-        using CallbackID = uint64_t;
-
-        template<typename E>
-        CallbackID addEventCallback(const EventCallbackFn<E>& callback)
+        template <typename E>
+        void addListener(EventListener* listener)
         {
-            BaseEventCallbackFn cbWrapper = [callback](AbstractEvent* e)
-            {
-                if (E* event = dynamic_cast<E*>(e))
-                    callback(*event);
-            };
-
-            uint32_t index = E::getEventTypeID();
-            if (index >= callbackFns_.size())
-                callbackFns_.resize(index + 1);
-
-            callbackFns_[index].push_back(cbWrapper);
-            return generateCallbackID<E>();
+            removeListenerForEvent<E>(listener);
+            listeners_[E::getEventTypeID()].push_back(listener);
         }
 
-        void removeEventCallback(CallbackID callback);
-
-    protected:
-        template<typename E>
-        void dispatchEvent(E& e)
+        template <typename E>
+        void removeListenerForEvent(EventListener* listener)
         {
-            uint32_t index = E::getEventTypeID();
-            if (index >= callbackFns_.size())
-                return;
+            std::vector<EventListener*>& vec = listeners_[E::getEventTypeID()];
+            auto it = std::find(vec.begin(), vec.end(), listener);
+            if (it != vec.end())
+                vec.erase(it);
+        }
 
-            std::vector<BaseEventCallbackFn> eCallbacks = callbackFns_[index];
-            for (const auto& callback : eCallbacks)
+        void removeListener(EventListener* listener)
+        {
+            for (auto& pair : listeners_)
             {
-                callback(&e);
+                std::vector<EventListener*>& vec = pair.second;
+                auto it = std::find(vec.begin(), vec.end(), listener);
+                if (it != vec.end())
+                    vec.erase(it);
             }
         }
 
-    private:
         template<typename E>
-        CallbackID generateCallbackID()
+        void dispatchEvent(const E& e)
         {
-            uint32_t high = E::getEventTypeID();
-            uint32_t low = callbackFns_[E::getEventTypeID()].size() - 1;
+            auto it = listeners_.find(E::getEventTypeID());
+            if (it == listeners_.end())
+                return;
 
-            return ((CallbackID)high << 32) | low;
+            for (EventListener* listener : it->second)
+                listener->handleEvent(&e);
         }
 
-        using BaseEventCallbackFn = std::function<void(AbstractEvent*)>;
-
     private:
-        using CallbackList = std::vector<std::vector<BaseEventCallbackFn>>;
-        CallbackList callbackFns_;
+        using ListenerMap = std::map<uint32_t, std::vector<EventListener*>>;
+        ListenerMap listeners_;
     };
 }

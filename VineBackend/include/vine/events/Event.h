@@ -41,4 +41,7 @@ namespace vine
             return typeID;
         }
     };
+
+    template<typename E>
+    using EventCallbackFn = std::function<void(const E&)>;
 }

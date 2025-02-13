@@ -4,6 +4,7 @@
 #include <vine/renderer/GraphicsContext.h>
 #include <vine/events/Event.h>
 #include <vine/controller/Controller.h>
+#include <vine/events/EventListener.h>
 
 namespace vine
 {
@@ -38,6 +39,8 @@ namespace vine
 
         Window* window_;
         Controller* controller_;
+
+        EventListener* windowListener_;
     };
 
     Application* createApplication(int argc, char** argv);

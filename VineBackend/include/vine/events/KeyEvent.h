@@ -5,7 +5,7 @@
 
 namespace vine
 {
-    class KeyEvent : public Event<KeyEvent>
+    class KeyEvent
     {
     public:
         KeyCode getKeyCode() const { return keyCode_; }
@@ -19,7 +19,7 @@ namespace vine
         KeyCode keyCode_;
     };
 
-    class KeyDownEvent : public KeyEvent
+    class KeyDownEvent : public KeyEvent, public Event<KeyDownEvent>
     {
     public:
         KeyDownEvent(KeyCode keycode)
@@ -28,7 +28,7 @@ namespace vine
         }
     };
 
-    class KeyHeldEvent : public KeyEvent
+    class KeyHeldEvent : public KeyEvent, public Event<KeyHeldEvent>
     {
     public:
         KeyHeldEvent(KeyCode keycode)
@@ -37,7 +37,7 @@ namespace vine
         }
     };
 
-    class KeyUpEvent : public KeyEvent
+    class KeyUpEvent : public KeyEvent, public Event<KeyUpEvent>
     {
     public:
         KeyUpEvent(KeyCode keycode)

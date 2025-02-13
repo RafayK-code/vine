@@ -13,6 +13,8 @@
 #include <vine/events/KeyEvent.h>
 #include <vine/events/MouseEvent.h>
 #include <vine/events/WindowEvent.h>
+#include <vine/events/EventDispatcher.h>
+#include <vine/events/EventListener.h>
 
 #include <vine/renderer/Renderer.h>
 #include <vine/renderer/OrthographicCamera.h>

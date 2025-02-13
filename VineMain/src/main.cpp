@@ -60,14 +60,18 @@ public:
         //RenderableManager::ref().addRenderable("Quad", quad);
 
         Renderer::ref().getCamera().setPosition({ 640, 360, 0.0f });
+
+        windowListener_ = new EventListener(*getWindow());
+        controllerListener_ = new EventListener(*getController());
         setupEventCallbacks();
 
         TextRenderableBuilder tBuilder("assets/fonts/opensans/OpenSans-Regular.ttf");
         text_ = tBuilder
-            .setPosition({ 850.0f, 500.0f }).setLayer(Layer::Background).setScale({ 30.0f, 30.0f }).setText("Hello\nWorld!")
+            .setPosition({ 850.0f, 500.0f }).setLayer(Layer::Background).setScale({ 200.0f, 200.0f }).setText("Hello\nWorld!")
             .setColor({ 0.0f, 1.0f, 0.0f, 1.0f }).createT();
 
-        quad3_ = builder.setPosition({ 850.0f, 500.0f }).setScale({ 30.0f, 30.0f }).createT();
+        quad3_ = builder.setPosition({ 850.0f, 500.0f }).setScale({ 30.0f, 30.0f }).setColor({0.0f, 1.0f, 0.0f, 1.0f}).createT();
+        quad3_->setPriority(1.0f);
         text2_ = tBuilder.setPosition({ 200.0f, 200.0f }).setText(typedText_).createT();
 
         TweenTarget* target = new RenderableTweenTarget(quad_);
@@ -89,7 +93,7 @@ public:
         TweenChainConfig config3;
         config3
             .setLoopType(TweenLoopType::PingPong)
-            .setIterations(0);
+            .setIterations(-1);
 
         chain_ = new TweenChain(config3);
         chain_->append(tween_);
@@ -133,6 +137,8 @@ public:
 
     void onShutdown() override 
     {
+        delete windowListener_;
+        delete controllerListener_;
         delete chain_;
     }
 
@@ -141,13 +147,13 @@ private:
     {
         using namespace vine;
 
-        getController()->addEventCallback<KeyTypedEvent>([this](KeyTypedEvent& e) {
+        controllerListener_->listen<KeyTypedEvent>([this](const KeyTypedEvent& e) {
             DBG_INFO("Key typed text: {0}", e.getText());
             typedText_ += e.getText();
             text2_->setText(typedText_);
         });
 
-        getController()->addEventCallback<KeyDownEvent>([this](KeyDownEvent& e) {
+        controllerListener_->listen<KeyDownEvent>([this](const KeyDownEvent& e) {
             DBG_INFO("Key down: {0}, {1}", e.getKeyCode(), e.getThisEventTypeID());
             if (e.getKeyCode() == Key::Backspace)
             {
@@ -162,7 +168,7 @@ private:
             }
         });
 
-        getController()->addEventCallback<KeyHeldEvent>([this](KeyHeldEvent& e) {
+        controllerListener_->listen<KeyHeldEvent>([this](const KeyHeldEvent& e) {
             DBG_INFO("Key down: {0}", e.getKeyCode());
             if (e.getKeyCode() == Key::Backspace)
             {
@@ -172,7 +178,7 @@ private:
             }
         });
 
-        getController()->addEventCallback<MouseMovedEvent>([this](MouseMovedEvent& e) {
+        controllerListener_->listen<MouseMovedEvent>([this](const MouseMovedEvent& e) {
             if (mouseHeld)
             {
                 Vec2 delta = Vec2(e.getX() - startPos.x, startPos.y - e.getY()) / curZoom_;
@@ -187,19 +193,19 @@ private:
             }
         });
 
-        getController()->addEventCallback<MouseButtonDownEvent>([this](MouseButtonDownEvent& e) {
+        controllerListener_->listen<MouseButtonDownEvent>([this](const MouseButtonDownEvent& e) {
             DBG_INFO("Mouse down");
             startPos.x = e.getX();
             startPos.y = e.getY();
             mouseHeld = true;
         });
 
-        getController()->addEventCallback<MouseButtonUpEvent>([this](MouseButtonUpEvent& e) {
+        controllerListener_->listen<MouseButtonUpEvent>([this](const MouseButtonUpEvent& e) {
             DBG_INFO("Mouse unheld");
             mouseHeld = false;
         });
 
-        getController()->addEventCallback<MouseScrolledEvent>([this](MouseScrolledEvent& e) {
+        controllerListener_->listen<MouseScrolledEvent>([this](const MouseScrolledEvent& e) {
             DBG_INFO("Mouse scrolled: {0} | {1}", e.getXOffset(), e.getYOffset());
 
             curZoom_ += 0.05f * e.getYOffset();
@@ -221,6 +227,9 @@ private:
 
     vine::Tween* tween_;
     vine::Tween* tween2_;
+
+    vine::EventListener* windowListener_;
+    vine::EventListener* controllerListener_;
 
     vine::TweenChain* chain_;
     float duration_ = 2.5f;

@@ -5,7 +5,7 @@
 
 namespace vine
 {
-    class MouseButtonEvent : public Event<MouseButtonEvent>
+    class MouseButtonEvent
     {
     public:
         MouseCode getMouseButton() const { return button_; }
@@ -24,7 +24,7 @@ namespace vine
         float mouseY_;
     };
 
-    class MouseButtonDownEvent : public MouseButtonEvent
+    class MouseButtonDownEvent : public MouseButtonEvent, public Event<MouseButtonDownEvent>
     {
     public:
         MouseButtonDownEvent(MouseCode button, float x, float y)
@@ -33,7 +33,7 @@ namespace vine
         }
     };
 
-    class MouseButtonUpEvent : public MouseButtonEvent
+    class MouseButtonUpEvent : public MouseButtonEvent, public Event<MouseButtonUpEvent>
     {
     public:
         MouseButtonUpEvent(MouseCode button, float x, float y)
@@ -58,7 +58,7 @@ namespace vine
         float mouseY_;
     };
 
-    class MouseScrolledEvent : public Event<MouseMovedEvent>
+    class MouseScrolledEvent : public Event<MouseScrolledEvent>
     {
     public:
         MouseScrolledEvent(float xOffset, float yOffset)
