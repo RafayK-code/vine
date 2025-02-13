@@ -52,7 +52,7 @@ namespace vine
                 return;
 
             for (EventListener* listener : it->second)
-                listener->handleEvent(&e);
+                listener->handleEvent(this, &e);
         }
 
     private:

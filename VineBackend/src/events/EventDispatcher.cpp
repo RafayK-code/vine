@@ -11,7 +11,7 @@ namespace vine
         for (auto& pair : listeners_)
         {
             for (EventListener* listener : pair.second)
-                listener->eventDispatcherDestroyed();
+                listener->eventDispatcherDestroyed(this);
         }
     }
 }

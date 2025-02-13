@@ -4,8 +4,7 @@
 
 namespace vine
 {
-    EventListener::EventListener(EventDispatcher& dispatcher)
-        : dispatcher_(&dispatcher)
+    EventListener::EventListener()
     {
     }
 
@@ -16,23 +15,32 @@ namespace vine
 
     void EventListener::stopListening()
     {
-        if (!dispatcher_)
-            return;
-
-        dispatcher_->removeListener(this);
-        callbacks_.clear();
+        for (EventDispatcher* dispatcher : dispatchers_)
+        {
+            stopListening(*dispatcher);
+        }
     }
 
-    void EventListener::handleEvent(const AbstractEvent* event)
+    void EventListener::stopListening(EventDispatcher& dispatcher)
     {
-        auto it = callbacks_.find(event->getThisEventTypeID());
-        if (it != callbacks_.end())
+        auto it = dispatchers_.find(&dispatcher);
+        if (it == dispatchers_.end())
+            return;
+
+        dispatcher.removeListener(this);
+        callbacks_[&dispatcher].clear();
+    }
+
+    void EventListener::handleEvent(EventDispatcher* dispatcher, const AbstractEvent* event)
+    {
+        auto it = callbacks_[dispatcher].find(event->getThisEventTypeID());
+        if (it != callbacks_[dispatcher].end())
             it->second(event);
     }
 
-    void EventListener::eventDispatcherDestroyed()
+    void EventListener::eventDispatcherDestroyed(EventDispatcher* dispatcher)
     {
-        callbacks_.clear();
-        dispatcher_ = nullptr;
+        callbacks_.erase(dispatcher);
+        dispatchers_.erase(dispatcher);
     }
 }

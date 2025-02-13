@@ -50,13 +50,11 @@ namespace vine
 
         RenderableManager::init();
 
-        windowListener_ = new EventListener(*window_);
-
-        windowListener_->listen<WindowCloseEvent>([this](const WindowCloseEvent& e) {
+        windowListener_.listen<WindowCloseEvent>(*window_, [this](const WindowCloseEvent& e) {
             running_ = false;
         });
 
-        windowListener_->listen<WindowResizeEvent>([](const WindowResizeEvent& e) {
+        windowListener_.listen<WindowResizeEvent>(*window_, [](const WindowResizeEvent& e) {
             Renderer::ref().setViewport({ 0, 0, e.getWidth(), e.getHeight() });
         });
 
@@ -75,8 +73,6 @@ namespace vine
 
     Application::~Application()
     {
-        if (windowListener_)
-            delete windowListener_;
         if (controller_)
             delete controller_;
         RenderableManager::shutdown();

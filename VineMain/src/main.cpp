@@ -61,8 +61,6 @@ public:
 
         Renderer::ref().getCamera().setPosition({ 640, 360, 0.0f });
 
-        windowListener_ = new EventListener(*getWindow());
-        controllerListener_ = new EventListener(*getController());
         setupEventCallbacks();
 
         TextRenderableBuilder tBuilder("assets/fonts/opensans/OpenSans-Regular.ttf");
@@ -137,8 +135,6 @@ public:
 
     void onShutdown() override 
     {
-        delete windowListener_;
-        delete controllerListener_;
         delete chain_;
     }
 
@@ -147,13 +143,15 @@ private:
     {
         using namespace vine;
 
-        controllerListener_->listen<KeyTypedEvent>([this](const KeyTypedEvent& e) {
+        Controller& con = *getController();
+
+        listener_.listen<KeyTypedEvent>(con, [this](const KeyTypedEvent& e) {
             DBG_INFO("Key typed text: {0}", e.getText());
             typedText_ += e.getText();
             text2_->setText(typedText_);
         });
 
-        controllerListener_->listen<KeyDownEvent>([this](const KeyDownEvent& e) {
+        listener_.listen<KeyDownEvent>(con, [this](const KeyDownEvent& e) {
             DBG_INFO("Key down: {0}, {1}", e.getKeyCode(), e.getThisEventTypeID());
             if (e.getKeyCode() == Key::Backspace)
             {
@@ -168,7 +166,7 @@ private:
             }
         });
 
-        controllerListener_->listen<KeyHeldEvent>([this](const KeyHeldEvent& e) {
+        listener_.listen<KeyHeldEvent>(con, [this](const KeyHeldEvent& e) {
             DBG_INFO("Key down: {0}", e.getKeyCode());
             if (e.getKeyCode() == Key::Backspace)
             {
@@ -178,7 +176,7 @@ private:
             }
         });
 
-        controllerListener_->listen<MouseMovedEvent>([this](const MouseMovedEvent& e) {
+        listener_.listen<MouseMovedEvent>(con, [this](const MouseMovedEvent& e) {
             if (mouseHeld)
             {
                 Vec2 delta = Vec2(e.getX() - startPos.x, startPos.y - e.getY()) / curZoom_;
@@ -193,19 +191,19 @@ private:
             }
         });
 
-        controllerListener_->listen<MouseButtonDownEvent>([this](const MouseButtonDownEvent& e) {
+        listener_.listen<MouseButtonDownEvent>(con, [this](const MouseButtonDownEvent& e) {
             DBG_INFO("Mouse down");
             startPos.x = e.getX();
             startPos.y = e.getY();
             mouseHeld = true;
         });
 
-        controllerListener_->listen<MouseButtonUpEvent>([this](const MouseButtonUpEvent& e) {
+        listener_.listen<MouseButtonUpEvent>(con, [this](const MouseButtonUpEvent& e) {
             DBG_INFO("Mouse unheld");
             mouseHeld = false;
         });
 
-        controllerListener_->listen<MouseScrolledEvent>([this](const MouseScrolledEvent& e) {
+        listener_.listen<MouseScrolledEvent>(con, [this](const MouseScrolledEvent& e) {
             DBG_INFO("Mouse scrolled: {0} | {1}", e.getXOffset(), e.getYOffset());
 
             curZoom_ += 0.05f * e.getYOffset();
@@ -228,8 +226,7 @@ private:
     vine::Tween* tween_;
     vine::Tween* tween2_;
 
-    vine::EventListener* windowListener_;
-    vine::EventListener* controllerListener_;
+    vine::EventListener listener_;
 
     vine::TweenChain* chain_;
     float duration_ = 2.5f;

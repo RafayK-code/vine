@@ -40,7 +40,7 @@ namespace vine
         Window* window_;
         Controller* controller_;
 
-        EventListener* windowListener_;
+        EventListener windowListener_;
     };
 
     Application* createApplication(int argc, char** argv);
