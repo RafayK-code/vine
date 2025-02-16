@@ -5,6 +5,33 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
+class Button : public vine::Interactive
+{
+public:
+    Button() {}
+    ~Button() {}
+
+    void onMouseDown() override
+    {
+        DBG_INFO("Mouse button down!");
+    }
+
+    void onMouseUp() override
+    {
+        DBG_INFO("Mouse button up!");
+    }
+
+    void onHover() override
+    {
+        DBG_INFO("mouse hover!");
+    }
+
+    void onHoverExit() override
+    {
+        DBG_INFO("mouse hover exit!");
+    }
+};
+
 //#define DEMO_FRAMEBUFFER
 
 class MyApp : public vine::Application
@@ -56,6 +83,11 @@ public:
         QuadRenderableBuilder builder;
         quad_ = builder.setPosition({ 400.0f, 500.0f }).setScale({ 100.0f, 100.0f }).setColor({ 1.0f, 0.0f, 0.0f, 0.7f }).createT();
         quad2_ = builder.setPosition({ 400.0f, 200.0f }).createT();
+        Rect rect;
+        rect.w = 100.0f;
+        rect.h = 100.0f;
+        rect.centerAt({ 400.0f, 200.0f });
+        button_.setHitbox(rect);
 
         //RenderableManager::ref().addRenderable("Quad", quad);
         gameCamera_ = new OrthographicCamera();
@@ -63,6 +95,11 @@ public:
         RenderableManager::ref().getLayer(Layer::CG)->setCamera(gameCamera_);
         RenderableManager::ref().getLayer(Layer::Game)->setCamera(gameCamera_);
         RenderableManager::ref().getLayer(Layer::Foreground)->setCamera(gameCamera_);
+
+        InteractiveManager::ref().getLayer(Layer::Background)->setCamera(gameCamera_);
+        InteractiveManager::ref().getLayer(Layer::CG)->setCamera(gameCamera_);
+        InteractiveManager::ref().getLayer(Layer::Game)->setCamera(gameCamera_);
+        InteractiveManager::ref().getLayer(Layer::Foreground)->setCamera(gameCamera_);
 
         setupEventCallbacks();
 
@@ -184,7 +221,7 @@ private:
                 Vec3 v = gameCamera_->getPosition();
                 Vec3 newPos = v - Vec3(delta, 0.0f);
                 gameCamera_->setPosition(newPos);
-                DBG_INFO("NewPos: x={0}, y={1}", newPos.x, newPos.y);
+                //DBG_INFO("NewPos: x={0}, y={1}", newPos.x, newPos.y);
 
                 startPos.x = e.getX();
                 startPos.y = e.getY();
@@ -192,19 +229,19 @@ private:
         });
 
         listener_.listen<MouseButtonDownEvent>(con, [this](const MouseButtonDownEvent& e) {
-            DBG_INFO("Mouse down");
+            //DBG_INFO("Mouse down");
             startPos.x = e.getX();
             startPos.y = e.getY();
             mouseHeld = true;
         });
 
         listener_.listen<MouseButtonUpEvent>(con, [this](const MouseButtonUpEvent& e) {
-            DBG_INFO("Mouse unheld");
+            //DBG_INFO("Mouse unheld");
             mouseHeld = false;
         });
 
         listener_.listen<MouseScrolledEvent>(con, [this](const MouseScrolledEvent& e) {
-            DBG_INFO("Mouse scrolled: {0} | {1}", e.getXOffset(), e.getYOffset());
+            //DBG_INFO("Mouse scrolled: {0} | {1}", e.getXOffset(), e.getYOffset());
 
             curZoom_ += 0.05f * e.getYOffset();
             curZoom_ = Math::clamp(curZoom_, 0.50f, 2.0f);
@@ -239,6 +276,7 @@ private:
     float curZoom_ = 1.0f;
 
     vine::Ref<vine::OrthographicCamera> gameCamera_;
+    Button button_;
 };
 
 vine::Application* vine::createApplication(int argc, char** argv)

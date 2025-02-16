@@ -28,4 +28,18 @@ namespace vine
 
         return *this;
     }
+
+    bool Rect::contains(const Vec2& point) const
+    {
+        return (point.x >= x &&
+                point.x <= x + w &&
+                point.y >= y &&
+                point.y <= y + h);
+    }
+
+    void Rect::centerAt(const Vec2& point)
+    {
+        x = point.x - (w / 2.0f);
+        y = point.y - (h / 2.0f);
+    }
 }

@@ -16,6 +16,9 @@
 #include <vine/events/EventDispatcher.h>
 #include <vine/events/EventListener.h>
 
+#include <vine/interactive/Interactive.h>
+#include <vine/interactive/InteractiveManager.h>
+
 #include <vine/renderer/Renderer.h>
 #include <vine/renderer/OrthographicCamera.h>
 #include <vine/renderer/GraphicsContext.h>

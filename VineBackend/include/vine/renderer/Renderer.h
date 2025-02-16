@@ -29,7 +29,10 @@ namespace vine
 
         void setViewport(const glm::vec4& dimensions);
         void setClearColor(const glm::vec4& color);
+
+        const glm::mat4& getOrtho() const { return projectionMatrix_; }
         void setOrtho(float left, float right, float bottom, float top, float zNear, float zFar);
+
         void clear();
         
         void beginScene(const Ref<OrthographicCamera>& camera);

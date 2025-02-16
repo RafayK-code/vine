@@ -4,6 +4,7 @@
 #include <vine/sys/Ref.h>
 #include <vine/renderer/Color.h>
 #include <vine/util/Math.h>
+#include <vine/core/Layer.h>
 
 #include <glm/glm.hpp>
 #include <string>
@@ -14,16 +15,6 @@ namespace vine
 
     namespace Layer
     {
-        enum : RenderableLayerLevel
-        {
-            Background = 6,
-            CG = 5,
-            Game = 4,
-            Foreground = 3,
-            Effects = 2,
-            UI = 1,
-        };
-
         bool isValidLayer(RenderableLayerLevel layer);
     }
 

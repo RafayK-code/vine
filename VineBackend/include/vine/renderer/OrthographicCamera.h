@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vine/sys/Ref.h>
+#include <vine/util/Math.h>
 
 #include <glm/glm.hpp>
 
@@ -11,6 +12,8 @@ namespace vine
     public:
         OrthographicCamera();
         ~OrthographicCamera();
+
+        Vec2 screenToWorld(const Vec2& point) const;
 
         const glm::vec3& getPosition() const { return position_; }
         void setPosition(const glm::vec3& position) { position_ = position; updateViewMatrix(); }

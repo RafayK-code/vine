@@ -13,6 +13,8 @@
 #include <vine/resource/ResourceImage.h>
 #include <vine/resource/ResourceFont.h>
 
+#include <vine/interactive/InteractiveManager.h>
+
 #include <vine/renderer/backend/Font.h>
 
 #include <vine/events/AppEvent.h>
@@ -29,8 +31,12 @@
 
 namespace vine
 {
+    Application* Application::instance_ = nullptr;
+
     Application::Application(const ApplicationCreationSettings& settings)
     {
+        instance_ = this;
+
         Logger::init();
         DBG_INFO("Logging initialized");
 
@@ -68,12 +74,16 @@ namespace vine
             controller_ = nullptr;
         }
 
+        InteractiveManager::init();
+        InteractiveManager::ref().setController(controller_);
+
         running_ = true;
         DBG_INFO("Application startup successful");
     }
 
     Application::~Application()
     {
+        InteractiveManager::shutdown();
         if (controller_)
             delete controller_;
         RenderableManager::shutdown();
@@ -84,6 +94,8 @@ namespace vine
         SDL_Quit();
         DBG_INFO("Application successfully shutdown");
         Logger::shutdown();
+
+        instance_ = nullptr;
     }
 
     void Application::tick()

@@ -1,5 +1,8 @@
 #include <vine/renderer/OrthographicCamera.h>
 
+#include <vine/core/Application.h>
+#include <vine/renderer/Renderer.h>
+
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace vine
@@ -12,6 +15,23 @@ namespace vine
 
     OrthographicCamera::~OrthographicCamera()
     {
+    }
+
+    Vec2 OrthographicCamera::screenToWorld(const Vec2& point) const
+    {
+        float screenWidth = (float)Application::ref().getWindow()->getWidth();
+        float screenHeight = (float)Application::ref().getWindow()->getHeight();
+
+        float ndcX = (2.0f * point.x) / screenWidth - 1.0f;
+        float ndcY = 1.0f - (2.0f * point.y) / screenHeight;
+        float ndcZ = 0.0f;
+
+        Vec4 ndcPos = { ndcX, ndcY, ndcZ, 1.0f };
+        glm::mat4 inverseViewProj = glm::inverse(Renderer::ref().getOrtho() * viewMatrix_);
+
+        Vec4 worldPos = inverseViewProj * ndcPos;
+
+        return Vec2(worldPos.x, worldPos.y);
     }
 
     void OrthographicCamera::updateViewMatrix()

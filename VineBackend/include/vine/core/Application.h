@@ -31,6 +31,9 @@ namespace vine
         Window* getWindow() { return window_; }
         Controller* getController() { return controller_; }
 
+        static Application& ref() { return *instance_; }
+        static Application* ptr() { return instance_; }
+
     private:
         void processSDLEvents();
 
@@ -41,6 +44,7 @@ namespace vine
         Controller* controller_;
 
         EventListener windowListener_;
+        static Application* instance_;
     };
 
     Application* createApplication(int argc, char** argv);
