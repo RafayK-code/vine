@@ -1,6 +1,7 @@
 #include <vine/renderer/Renderer.h>
 
 #include <vine/renderer/backend/MSDFData.h>
+#include <vine/core/Logger.h>
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glad/glad.h>
@@ -8,7 +9,7 @@
 namespace vine
 {
     Renderer::Renderer(Window* window)
-        : camera_(-(int)window->getWidth() / 2.0f, window->getWidth() / 2.0f, -(int)window->getHeight() / 2.0f, window->getHeight() / 2.0f, -0.01f, -100.0f) // remember that NDC is left handed
+        : camera_(-(int)window->getWidth() / 2.0f, window->getWidth() / 2.0f, -(int)window->getHeight() / 2.0f, window->getHeight() / 2.0f, 0.0f, -1000.0f) // remember that NDC is left handed, and opengl does a flip argh
     {
         context_.createContext(window);
 

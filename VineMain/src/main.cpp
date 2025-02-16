@@ -68,7 +68,7 @@ public:
             .setPosition({ 850.0f, 500.0f }).setLayer(Layer::Background).setScale({ 200.0f, 200.0f }).setText("Hello\nWorld!")
             .setColor({ 0.0f, 1.0f, 0.0f, 1.0f }).createT();
 
-        quad3_ = builder.setPosition({ 850.0f, 500.0f }).setScale({ 30.0f, 30.0f }).setColor({0.0f, 1.0f, 0.0f, 1.0f}).createT();
+        quad3_ = builder.setPosition({ 865.0f, 500.0f }).setScale({ 200.0f, 200.0f }).setColor({0.0f, 0.5f, 0.8f, 0.6f}).createT();
         quad3_->setPriority(1.0f);
         text2_ = tBuilder.setPosition({ 200.0f, 200.0f }).setText(typedText_).createT();
 

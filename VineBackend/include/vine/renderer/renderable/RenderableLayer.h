@@ -20,10 +20,12 @@ namespace vine
 
         RenderableLayerLevel getLayer() const { return layer_; }
 
+        using RenderableList = std::vector<Renderable*>;
+        const RenderableList& getRenderables() const { return renderables_; }
+
     private:
         RenderableLayerLevel layer_;
 
-        using RenderableList = std::vector<Renderable*>;
         RenderableList renderables_;
     };
 }

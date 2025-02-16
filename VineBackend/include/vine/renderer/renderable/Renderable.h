@@ -21,7 +21,7 @@ namespace vine
             Game = 4,
             Foreground = 3,
             Effects = 2,
-            UI = 1
+            UI = 1,
         };
 
         bool isValidLayer(RenderableLayerLevel layer);
