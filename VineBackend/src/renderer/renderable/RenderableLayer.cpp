@@ -9,7 +9,7 @@
 namespace vine
 {
     RenderableLayer::RenderableLayer(RenderableLayerLevel layer)
-        : layer_(layer)
+        : layer_(layer), camera_(nullptr)
     {
     }
 
@@ -42,6 +42,8 @@ namespace vine
         }
 
         auto textIt = textRenderablesByShader.begin();
+
+        Renderer::ref().beginScene(camera_);
 
         for (const auto& pair : quadRenderablesByShader)
         {
@@ -103,6 +105,8 @@ namespace vine
             Renderer::ref().nextBatch();
         }
         glDepthMask(GL_TRUE);
+
+        Renderer::ref().endScene();
     }
 
     void RenderableLayer::add(Renderable* renderable)

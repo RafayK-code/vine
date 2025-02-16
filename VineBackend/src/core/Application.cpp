@@ -47,6 +47,7 @@ namespace vine
 
         Renderer::ref().setViewport({ 0, 0, window_->getWidth(), window_->getHeight() });
         Renderer::ref().setClearColor({ 0.0f, 0.0f, 0.0f, 0.0f });
+        Renderer::ref().setOrtho(0, window_->getWidth(), 0, window_->getHeight(), 0.0f, -1000.0f);
 
         RenderableManager::init();
 

@@ -46,6 +46,8 @@ namespace vine
 
     void RenderableManager::render() const
     {
+        Renderer::ref().clear();
+
         for (const auto& pair : renderables_)
         {
             if (pair.second)

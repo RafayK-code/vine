@@ -9,7 +9,7 @@
 namespace vine
 {
     Renderer::Renderer(Window* window)
-        : camera_(-(int)window->getWidth() / 2.0f, window->getWidth() / 2.0f, -(int)window->getHeight() / 2.0f, window->getHeight() / 2.0f, 0.0f, -1000.0f) // remember that NDC is left handed, and opengl does a flip argh
+        : projectionMatrix_(glm::ortho(0.0f, (float)window->getWidth(), 0.0f, (float)window->getHeight(), 0.0f, -1000.0f))
     {
         context_.createContext(window);
 
@@ -119,18 +119,25 @@ namespace vine
         glClearColor(color.x, color.y, color.z, color.w);
     }
 
+    void Renderer::setOrtho(float left, float right, float bottom, float top, float zNear, float zFar)
+    {
+        projectionMatrix_ = glm::ortho(left, right, bottom, top, zNear, zFar);
+    }
+
     void Renderer::clear()
     {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
-    void Renderer::beginScene()
+    void Renderer::beginScene(const Ref<OrthographicCamera>& camera)
     {
+        glm::mat4 viewMatrix = camera ? camera->getViewMatrix() : glm::mat4(1.0f);
+        glm::mat4 viewProjectionMatrix = projectionMatrix_ * viewMatrix;
         data_->quadShader->bind();
-        data_->quadShader->uploadUniformMat4("u_ViewProjection", camera_.getViewProjectionMatrix());
+        data_->quadShader->uploadUniformMat4("u_ViewProjection", viewProjectionMatrix);
 
         data_->textShader->bind();
-        data_->textShader->uploadUniformMat4("u_ViewProjection", camera_.getViewProjectionMatrix());
+        data_->textShader->uploadUniformMat4("u_ViewProjection", viewProjectionMatrix);
 
         startBatch();
     }

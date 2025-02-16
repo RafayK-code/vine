@@ -27,14 +27,12 @@ namespace vine
         static void init(Window* window);
         static void shutdown();
 
-        OrthographicCamera& getCamera() { return camera_; }
-        const OrthographicCamera& getCamera() const { return camera_; }
-
         void setViewport(const glm::vec4& dimensions);
         void setClearColor(const glm::vec4& color);
+        void setOrtho(float left, float right, float bottom, float top, float zNear, float zFar);
         void clear();
         
-        void beginScene();
+        void beginScene(const Ref<OrthographicCamera>& camera);
         void endScene();
 
         void startBatch();
@@ -130,6 +128,7 @@ namespace vine
 
         std::unique_ptr<RendererData> data_;
         GraphicsContext context_;
-        OrthographicCamera camera_;
+
+        glm::mat4 projectionMatrix_;
     };
 }

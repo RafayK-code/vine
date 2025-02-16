@@ -58,8 +58,11 @@ public:
         quad2_ = builder.setPosition({ 400.0f, 200.0f }).createT();
 
         //RenderableManager::ref().addRenderable("Quad", quad);
-
-        Renderer::ref().getCamera().setPosition({ 640, 360, 0.0f });
+        gameCamera_ = new OrthographicCamera();
+        RenderableManager::ref().getLayer(Layer::Background)->setCamera(gameCamera_);
+        RenderableManager::ref().getLayer(Layer::CG)->setCamera(gameCamera_);
+        RenderableManager::ref().getLayer(Layer::Game)->setCamera(gameCamera_);
+        RenderableManager::ref().getLayer(Layer::Foreground)->setCamera(gameCamera_);
 
         setupEventCallbacks();
 
@@ -70,7 +73,7 @@ public:
 
         quad3_ = builder.setPosition({ 865.0f, 500.0f }).setScale({ 200.0f, 200.0f }).setColor({0.0f, 0.5f, 0.8f, 0.6f}).createT();
         quad3_->setPriority(1.0f);
-        text2_ = tBuilder.setPosition({ 200.0f, 200.0f }).setText(typedText_).createT();
+        text2_ = tBuilder.setPosition({ 200.0f, 200.0f }).setText(typedText_).setScale({ 50.0f, 50.0f }).setLayer(Layer::UI).createT();
 
         TweenTarget* target = new RenderableTweenTarget(quad_);
         TweenConfig config;
@@ -113,10 +116,7 @@ public:
 #ifdef DEMO_FRAMEBUFFER
         framebuffer_->bind();
 #endif
-        Renderer::ref().clear();
-        Renderer::ref().beginScene();
         RenderableManager::ref().render();
-        Renderer::ref().endScene();
 #ifdef DEMO_FRAMEBUFFER
         framebuffer_->unbind();
 #endif
@@ -181,9 +181,9 @@ private:
             {
                 Vec2 delta = Vec2(e.getX() - startPos.x, startPos.y - e.getY()) / curZoom_;
 
-                Vec3 v = Renderer::ref().getCamera().getPosition();
+                Vec3 v = gameCamera_->getPosition();
                 Vec3 newPos = v - Vec3(delta, 0.0f);
-                Renderer::ref().getCamera().setPosition(newPos);
+                gameCamera_->setPosition(newPos);
                 DBG_INFO("NewPos: x={0}, y={1}", newPos.x, newPos.y);
 
                 startPos.x = e.getX();
@@ -209,7 +209,7 @@ private:
             curZoom_ += 0.05f * e.getYOffset();
             curZoom_ = Math::clamp(curZoom_, 0.50f, 2.0f);
 
-            Renderer::ref().getCamera().setZoom(curZoom_);
+            gameCamera_->setZoom(curZoom_);
         });
     }
 
@@ -237,6 +237,8 @@ private:
     bool mouseHeld = false;
 
     float curZoom_ = 1.0f;
+
+    vine::Ref<vine::OrthographicCamera> gameCamera_;
 };
 
 vine::Application* vine::createApplication(int argc, char** argv)
