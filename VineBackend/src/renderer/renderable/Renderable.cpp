@@ -49,8 +49,20 @@ namespace vine
 
     void Renderable::updateTransform()
     {
-        transform_ = glm::translate(glm::mat4(1.0f), { state_.pos.x, state_.pos.y, state_.layer * 100 + state_.priority }) *
+        Vec2 pivotOffset = state_.pivot * (state_.size * state_.scale);
+
+        transform_ = glm::translate(glm::mat4(1.0f), { state_.pos.x - pivotOffset.x, state_.pos.y - pivotOffset.y, state_.layer * 100 + state_.priority }) *
+            glm::translate(glm::mat4(1.0f), { pivotOffset, 0.0f }) *
             glm::rotate(glm::mat4(1.0f), glm::radians(state_.rotation), glm::vec3(0.0f, 0.0f, 1.0f)) *
-            glm::scale(glm::mat4(1.0f), { state_.scale.x, state_.scale.y, 1.0f });
+            glm::translate(glm::mat4(1.0f), { -pivotOffset, 0.0f }) *
+            glm::scale(glm::mat4(1.0f), { state_.scale.x * state_.size.x, state_.scale.y * state_.size.y, 1.0f });
+
+        /*
+        transform_ = glm::translate(glm::mat4(1.0f), { state_.pivot, 0.0f }) *
+            glm::scale(glm::mat4(1.0f), { state_.scale.x * state_.size.x, state_.scale.y * state_.size.y, 1.0f }) *
+            glm::rotate(glm::mat4(1.0f), glm::radians(state_.rotation), glm::vec3(0.0f, 0.0f, 1.0f)) *
+            glm::translate(glm::mat4(1.0f), { -state_.pivot, 0.0f }) *
+            glm::translate(glm::mat4(1.0f), { state_.pos.x, state_.pos.y, state_.layer * 100 + state_.priority });
+            */
     }
 }

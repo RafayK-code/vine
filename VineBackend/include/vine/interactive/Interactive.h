@@ -2,15 +2,18 @@
 
 #include <vine/renderer/Rect.h>
 #include <vine/renderer/renderable/Renderable.h>
+#include <vine/sys/Ref.h>
 #include <vine/core/Layer.h>
 
 namespace vine
 {
-    class Interactive
+    class Interactive : public RefCounted
     {
     public:
         Interactive();
         virtual ~Interactive();
+
+        //static Ref<Interactive> createFromRenderable(const Ref<Renderable>& renderable);
 
         virtual void onMouseDown() = 0;
         virtual void onMouseUp() = 0;

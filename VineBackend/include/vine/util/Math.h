@@ -58,12 +58,12 @@ namespace vine
 
         static inline float deltaAngle(float a, float b)
         {
-            if (Math::abs(b - a) < Math::PI)
+            if (Math::abs(b - a) < 180)
                 return b - a;
             if (b > a)
-                return b - a - Math::TWO_PI;
+                return b - a - 360;
 
-            return b - a + Math::TWO_PI;
+            return b - a + 360;
         }
     };
 }

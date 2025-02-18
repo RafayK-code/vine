@@ -18,15 +18,33 @@ namespace vine
         bool isValidLayer(RenderableLayerLevel layer);
     }
 
+    enum class HAnchor
+    {
+        Left,
+        Center,
+        Right,
+    };
+
+    enum class VAnchor
+    {
+        Bottom,
+        Center,
+        Top,
+    };
+
     struct RenderableState
     {
         glm::vec2 pos = { 0.0f, 0.0f };
-        glm::vec2 scale = { 0.0f, 0.0f };
+        glm::vec2 size = { 1.0f, 1.0f };
+        glm::vec2 scale = { 1.0f, 1.0f };
         float rotation = 0.0f;
         Color color = { 1.0f, 1.0f, 1.0f, 1.0f };
         RenderableLayerLevel layer = Layer::Game;
         float priority = 0.0f;
         bool visible = true;
+        VAnchor vAnchor = VAnchor::Center;
+        HAnchor hAnchor = HAnchor::Center;
+        Vec2 pivot = { 0.5f, 0.5f };
     };
 
     class Renderable : public RefCounted
@@ -42,8 +60,8 @@ namespace vine
 
         const RenderableState& getState() const { return state_; }
 
-        const glm::vec2& getPosition() const { return state_.pos; }
-        void setPosition(const glm::vec2& pos) { state_.pos = pos; updateTransform(); }
+        const Vec2& getPosition() const { return state_.pos; }
+        void setPosition(const Vec2& pos) { state_.pos = pos; updateTransform(); }
 
         const glm::vec2& getScale() const { return state_.scale; }
         void setScale(const glm::vec2& scale) { state_.scale = scale; updateTransform(); }
@@ -62,6 +80,15 @@ namespace vine
 
         bool isVisible() const { return state_.visible; }
         void setVisible(bool visible) { state_.visible = visible; }
+
+        HAnchor getHAnchor() const { return state_.hAnchor; }
+        void setHAnchor(HAnchor hAnchor) { state_.hAnchor = hAnchor; updateTransform(); }
+
+        VAnchor getVAnchor() const { return state_.vAnchor; }
+        void setVAnchor(VAnchor vAnchor) { state_.vAnchor = vAnchor; updateTransform(); }
+
+        const Vec2& getPivot() const { return state_.pivot; }
+        void setPivot(const Vec2& pivot) { state_.pivot = pivot; updateTransform(); }
 
         ShaderRef getShader() const { return shader_; }
         const std::string& getShaderName() const { return shaderName_; }

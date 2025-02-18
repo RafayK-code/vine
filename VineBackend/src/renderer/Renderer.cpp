@@ -72,10 +72,10 @@ namespace vine
         for (int i = 0; i < RendererData::maxTextureSlots; i++)
             samplers[i] = i;
 
-        data_->quadVertexPositions[0] = { -0.5f, -0.5f, 0.0f, 1.0f };
-        data_->quadVertexPositions[1] = { 0.5f, -0.5f, 0.0f, 1.0f };
-        data_->quadVertexPositions[2] = { 0.5f,  0.5f, 0.0f, 1.0f };
-        data_->quadVertexPositions[3] = { -0.5f,  0.5f, 0.0f, 1.0f };
+        data_->quadVertexPositions[0] = { 0.0f, 0.0f, 0.0f, 1.0f };
+        data_->quadVertexPositions[1] = { 1.0f, 0.0f, 0.0f, 1.0f };
+        data_->quadVertexPositions[2] = { 1.0f,  1.0f, 0.0f, 1.0f };
+        data_->quadVertexPositions[3] = { 0.0f,  1.0f, 0.0f, 1.0f };
 
         // shader stuff
         ShaderCache::init();
@@ -342,7 +342,7 @@ namespace vine
         data_->fontAtlasTexture = fontAtlas;
 
         double x = 0.0;
-        double fsScale = 1.0 / (metrics.ascenderY - metrics.descenderY);
+        double fsScale = font->getFontSize() / (metrics.ascenderY - metrics.descenderY);
         double y = 0.0;
 
         const float spaceGlyphAdvance = fontGeomtry.getGlyph(' ')->getAdvance();

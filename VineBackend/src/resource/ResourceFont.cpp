@@ -48,7 +48,7 @@ namespace vine
     }
 
     ResourceFont::ResourceFont(const ResourceCreationData& data)
-        : Resource(data), data_(new MSDFData())
+        : Resource(data), data_(new MSDFData()), fontSize_(12.0f)
     {
     }
 

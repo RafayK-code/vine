@@ -21,6 +21,9 @@ namespace vine
         const MSDFData* getData() const { return data_; }
         const Ref<ResourceImage>& getAtlasTexture() const { return atlasTexture_; }
 
+        float getFontSize() const { return fontSize_; }
+        void setFontSize(float fontSize) { fontSize_ = fontSize; }
+
     protected:
         ResourceFont(const ResourceCreationData& data);
 
@@ -30,5 +33,7 @@ namespace vine
     private:
         MSDFData* data_;
         Ref<ResourceImage> atlasTexture_;
+
+        float fontSize_;
     };
 }
