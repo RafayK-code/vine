@@ -33,6 +33,9 @@ namespace vine
         const glm::mat4& getOrtho() const { return projectionMatrix_; }
         void setOrtho(float left, float right, float bottom, float top, float zNear, float zFar);
 
+        const Ref<OrthographicCamera> getActiveCamera() const { return camera_; }
+        void setActiveCamera(const Ref<OrthographicCamera>& camera);
+
         void clear();
         
         void beginScene(const Ref<OrthographicCamera>& camera);
@@ -133,5 +136,6 @@ namespace vine
         GraphicsContext context_;
 
         glm::mat4 projectionMatrix_;
+        Ref<OrthographicCamera> camera_;
     };
 }

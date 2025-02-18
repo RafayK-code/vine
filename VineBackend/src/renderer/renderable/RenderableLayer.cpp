@@ -60,6 +60,7 @@ namespace vine
             {
                 ShaderRef shader = ShaderCache::ref().get(textIt->first);
                 Renderer::ref().setActiveTextShader(shader);
+                Renderer::ref().setActiveCamera(camera_);
 
                 for (auto& renderable : textIt->second)
                     renderable->render();
@@ -74,6 +75,7 @@ namespace vine
         {
             ShaderRef shader = ShaderCache::ref().get(textIt->first);
             Renderer::ref().setActiveTextShader(shader);
+            Renderer::ref().setActiveCamera(camera_);
 
             for (auto& renderable : textIt->second)
             {

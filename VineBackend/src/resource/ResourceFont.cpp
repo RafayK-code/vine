@@ -37,7 +37,7 @@ namespace vine
         TextureSpecification spec;
         spec.width = bitmap.width;
         spec.height = bitmap.height;
-        spec.format = ImageFormat::RGB8;
+        spec.format = ImageFormat::RGBA8;
         spec.generateMips = false;
 
         TextureSamplerSettings settings;
@@ -110,10 +110,12 @@ namespace vine
 
         double emSize = 40.0;
         msdf_atlas::TightAtlasPacker atlasPacker;
-        atlasPacker.setPixelRange(2.0);
         atlasPacker.setMiterLimit(1.0);
         atlasPacker.setSpacing(0);
         atlasPacker.setScale(emSize);
+        atlasPacker.setUnitRange(0.2);
+
+        DBG_INFO("Atlas px range: {0}, {1}", atlasPacker.getPixelRange().lower, atlasPacker.getPixelRange().upper);
 
         int remaining = atlasPacker.pack(data_->glyphs.data(), (int)data_->glyphs.size());
         DBG_ASSERT(remaining == 0, "");
@@ -150,7 +152,7 @@ namespace vine
             }
         }
 
-        atlasTexture_ = createAndCacheAtlas<uint8_t, float, 3, msdf_atlas::msdfGenerator>("tex_" + data->file, (float)emSize, data_->glyphs, data_->fontGeometry, width, height);
+        atlasTexture_ = createAndCacheAtlas<uint8_t, float, 4, msdf_atlas::mtsdfGenerator>("tex_" + data->file, (float)emSize, data_->glyphs, data_->fontGeometry, width, height);
         msdfgen::destroyFont(font);
         msdfgen::deinitializeFreetype(ft);
     }

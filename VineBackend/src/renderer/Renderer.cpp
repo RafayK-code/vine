@@ -124,6 +124,19 @@ namespace vine
         projectionMatrix_ = glm::ortho(left, right, bottom, top, zNear, zFar);
     }
 
+    void Renderer::setActiveCamera(const Ref<OrthographicCamera>& camera)
+    {
+        camera_ = camera;
+
+        glm::mat4 viewMatrix = camera ? camera->getViewMatrix() : glm::mat4(1.0f);
+        glm::mat4 viewProjectionMatrix = projectionMatrix_ * viewMatrix;
+        data_->quadShader->bind();
+        data_->quadShader->uploadUniformMat4("u_ViewProjection", viewProjectionMatrix);
+
+        data_->textShader->bind();
+        data_->textShader->uploadUniformMat4("u_ViewProjection", viewProjectionMatrix);
+    }
+
     void Renderer::clear()
     {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

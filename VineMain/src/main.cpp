@@ -113,10 +113,10 @@ public:
 
         TextRenderableBuilder tBuilder("assets/fonts/opensans/OpenSans-Regular.ttf");
         text_ = tBuilder
-            .setPosition({ 0.0f, 0.0f }).setLayer(Layer::UI).setScale({ 10.0f, 10.0f }).setText("He")
+            .setPosition({ 0.0f, 0.0f }).setLayer(Layer::UI).setScale({ 4.0f, 4.0f }).setText("He")
             .setColor({ 0.0f, 1.0f, 0.0f, 1.0f }).createT();
 
-        text3_ = tBuilder.setScale({ 20.0f, 20.0f }).setColor({ 1.0f, 1.0f, 1.0f, 1.0f }).setLayer(Layer::Background).createT();
+        text3_ = tBuilder.setScale({ 20.0f, 20.0f }).setColor({ 1.0f, 1.0f, 0.0f, 1.0f }).setLayer(Layer::Background).createT();
         text3_->setPivot({ 0.0f, 0.0f });
         text_->setPivot({ 0.0f, 0.0f });
 
@@ -165,25 +165,8 @@ public:
 
         chain_->tick(dt);
 
-#ifdef DEMO_FRAMEBUFFER
-        framebuffer_->bind();
-#endif
-        //Renderer::ref().setClearColor({ 0.0f, 0.5f, 0.6f, 1.0f });
+        Renderer::ref().setClearColor({ 0.0f, 0.6f, 0.8f, 1.0f });
         RenderableManager::ref().render();
-#ifdef DEMO_FRAMEBUFFER
-        framebuffer_->unbind();
-#endif
-
-#ifdef DEMO_FRAMEBUFFER
-        glDisable(GL_BLEND);
-        Renderer::ref().clear();
-        Renderer::ref().beginScene();
-        glm::mat4 transform = glm::translate(glm::mat4(1.0f), { 1280.0f / 2.0f, 720.0f / 2.0f, 10 }) *
-            glm::rotate(glm::mat4(1.0f), glm::radians(0.0f), glm::vec3(0.0f, 0.0f, 1.0f)) *
-            glm::scale(glm::mat4(1.0f), { 1280.0f, 720.0f, 1.0f });
-        Renderer::ref().drawQuad(transform, framebuffer_);
-        Renderer::ref().endScene();
-#endif
     }
 
     void onShutdown() override 
