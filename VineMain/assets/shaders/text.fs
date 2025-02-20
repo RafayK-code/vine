@@ -21,6 +21,7 @@ float median(float r, float g, float b) {
 
 void main()
 {
+    /*
     float out_bias = 0.25;
     float outline_width_absolute = 1.0 / 16.0;
     float outline_width_relative = 1.0 / 7.0;
@@ -46,6 +47,11 @@ void main()
     vec4 outer_color = vec4(0.0, 0.0, 0.0, 1.0);
 
     vec4 color = (inner_color * inner_opacity) + (outer_color * (outer_opacity - inner_opacity));
+    if (color.a == 0.0)
+        discard;
 
-    FragColor = color;    
+    FragColor = color;
+    */
+
+    FragColor = vec4(texture(u_FontAtlas, v_TexCoord).rgb, 1.0);
 }

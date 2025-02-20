@@ -63,8 +63,10 @@ namespace vine
         const Vec2& getPosition() const { return state_.pos; }
         void setPosition(const Vec2& pos) { state_.pos = pos; updateTransform(); }
 
-        const glm::vec2& getScale() const { return state_.scale; }
-        void setScale(const glm::vec2& scale) { state_.scale = scale; updateTransform(); }
+        const Vec2& getSize() const { return state_.size; }
+
+        const Vec2& getScale() const { return state_.scale; }
+        void setScale(const Vec2& scale) { state_.scale = scale; updateTransform(); }
 
         float getRotation() const { return state_.rotation; }
         void setRotation(float rotation) { state_.rotation = rotation; updateTransform(); }
@@ -97,10 +99,12 @@ namespace vine
 
         const glm::mat4& getTransform() const { return transform_; }
 
-    private:
+    protected:
         void updateTransform();
 
-    private:
+        void setSize(const Vec2& size) { state_.size = size; }
+
+    protected:
         ShaderRef shader_;
         std::string shaderName_;
 

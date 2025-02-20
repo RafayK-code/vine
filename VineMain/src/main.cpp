@@ -125,7 +125,10 @@ public:
 
         //quad4_ = builder.createT();
 
-        text2_ = tBuilder.setPosition({ 850.0f, 500.0f }).setText(typedText_).setScale({ 200.0f, 200.0f }).setLayer(Layer::UI).createT();
+        text2_ = tBuilder.setPosition({ 850.0f, 500.0f }).setText(typedText_).setScale({ 20.0f, 20.0f }).setLayer(Layer::Game).createT();
+        text2_->setKerning(0.2f);
+        text2_->setLineSpacing(-1.0f);
+        text2_->setPivot({ 0.0f, 0.0f });
 
         TweenTarget* target = new RenderableTweenTarget(quad_);
         TweenConfig config;
@@ -165,7 +168,7 @@ public:
 
         chain_->tick(dt);
 
-        Renderer::ref().setClearColor({ 0.0f, 0.6f, 0.8f, 1.0f });
+        Renderer::ref().setClearColor({ 0.0f, 0.3f, 0.4f, 1.0f });
         RenderableManager::ref().render();
     }
 

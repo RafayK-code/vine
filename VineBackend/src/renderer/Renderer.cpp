@@ -411,6 +411,9 @@ namespace vine
             quadMin *= fsScale;
             quadMax *= fsScale;
 
+            quadMin -= quadMin;
+            quadMax -= quadMin;
+
             quadMin += glm::vec2(x, y);
             quadMax += glm::vec2(x, y);
 
