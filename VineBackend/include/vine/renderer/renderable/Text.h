@@ -32,6 +32,12 @@ namespace vine
         float getLineSpacing() const { return lineSpacing_; }
         void setLineSpacing(float lineSpacing) { lineSpacing_ = lineSpacing; }
 
+        TextAlignment getAlignment() const { return alignment_; }
+        void setAlignmemnt(TextAlignment alignment) { alignment_ = alignment; processText(); }
+
+        float getFontSize() const { return fontSize_; }
+        void setFontSize(float fontSize) { fontSize_ = fontSize; }
+
         const Ref<ResourceFont>& getFont() const { return font_; }
 
     private:
@@ -48,6 +54,12 @@ namespace vine
         std::string text_;
         float kerning_;
         float lineSpacing_;
+        TextAlignment alignment_;
+
+        float maxLineWidth_;
+        float textHeight_;
+
+        float fontSize_;
 
         std::vector<Chunk> chunks_;
 

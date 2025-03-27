@@ -4,12 +4,15 @@
 #include <vine/resource/ResourceManager.h>
 #include <vine/resource/ResourceFont.h>
 #include <vine/core/Logger.h>
+#include <vine/util/Math.h>
 
 #undef INFINITE
 #include <msdf-atlas-gen/msdf-atlas-gen.h>
 
 #include <msdf-atlas-gen/FontGeometry.h>
 #include <msdf-atlas-gen/GlyphGeometry.h>
+
+#include <glm/gtc/matrix_transform.hpp>
 
 #include <sstream>
 
@@ -24,7 +27,7 @@ namespace vine
     static std::vector<std::string> split(const std::string& str, char delimiter)
     {
         std::vector<std::string> res;
-        std::stringstream ss;
+        std::stringstream ss(str);
         std::string token;
 
         while (std::getline(ss, token, delimiter))
@@ -34,10 +37,11 @@ namespace vine
     }
 
     Text::Text(const std::string& fontfile, const RenderableState& state, const std::string& text, float kerning, float lineSpacing)
-        : Renderable(state), text_(text), kerning_(kerning), lineSpacing_(lineSpacing)
+        : Renderable(state), text_(text), kerning_(kerning), lineSpacing_(lineSpacing), maxLineWidth_(0.0f), textHeight_(0.0f), fontSize_(6.0f)
     {
         font_ = ResourceFont::create(fontfile);
         setShader("TextShader");
+        processText();
     }
 
     Text::~Text()
@@ -46,7 +50,13 @@ namespace vine
 
     void Text::render() const
     {
-        Renderer::ref().drawText(text_, font_, getTransform(), { getColor(), kerning_, lineSpacing_ });
+        std::vector<float> widths;
+        for (const auto& chunk : chunks_)
+        {
+            widths.push_back(chunk.width);
+        }
+
+        Renderer::ref().drawText(text_, font_, getTransform(), { getColor(), kerning_, lineSpacing_, alignment_, widths, maxLineWidth_, textHeight_, fontSize_ });
     }
 
     Ref<Renderable> Text::clone() const
@@ -58,8 +68,20 @@ namespace vine
     {
         chunks_.clear();
         std::vector<std::string> lines = split(text_, '\n');
+        float maxLineWidth = 0.0f;
         for (const auto& str : lines)
-            chunks_.push_back(processLine(str));
+        {
+            Chunk chunk = processLine(str);
+            maxLineWidth = Math::max(maxLineWidth, chunk.width);
+            chunks_.push_back(chunk);
+        }
+
+        maxLineWidth_ = maxLineWidth;
+
+        const msdf_atlas::FontGeometry& fontGeomtry = font_->getData()->fontGeometry;
+        const msdfgen::FontMetrics& metrics = fontGeomtry.getMetrics();
+        double fsScale = font_->getFontSize() / (metrics.ascenderY - metrics.descenderY);
+        textHeight_ = chunks_.size() * (fsScale * metrics.lineHeight + lineSpacing_);
     }
 
     Text::Chunk Text::processLine(const std::string& line) const
@@ -69,7 +91,7 @@ namespace vine
         Ref<ResourceImage> fontAtlas = font_->getAtlasTexture();
 
         double x = 0.0;
-        double fsScale = font_->getFontSize() / (metrics.ascenderY - metrics.descenderY);
+        double fsScale = fontSize_ / (metrics.ascenderY - metrics.descenderY);
         double y = 0.0;
 
         const float spaceGlyphAdvance = fontGeomtry.getGlyph(' ')->getAdvance();

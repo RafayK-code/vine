@@ -64,6 +64,7 @@ namespace vine
         void setPosition(const Vec2& pos) { state_.pos = pos; updateTransform(); }
 
         const Vec2& getSize() const { return state_.size; }
+        void setSize(const Vec2& size) { state_.size = size; updateTransform(); }
 
         const Vec2& getScale() const { return state_.scale; }
         void setScale(const Vec2& scale) { state_.scale = scale; updateTransform(); }
@@ -101,8 +102,6 @@ namespace vine
 
     protected:
         void updateTransform();
-
-        void setSize(const Vec2& size) { state_.size = size; }
 
     protected:
         ShaderRef shader_;

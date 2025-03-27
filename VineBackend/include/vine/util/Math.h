@@ -35,6 +35,9 @@ namespace vine
 
         static inline float abs(float num) { return std::abs(num); }
 
+        static inline float max(float a, float b) { return std::max(a, b); }
+        static inline float min(float a, float b) { return std::min(a, b); }
+
         static inline float lerp(float lerp, float a, float b) { return a + lerp * (b - a); }
         static inline float clamp(float val, float min, float max)
         {

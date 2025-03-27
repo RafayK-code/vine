@@ -72,10 +72,10 @@ namespace vine
         for (int i = 0; i < RendererData::maxTextureSlots; i++)
             samplers[i] = i;
 
-        data_->quadVertexPositions[0] = { 0.0f, 0.0f, 0.0f, 1.0f };
-        data_->quadVertexPositions[1] = { 1.0f, 0.0f, 0.0f, 1.0f };
-        data_->quadVertexPositions[2] = { 1.0f,  1.0f, 0.0f, 1.0f };
-        data_->quadVertexPositions[3] = { 0.0f,  1.0f, 0.0f, 1.0f };
+        data_->quadVertexPositions[0] = { -0.5f, -0.5f, 0.0f, 1.0f };
+        data_->quadVertexPositions[1] = { 0.5f, -0.5f, 0.0f, 1.0f };
+        data_->quadVertexPositions[2] = { 0.5f,  0.5f, 0.0f, 1.0f };
+        data_->quadVertexPositions[3] = { -0.5f,  0.5f, 0.0f, 1.0f };
 
         // shader stuff
         ShaderCache::init();
@@ -355,10 +355,22 @@ namespace vine
         data_->fontAtlasTexture = fontAtlas;
 
         double x = 0.0;
-        double fsScale = font->getFontSize() / (metrics.ascenderY - metrics.descenderY);
+        double fsScale = params.fontSize / (metrics.ascenderY - metrics.descenderY);
         double y = 0.0;
 
         const float spaceGlyphAdvance = fontGeomtry.getGlyph(' ')->getAdvance();
+
+        int lineNumber = 0;
+
+        glm::vec2 originOffset = { 0.0f, 0.0f };
+        if (params.alignment == TextAlignment::Centered)
+            originOffset.x = -0.5f * params.textWidth;
+        else if (params.alignment == TextAlignment::Right)
+            originOffset.x = -params.textWidth;
+
+        //originOffset.y = 0.5f * params.textHeight;
+
+        glm::vec4 worldOrigin = transform * glm::vec4(originOffset, 1.0f, 1.0f);
 
         for (size_t i = 0; i < text.size(); i++)
         {
@@ -370,6 +382,7 @@ namespace vine
             {
                 x = 0;
                 y -= fsScale * metrics.lineHeight + params.lineSpacing;
+                lineNumber++;
                 continue;
             }
 
@@ -394,6 +407,12 @@ namespace vine
                 continue;
             }
 
+            float alignOffset = 0.0f;
+            if (params.alignment == TextAlignment::Centered)
+                alignOffset = -0.5 * params.widths[lineNumber];
+            else if (params.alignment == TextAlignment::Right)
+                alignOffset = -params.widths[lineNumber];
+
             const msdf_atlas::GlyphGeometry* glyph = fontGeomtry.getGlyph(character);
             if (!glyph)
                 glyph = fontGeomtry.getGlyph('?');
@@ -411,11 +430,11 @@ namespace vine
             quadMin *= fsScale;
             quadMax *= fsScale;
 
-            quadMin -= quadMin;
-            quadMax -= quadMin;
-
             quadMin += glm::vec2(x, y);
             quadMax += glm::vec2(x, y);
+
+            quadMin += glm::vec2(alignOffset, originOffset.y);
+            quadMax += glm::vec2(alignOffset, originOffset.y);
 
             float texelWidth = 1.0f / fontAtlas->getWidth();
             float texelHeight = 1.0f / fontAtlas->getHeight();
@@ -425,7 +444,6 @@ namespace vine
             constexpr size_t textVertexCount = 4;
             const glm::vec2 texCoords[] = { texCoordMin, {texCoordMin.x, texCoordMax.y}, texCoordMax, {texCoordMax.x, texCoordMin.y} };
             const glm::vec4 positions[] = { {quadMin, 0.0f, 1.0f}, {quadMin.x, quadMax.y, 0.0f, 1.0f}, {quadMax, 0.0f, 1.0f}, {quadMax.x, quadMin.y, 0.0f, 1.0f} };
-
 
             for (size_t i = 0; i < textVertexCount; i++)
             {

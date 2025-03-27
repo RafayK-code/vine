@@ -85,7 +85,7 @@ public:
         */
 
         QuadRenderableBuilder builder;
-        quad_ = builder.setPosition({ 400.0f, 500.0f }).setScale({ 100.0f, 100.0f }).setColor({ 1.0f, 0.0f, 0.0f, 0.7f }).createT();
+        quad_ = builder.setPosition({ 0.0f, 0.0f }).setScale({ 100.0f, 100.0f }).setColor({ 1.0f, 0.0f, 0.0f, 0.7f }).createT();
         quad2_ = builder.setPosition({ 400.0f, 200.0f }).setColor({1.0f, 0.0f, 0.0f, 1.0f}).createT();
 
         //quad_->setRotation(45.0f);
@@ -116,25 +116,29 @@ public:
             .setPosition({ 0.0f, 0.0f }).setLayer(Layer::UI).setScale({ 4.0f, 4.0f }).setText("He")
             .setColor({ 0.0f, 1.0f, 0.0f, 1.0f }).createT();
 
-        text3_ = tBuilder.setScale({ 20.0f, 20.0f }).setColor({ 1.0f, 1.0f, 0.0f, 1.0f }).setLayer(Layer::Background).createT();
-        text3_->setPivot({ 0.0f, 0.0f });
+        text3_ = tBuilder.setScale({ 30.0f, 30.0f }).setColor({ 1.0f, 1.0f, 0.0f, 1.0f }).setLayer(Layer::Background).createT();
+        text3_->setPivot({ 0.5f, 0.5f });
         text_->setPivot({ 0.0f, 0.0f });
 
-        quad3_ = builder.setPosition({ 850.0f, 500.0f }).setScale({ 50.0f, 50.0f }).setColor({0.0f, 0.5f, 0.8f, 0.6f}).createT();
+        quad3_ = builder.setPosition({ 850.0f, 500.0f }).setScale({ 100.0f, 100.0f }).setColor({0.0f, 0.5f, 0.8f, 0.6f}).createT();
         quad3_->setPriority(1.0f);
+        quad3_->setPivot({ 0.5f, 0.5f });
 
         //quad4_ = builder.createT();
 
         text2_ = tBuilder.setPosition({ 850.0f, 500.0f }).setText(typedText_).setScale({ 20.0f, 20.0f }).setLayer(Layer::Game).createT();
-        text2_->setKerning(0.2f);
-        text2_->setLineSpacing(-1.0f);
-        text2_->setPivot({ 0.0f, 0.0f });
+        text2_->setKerning(0.0f);
+        text2_->setLineSpacing(0.0f);
+        text2_->setPivot({ 0.5f, 0.5f });
+        text2_->setAlignmemnt(TextAlignment::Centered);
 
-        TweenTarget* target = new RenderableTweenTarget(quad_);
+        quad_->setPivot({ 0.5f, 0.5f });
+
+        TweenTarget* target = new RenderableTweenTarget(quad3_);
         TweenConfig config;
         config
-            .rotation(45.0f)
-            .scale({ 200.0f, 200.0f })
+            //.rotation(45.0f)
+            .scale({ 150.0f, 150.0f })
             .setEase(easing::Linear::easeNone);
 
         TweenConfig config2;
@@ -143,7 +147,7 @@ public:
             .setEase(easing::Quadratic::easeInOut);
 
         tween_ = new Tween(target, duration_, config);
-        tween2_ = new Tween(target, duration_, config2);
+        //tween2_ = new Tween(target, duration_, config2);
         //tween_->play();
 
         TweenChainConfig config3;
@@ -153,7 +157,7 @@ public:
 
         chain_ = new TweenChain(config3);
         chain_->append(tween_);
-        chain_->append(tween2_);
+        //chain_->append(tween2_);
 
         chain_->play();
 
@@ -167,6 +171,8 @@ public:
         using namespace vine;
 
         chain_->tick(dt);
+
+        //quad3_->setPosition()
 
         Renderer::ref().setClearColor({ 0.0f, 0.3f, 0.4f, 1.0f });
         RenderableManager::ref().render();

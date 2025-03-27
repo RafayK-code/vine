@@ -12,6 +12,8 @@
 #include <vine/resource/ResourceImage.h>
 #include <vine/resource/ResourceFont.h>
 
+#include <vine/renderer/renderable/Text.h>
+
 #include <array>
 #include <string>
 #include <variant>
@@ -58,11 +60,17 @@ namespace vine
         void drawQuad(const glm::mat4& transform, const Ref<ResourceImage>& texture, const glm::vec2& texPos = { -1.0f, -1.0f }, const glm::vec2& texScale = { -1.0f, -1.0f }, const glm::vec4& tintColor = { 1.0f, 1.0f, 1.0f, 1.0f });
         void drawQuad(const glm::mat4& transform, const FramebufferRef& framebuffer, const glm::vec2& texPos = { -1.0f, -1.0f }, const glm::vec2& texScale = { -1.0f, -1.0f }, const glm::vec4& tintColor = { 1.0f, 1.0f, 1.0f, 1.0f });
 
+        // TODO : wtf is this find a better way to do this
         struct TextParams
         {
             glm::vec4 color = { 1.0f, 1.0f, 1.0, 1.0 };
             float kerning = 0.0f;
             float lineSpacing = 0.0f;
+            TextAlignment alignment = TextAlignment::Left;
+            std::vector<float> widths;
+            float textWidth = 0.0f;
+            float textHeight = 0.0f;
+            float fontSize = 1.0f;
         };
 
         void drawText(const std::string& text, const Ref<ResourceFont>& font, const glm::mat4& trnasform, const TextParams& params);
